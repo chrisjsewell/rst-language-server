@@ -1,0 +1,8 @@
+[flake8]
+# black uses 88
+max-line-length = 90
+ignore =
+    E203,  # not compatible with black
+    W503   # not compatible with black
+exclude =
+    setup.py
