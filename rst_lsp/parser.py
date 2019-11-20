@@ -14,8 +14,8 @@ from docutils.frontend import OptionParser
 
 # from docutils.parsers import get_parser_class
 from docutils.parsers.rst import Parser as RSTParser
-from docutils.parsers.rst.directives import _directives
-from docutils.parsers.rst.roles import _roles
+# from docutils.parsers.rst.directives import _directives
+# from docutils.parsers.rst.roles import _roles
 from docutils.parsers.rst.states import Body, Inliner, MarkupError, RSTState
 
 # from docutils.utils import new_document
@@ -61,6 +61,8 @@ def init_sphinx(
         log_stream_status = StringIO()
         log_stream_warning = StringIO()
         with patch_docutils(confdir), docutils_namespace():
+            from docutils.parsers.rst.directives import _directives
+            from docutils.parsers.rst.roles import _roles
             app = Sphinx(
                 sourcedir,
                 confdir,
@@ -326,15 +328,16 @@ class CustomReporter(Reporter):
 
     def system_message(self, level, message, *children, **kwargs):
         sys_message = super().system_message(level, message, *children, **kwargs)
-        self.log_capture.append(
-            {
-                # "source": sys_message["source"],
-                "line": sys_message.get("line", ""),
-                "type": sys_message["type"],
-                "level": sys_message["level"],
-                "description": nodes.Element.astext(sys_message),
-            }
-        )
+        if level >= self.report_level:
+            self.log_capture.append(
+                {
+                    # "source": sys_message["source"],
+                    "line": sys_message.get("line", ""),
+                    "type": sys_message["type"],
+                    "level": sys_message["level"],
+                    "description": nodes.Element.astext(sys_message),
+                }
+            )
         return sys_message
 
 
@@ -390,6 +393,7 @@ def assess_source(content, filename="input.rst", confdir=None, confoverrides=Non
         settings.env = sphinx_init.app.env
         doc_warning_stream = StringIO()
         settings.warning_stream = doc_warning_stream
+        settings.report_level = 2  # warning
 
         document, reporter = new_document_custom(content, settings=settings)
 

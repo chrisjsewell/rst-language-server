@@ -83,38 +83,38 @@ def test_1_errors(get_test_file_content):
         content, confoverrides={"extensions": ["sphinxcontrib.bibtex"]}
     )
     assert results.errors == [
-        {
-            "line": 2,
-            "type": "INFO",
-            "level": 1,
-            "description": 'Duplicate explicit target name: "python".',
-        },
-        {
-            "line": 20,
-            "type": "INFO",
-            "level": 1,
-            "description": (
-                'No role entry for "sdf" in module '
-                '"docutils.parsers.rst.languages.en".\n'
-                'Trying "sdf" as canonical role name.'
-            ),
-        },
+        # {
+        #     "line": 2,
+        #     "type": "INFO",
+        #     "level": 1,
+        #     "description": 'Duplicate explicit target name: "python".',
+        # },
+        # {
+        #     "line": 20,
+        #     "type": "INFO",
+        #     "level": 1,
+        #     "description": (
+        #         'No role entry for "sdf" in module '
+        #         '"docutils.parsers.rst.languages.en".\n'
+        #         'Trying "sdf" as canonical role name.'
+        #     ),
+        # },
         {
             "line": 20,
             "type": "ERROR",
             "level": 3,
             "description": 'Unknown interpreted text role "sdf".',
         },
-        {
-            "line": 26,
-            "type": "INFO",
-            "level": 1,
-            "description": (
-                'No directive entry for "dsfsdf" in module '
-                '"docutils.parsers.rst.languages.en".\n'
-                'Trying "dsfsdf" as canonical directive name.'
-            ),
-        },
+        # {
+        #     "line": 26,
+        #     "type": "INFO",
+        #     "level": 1,
+        #     "description": (
+        #         'No directive entry for "dsfsdf" in module '
+        #         '"docutils.parsers.rst.languages.en".\n'
+        #         'Trying "dsfsdf" as canonical directive name.'
+        #     ),
+        # },
         {
             "line": 26,
             "type": "ERROR",
@@ -123,32 +123,32 @@ def test_1_errors(get_test_file_content):
                 'Unknown directive type "dsfsdf".' "\n\n.. dsfsdf::\n\n    import a\n"
             ),
         },
-        {
-            "line": 37,
-            "type": "INFO",
-            "level": 1,
-            "description": (
-                'No role entry for "sdf" in module '
-                '"docutils.parsers.rst.languages.en".\n'
-                'Trying "sdf" as canonical role name.'
-            ),
-        },
+        # {
+        #     "line": 37,
+        #     "type": "INFO",
+        #     "level": 1,
+        #     "description": (
+        #         'No role entry for "sdf" in module '
+        #         '"docutils.parsers.rst.languages.en".\n'
+        #         'Trying "sdf" as canonical role name.'
+        #     ),
+        # },
         {
             "line": 37,
             "type": "ERROR",
             "level": 3,
             "description": 'Unknown interpreted text role "sdf".',
         },
-        {
-            "line": 37,
-            "type": "INFO",
-            "level": 1,
-            "description": (
-                'No role entry for "abcf" in module '
-                '"docutils.parsers.rst.languages.en".\n'
-                'Trying "abcf" as canonical role name.'
-            ),
-        },
+        # {
+        #     "line": 37,
+        #     "type": "INFO",
+        #     "level": 1,
+        #     "description": (
+        #         'No role entry for "abcf" in module '
+        #         '"docutils.parsers.rst.languages.en".\n'
+        #         'Trying "abcf" as canonical role name.'
+        #     ),
+        # },
         {
             "line": 37,
             "type": "ERROR",
@@ -184,10 +184,10 @@ def test_1_element_info(get_test_file_content):
     }
 
 
-def test_1_environment(get_test_file_content):
-    content = get_test_file_content("test1.rst")
-    results = assess_source(
-        content, confoverrides={"extensions": ["sphinxcontrib.bibtex"]}
-    )
-    print(results.environment.__dir__())
-    raise
+# def test_1_environment(get_test_file_content):
+#     content = get_test_file_content("test1.rst")
+#     results = assess_source(
+#         content, confoverrides={"extensions": ["sphinxcontrib.bibtex"]}
+#     )
+#     print(results.environment.__dir__())
+#     raise
