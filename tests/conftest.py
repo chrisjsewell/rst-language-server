@@ -20,4 +20,5 @@ def get_test_file_content(get_test_file_path):
         with open(get_test_file_path(name)) as handle:
             content = handle.read()
         return content
+
     return _get_test_file_content

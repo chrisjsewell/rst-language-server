@@ -1,8 +1,10 @@
 from contextlib import contextmanager
 from collections import namedtuple
 import copy
-from inspect import getdoc  # , getmro
+
 from io import StringIO
+import locale
+import os
 import shutil
 import tempfile
 from unittest import mock
@@ -19,11 +21,13 @@ from docutils.parsers.rst.states import Body, Inliner, MarkupError, RSTState
 # from docutils.utils import new_document
 from docutils.utils import decode_path, Reporter  # , SystemMessage, unescape
 
+from sphinx import package_dir
+import sphinx.locale
 from sphinx.application import Sphinx
 from sphinx.util.console import nocolor, color_terminal, terminal_safe  # noqa
 from sphinx.util.docutils import docutils_namespace, patch_docutils
 
-import yaml
+# import yaml
 
 
 sphinx_init = namedtuple(
@@ -32,18 +36,25 @@ sphinx_init = namedtuple(
 
 
 @contextmanager
-def init_sphinx(confdir=None, confoverrides=None):
+def init_sphinx(
+    confdir=None, confoverrides=None, source_dir=None, output_dir=None
+) -> sphinx_init:
     """Initialise the Sphinx Application"""
 
+    # below is taken from sphinx.cmd.build.main
+    sphinx.locale.setlocale(locale.LC_ALL, "")
+    sphinx.locale.init_console(os.path.join(package_dir, "locale"), "sphinx")
+
+    # below is adapted from sphinx.cmd.build.build_main
     confdir = None
     confoverrides = confoverrides or {}
 
-    # these are not needed before build, but there existence is checked
     builder = "html"
-    sourcedir = tempfile.mkdtemp()  # path to documentation source files
+    # these are not needed before build, but there existence is checked in ``Sphinx```
+    sourcedir = source_dir or tempfile.mkdtemp()  # path to documentation source files
     # path for the cached environment and doctree
     # note source directory and destination directory cannot be identical
-    doctreedir = outputdir = tempfile.mkdtemp()
+    doctreedir = outputdir = output_dir or tempfile.mkdtemp()
 
     app = None
     try:
@@ -75,53 +86,10 @@ def init_sphinx(confdir=None, confoverrides=None):
         # handle_exception(app, args, exc, error)
         raise exc
     finally:
-        shutil.rmtree(sourcedir)
-        shutil.rmtree(outputdir)
-
-
-def get_role_doc(role):
-    return {
-        "doc": getdoc(role),
-        "module": f"{role.__module__}"
-        # "module": role.__module__,
-    }
-
-
-def get_directive_doc(direct):
-    return {
-        "doc": getdoc(direct),
-        "class": f"{direct.__module__}.{direct.__name__}",
-        "required_arguments": direct.required_arguments,
-        "optional_arguments": direct.optional_arguments,
-        "has_content": direct.has_content,
-        "options": {k: str(v.__name__) for k, v in direct.option_spec.items()}
-        if direct.option_spec
-        else "",
-    }
-
-
-def document_roles(extensions=(), as_string=False):
-    with init_sphinx(confoverrides={"extensions": extensions}) as (
-        app,
-        directives,
-        roles,
-    ):
-        roles_info = {f"{name}": get_role_doc(r) for name, r in roles.items()}
-        if as_string:
-            return yaml.safe_dump(roles_info, default_flow_style=False)
-        return roles_info
-
-
-def document_directives(extensions=(), as_string=False):
-    with init_sphinx(confoverrides={"extensions": extensions}) as (
-        app,
-        directives,
-        roles,
-    ):
-        dir_info = {f"{name}": get_directive_doc(d) for name, d in directives.items()}
-        if as_string:
-            return yaml.safe_dump(dir_info, default_flow_style=False)
-        return dir_info
+        if not source_dir:
+            shutil.rmtree(sourcedir, ignore_errors=True)
+        if not output_dir:
+            shutil.rmtree(outputdir, ignore_errors=True)
 
 
 directive_info = namedtuple(
@@ -409,7 +377,7 @@ def new_document_custom(source_path, settings=None):
 
 SourceAssessResult = namedtuple(
     "SourceAssessResult",
-    ["roles", "directives", "element_info", "line_lookup", "errors"],
+    ["environment", "roles", "directives", "element_info", "line_lookup", "errors"],
 )
 
 
@@ -433,6 +401,7 @@ def assess_source(content, filename="input.rst", confdir=None, confoverrides=Non
                 line_lookup.setdefault(el.lineno, []).append(el)
 
     return SourceAssessResult(
+        sphinx_init.app.env,
         sphinx_init.roles,
         sphinx_init.directives,
         element_info,

@@ -182,3 +182,12 @@ def test_1_element_info(get_test_file_content):
         30: ["role_info", "role_info"],
         37: ["role_info", "role_info"],
     }
+
+
+def test_1_environment(get_test_file_content):
+    content = get_test_file_content("test1.rst")
+    results = assess_source(
+        content, confoverrides={"extensions": ["sphinxcontrib.bibtex"]}
+    )
+    print(results.environment.__dir__())
+    raise
