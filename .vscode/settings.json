@@ -8,7 +8,8 @@
         "**/.DS_Store": true,
         "**/__pycache__": true,
         "**/.ipynb_checkpoints": true,
-        "**/pytest_cache": true
+        "**/.pytest_cache": true,
+        "**/.ropeproject": true
     },
     "python.pythonPath": "/anaconda/envs/rst-lsp/bin/python",
     "python.linting.pylintEnabled": false,

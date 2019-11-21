@@ -1,3 +1,6 @@
+
+.. _headerlink:
+
 header 1
 ========
 
@@ -5,20 +8,24 @@ header 1
 
     .. note::
 
-        my note1 `python <www.python.org>`_
+        **my note1**
 
 .. code-block:: python
     :linenos:
 
     import a
 
+`<sdf>`__
+
 sub-title
 ---------
 
+`<http://www.python.org/>`_
+
 .. note::
 
-    my note `python <www.python.org>`_
-    :sdf:`asdasd`
+    my note `a link to python <www.python.org>`_
+    :sdf:`asdasx`
 
 header 2
 ========
@@ -35,3 +42,10 @@ header 2
 ``a literal``
 
 :sdf:`saasf`  :abcf:`saasf`
+
+|REF1| |REF2|_ |REF3|
+
+.. |REF1| image:: file.png
+.. |REF2| replace:: MyText
+.. _REF3: http://sdfsdf/dsf
+.. |REF4| replace: bad syntax

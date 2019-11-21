@@ -1,10 +1,12 @@
 from inspect import getdoc  # , getmro
+from typing import List
+
+import attr
 
 from tinydb import TinyDB, Query
+from tinydb.database import Table
 from tinydb.middlewares import CachingMiddleware
 from tinydb.storages import JSONStorage
-
-from .parser import init_sphinx
 
 
 def get_role_json(name, role):
@@ -32,6 +34,23 @@ def get_directive_json(name, direct):
     return data
 
 
+def get_element_json(block_objects: list, inline_objects: list):
+    objs = []
+    for obj in block_objects:
+        dct = attr.asdict(obj)
+        dct.pop("parent", None)  # this is a docutils.doctree element
+        dct["type"] = "Block"
+        dct["element"] = obj.__class__.__name__
+        objs.append(dct)
+    for obj in inline_objects:
+        dct = attr.asdict(obj)
+        dct.pop("parent", None)
+        dct["type"] = "Inline"
+        dct["element"] = obj.__class__.__name__
+        objs.append(dct)
+    return objs
+
+
 class Database:
     def __init__(self, path, cache_writes=True):
         # caches all read operations and writes data to disk,
@@ -44,9 +63,9 @@ class Database:
         )
         self._query = Query()
         # FYI can also set query sizes for tables
-        self._tbl_global = self._db.table("global")
-        self._tbl_docs = self._db.table("docs")
-        self._tbl_linting = self._db.table("linting")
+        self._tbl_global = self._db.table("global")  # type: Table
+        self._tbl_elements = self._db.table("elements")  # type: Table
+        self._tbl_linting = self._db.table("linting")  # type: Table
 
     @property
     def db(self) -> TinyDB:
@@ -65,32 +84,43 @@ class Database:
         return self._tbl_linting
 
     @property
-    def tbl_docs(self):
-        return self._tbl_docs
+    def tbl_elements(self):
+        return self._tbl_elements
 
-    def update_classes(self, confdir=None, confoverrides=None):
-        # TODO confdir, confoverrides should be stored in the dictionary separately
-        with init_sphinx(confdir=confdir, confoverrides=confoverrides) as sphinx_init:
-            for name, role in sphinx_init.roles.items():
-                self.tbl_global.upsert(
-                    get_role_json(name, role),
-                    (self.query.element == "role") & (self.query.name == name),
-                )
-            for name, directive in sphinx_init.directives.items():
-                self.tbl_global.upsert(
-                    get_directive_json(name, directive),
-                    (self.query.element == "directive") & (self.query.name == name),
-                )
+    def update_classes(self, roles: dict, directives: dict):
+        self.tbl_global.remove(self.query.element == "role")
+        for name, role in roles.items():
+            self.tbl_global.upsert(
+                get_role_json(name, role),
+                (self.query.element == "role") & (self.query.name == name),
+            )
+        self.tbl_global.remove(self.query.element == "directive")
+        for name, directive in directives.items():
+            self.tbl_global.upsert(
+                get_directive_json(name, directive),
+                (self.query.element == "directive") & (self.query.name == name),
+            )
 
-    def query_role(self, name):
+    def query_role(self, name: str):
         return self.tbl_global.get(
             (self.query.element == "role") & (self.query.name == name)
         )
 
-    def query_directive(self, name):
+    def query_directive(self, name: str):
         return self.tbl_global.get(
             (self.query.element == "directive") & (self.query.name == name)
         )
 
-    def update_doc_lint(self, doc_name, errors):
-        pass
+    def update_doc_lint(self, doc_path: str, errors: List[dict]):
+        self.tbl_linting.remove(self.query.doc_path == doc_path)
+        for error in errors:
+            doc = {"doc_path": doc_path}
+            doc.update(error)
+            self.tbl_linting.insert(doc)
+
+    def update_doc_elements(self, doc_path: str, elements: List[dict]):
+        self.tbl_elements.remove(self.query.doc_path == doc_path)
+        for element in elements:
+            doc = {"doc_path": doc_path}
+            doc.update(element)
+            self.tbl_elements.insert(doc)

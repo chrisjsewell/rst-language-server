@@ -1,8 +1,23 @@
+"""Module for building a mapping of document/line/character to RST elements. 
+
+This modules contains `init_sphinx`,
+which is a context manager, that allows sphinx to be initialised,
+outside of the command-line, and also collects all available roles and directives.
+
+``run_parser`` then patches a number of the docutils classes,
+to allow for line numbers and character columns to be obtained for certain elements.
+
+Note, it would be desirable to subclass these classes.
+However, docutils does not make these easy,
+because it hard-wires in a number of class dependencies.
+For example a lot of the state functions return 'Body', as mapping to the Body class
+
+"""
 from contextlib import contextmanager
 from collections import namedtuple
 import copy
-
 from io import StringIO
+from importlib import import_module
 import locale
 import os
 import shutil
@@ -14,20 +29,29 @@ from docutils.frontend import OptionParser
 
 # from docutils.parsers import get_parser_class
 from docutils.parsers.rst import Parser as RSTParser
+
 # from docutils.parsers.rst.directives import _directives
 # from docutils.parsers.rst.roles import _roles
-from docutils.parsers.rst.states import Body, Inliner, MarkupError, RSTState
+# from docutils.parsers.rst import states
+from docutils.parsers.rst.states import Body, MarkupError, RSTState
 
 # from docutils.utils import new_document
-from docutils.utils import decode_path, Reporter  # , SystemMessage, unescape
+from docutils.utils import (
+    decode_path,
+    Reporter,
+)  # , escape2null, SystemMessage, unescape
 
 from sphinx import package_dir
 import sphinx.locale
 from sphinx.application import Sphinx
 from sphinx.util.console import nocolor, color_terminal, terminal_safe  # noqa
 from sphinx.util.docutils import docutils_namespace, patch_docutils
+from sphinx.util.docutils import sphinx_domains
 
-# import yaml
+from .inliner import CustomInliner
+from .elements import SectionElement, DirectiveElement
+
+_BLOCK_OBJECTS = []
 
 
 sphinx_init = namedtuple(
@@ -42,11 +66,12 @@ def init_sphinx(
     """Initialise the Sphinx Application"""
 
     # below is taken from sphinx.cmd.build.main
+    # note: this may be removed in future
     sphinx.locale.setlocale(locale.LC_ALL, "")
     sphinx.locale.init_console(os.path.join(package_dir, "locale"), "sphinx")
 
     # below is adapted from sphinx.cmd.build.build_main
-    confdir = None
+    confdir = confdir
     confoverrides = confoverrides or {}
 
     builder = "html"
@@ -61,8 +86,21 @@ def init_sphinx(
         log_stream_status = StringIO()
         log_stream_warning = StringIO()
         with patch_docutils(confdir), docutils_namespace():
-            from docutils.parsers.rst.directives import _directives
-            from docutils.parsers.rst.roles import _roles
+
+            from docutils.parsers.rst.directives import _directives, _directive_registry
+            from docutils.parsers.rst.roles import _roles, _role_registry
+
+            # regarding the ``_roles`` and ``_directives`` mapping;
+            # sphinx presumably checks loads all roles/directives,
+            # when it loads its internal and conf specified extensions,
+            # however, docutils loads them on a lazy basis, when they are required
+            # the _role_registry contains all docutils roles by their 'canonical' names,
+            # but these are also mapped to language-dependent dependant names
+            # in docutils.parsers.rst.roles.role and
+            # similarly in docutils.parsers.rst.directives.directive
+            # TODO work out how to obtain the correct language mapping
+            # from docutils.languages import get_language
+
             app = Sphinx(
                 sourcedir,
                 confdir,
@@ -77,13 +115,39 @@ def init_sphinx(
                 # args.tags, args.verbosity, args.jobs, args.keep_going
             )
             # app.build(args.force_all, filenames)
-            yield sphinx_init(
-                app,
-                _directives,
-                _roles,
-                log_stream_status.getvalue(),
-                log_stream_warning.getvalue(),
-            )
+
+            all_roles = copy.copy(_role_registry)
+            all_roles.update(_roles)
+            all_directives = copy.copy(_directives)
+            for key, (modulename, classname) in _directive_registry.items():
+                if key not in all_directives:
+                    try:
+                        module = import_module(
+                            f"docutils.parsers.rst.directives.{modulename}"
+                        )
+                        all_directives[key] = getattr(module, classname)
+                    except (AttributeError, ModuleNotFoundError):
+                        pass
+            for domain_name in app.env.domains:
+                domain = app.env.get_domain(domain_name)
+                prefix = "" if domain.name == "std" else f"{domain.name}:"
+                # TODO 'default_domain' is also looked up by
+                # sphinx.util.docutils.sphinx_domains.lookup_domain_element
+                for role_name, role in domain.roles.items():
+                    all_roles[f"{prefix}{role_name}"] = role
+                for direct_name, direct in domain.directives.items():
+                    all_roles[f"{prefix}{direct_name}"] = direct
+
+            with sphinx_domains(app.env):
+                # note this with statement redirects docutils role/directive getters,
+                # to include loading from domains
+                yield sphinx_init(
+                    app,
+                    all_directives,
+                    all_roles,
+                    log_stream_status.getvalue(),
+                    log_stream_warning.getvalue(),
+                )
     except (Exception, KeyboardInterrupt) as exc:
         # handle_exception(app, args, exc, error)
         raise exc
@@ -92,15 +156,6 @@ def init_sphinx(
             shutil.rmtree(sourcedir, ignore_errors=True)
         if not output_dir:
             shutil.rmtree(outputdir, ignore_errors=True)
-
-
-directive_info = namedtuple(
-    "directive_info", ["indented", "lineno", "cls", "options", "arguments"]
-)
-role_info = namedtuple("role_info", ["raw", "text", "name", "lineno", "cls"])
-section_info = namedtuple("section_info", ["length", "lineno", "node", "level"])
-
-_element_info = {}
 
 
 def parse_directive_block(self, indented, line_offset, directive, option_presets):
@@ -146,112 +201,18 @@ def parse_directive_block(self, indented, line_offset, directive, option_presets
     else:
         arguments = []
     # patch
-    _element_info.setdefault("directives", []).append(
-        directive_info(type(indented), line_offset, directive, options, arguments)
+    _BLOCK_OBJECTS.append(
+        DirectiveElement(
+            lineno=line_offset,
+            arguments=arguments,
+            options=options,
+            klass=f"{directive.__module__}.{directive.__name__}",
+        )
     )
     # end patch
     if content and not has_content:
         raise MarkupError("no content permitted")
     return (arguments, options, content, content_offset)
-
-
-def interpreted(self, rawsource, text, role, lineno):
-    from docutils.parsers.rst import roles
-
-    role_fn, messages = roles.role(role, self.language, lineno, self.reporter)
-    # patch
-    _element_info.setdefault("roles", []).append(
-        role_info(rawsource, text, role, lineno, role_fn)
-    )
-    # end patch
-    if role_fn:
-        nodes, messages2 = role_fn(role, rawsource, text, lineno, self)
-        return nodes, messages + messages2
-    else:
-        msg = self.reporter.error(
-            'Unknown interpreted text role "%s".' % role, line=lineno
-        )
-        return ([self.problematic(rawsource, rawsource, msg)], messages + [msg])
-
-
-# def interpreted_or_phrase_ref(self, match, lineno):
-#     end_pattern = self.patterns.interpreted_or_phrase_ref
-#     string = match.string
-#     matchstart = match.start('backquote')
-#     matchend = match.end('backquote')
-#     rolestart = match.start('role')
-#     role = match.group('role')
-#     position = ''
-#     if role:
-#         role = role[1:-1]
-#         position = 'prefix'
-#     elif self.quoted_start(match):
-#         return (string[:matchend], [], string[matchend:], [])
-#     endmatch = end_pattern.search(string[matchend:])
-#     if endmatch and endmatch.start(1):  # 1 or more chars
-#         textend = matchend + endmatch.end()
-#         if endmatch.group('role'):
-#             if role:
-#                 msg = self.reporter.warning(
-#                     'Multiple roles in interpreted text (both '
-#                     'prefix and suffix present; only one allowed).',
-#                     line=lineno)
-#                 text = unescape(string[rolestart:textend], True)
-#                 prb = self.problematic(text, text, msg)
-#                 return string[:rolestart], [prb], string[textend:], [msg]
-#             role = endmatch.group('suffix')[1:-1]
-#             position = 'suffix'
-#         escaped = endmatch.string[:endmatch.start(1)]
-#         rawsource = unescape(string[matchstart:textend], True)
-#         if rawsource[-1:] == '_':
-#             if role:
-#                 msg = self.reporter.warning(
-#                         'Mismatch: both interpreted text role %s and '
-#                         'reference suffix.' % position, line=lineno)
-#                 text = unescape(string[rolestart:textend], True)
-#                 prb = self.problematic(text, text, msg)
-#                 return string[:rolestart], [prb], string[textend:], [msg]
-#             return self.phrase_ref(string[:matchstart], string[textend:],
-#                                     rawsource, escaped, unescape(escaped))
-#         else:
-#             rawsource = unescape(string[rolestart:textend], True)
-#             # patch starts
-#             from docutils.parsers.rst import roles
-#             role_fn, messages = roles.role(role, self.language, lineno,
-#                                             self.reporter)
-#             _element_info["roles"].append(
-#                 role_info(rawsource, escaped, role, lineno,
-#                           role_fn, rolestart, textend, match.pos))
-#             # patch ends
-#             nodelist, messages = self.interpreted(rawsource, escaped, role,
-#                                                     lineno)
-#             return (string[:rolestart], nodelist,
-#                     string[textend:], messages)
-#     msg = self.reporter.warning(
-#             'Inline interpreted text or phrase reference start-string '
-#             'without end-string.', line=lineno)
-#     text = unescape(string[matchstart:matchend], True)
-#     prb = self.problematic(text, text, msg)
-#     return string[:matchstart], [prb], string[matchend:], [msg]
-
-
-# def literal(self, match, lineno):
-#     """This would turn literals, e.g. ``a=1`` into math, e.g. $a=1$ """
-#     before, inlines, remaining, sysmessages, endstring = self.inline_obj(
-#         match, lineno, self.patterns.literal, nodes.math,
-#         restore_backslashes=True)
-#     return before, inlines, remaining, sysmessages
-
-
-# dispatch = {'*': Inliner.emphasis,
-#             '**': Inliner.strong,
-#             '`': interpreted_or_phrase_ref,
-#             '``': Inliner.literal,
-#             '_`': Inliner.inline_internal_target,
-#             ']_': Inliner.footnote_reference,
-#             '|': Inliner.substitution_reference,
-#             '_': Inliner.reference,
-#             '__': Inliner.anonymous_reference}
 
 
 def nested_parse(
@@ -269,11 +230,11 @@ def nested_parse(
     """
     # patch
     if isinstance(node, nodes.section):
-        _element_info.setdefault("sections", []).append(
-            section_info(len(block), input_offset, node, self.memo.section_level)
+        _BLOCK_OBJECTS.append(
+            SectionElement(
+                lineno=input_offset, level=self.memo.section_level, length=len(block)
+            )
         )
-    # _element_info.setdefault("blocks", []).append(
-    #     block_info(len(block), input_offset, node))
     # end patch
     use_default = 0
     if state_machine_class is None:
@@ -307,18 +268,23 @@ def nested_parse(
     return new_offset
 
 
-# @mock.patch.object(Inliner, 'dispatch', dispatch)
-# @mock.patch.object(Inliner, 'interpreted_or_phrase_ref', interpreted_or_phrase_ref)
-# @mock.patch.object(Inliner, 'literal', literal)
-@mock.patch.object(Inliner, "interpreted", interpreted)
+# TODO see also sphinx/testing/restructuredtext.py
+# small function to parse a string as reStructuredText with premade Sphinx application
+# @mock.patch.object(states, "Inliner", CustomInliner)
 @mock.patch.object(Body, "parse_directive_block", parse_directive_block)
 @mock.patch.object(RSTState, "nested_parse", nested_parse)
 def run_parser(source, doc):
-    global _element_info
-    _element_info = {}
-    parser = RSTParser()
+    global _BLOCK_OBJECTS
+    _BLOCK_OBJECTS = []
+    # CustomInliner.reset_inline_objects()
+    inliner = CustomInliner()
+    parser = RSTParser(inliner=inliner)
     parser.parse(source, doc)
-    return {k: copy.copy(v) for k, v in _element_info.items()}
+    return (
+        _BLOCK_OBJECTS[:],
+        # CustomInliner.inline_objects[:],
+        inliner.inline_objects[:]
+    )
 
 
 class CustomReporter(Reporter):
@@ -361,6 +327,7 @@ def new_document_custom(source_path, settings=None):
                 components=(docutils.parsers.rst.Parser,)
                 ).get_default_values()
     """
+    # TODO cache creation, as in sphinx.util.docutils.new_document
     if settings is None:
         settings = OptionParser().get_default_values()
     source_path = decode_path(source_path)
@@ -380,7 +347,15 @@ def new_document_custom(source_path, settings=None):
 
 SourceAssessResult = namedtuple(
     "SourceAssessResult",
-    ["environment", "roles", "directives", "element_info", "line_lookup", "errors"],
+    [
+        "doctree",
+        "environment",
+        "roles",
+        "directives",
+        "block_objects",
+        "inline_objects",
+        "errors",
+    ],
 )
 
 
@@ -397,19 +372,29 @@ def assess_source(content, filename="input.rst", confdir=None, confoverrides=Non
 
         document, reporter = new_document_custom(content, settings=settings)
 
-        element_info = run_parser(content, document)
+        block_objs, inline_objs = run_parser(content, document)
 
-        line_lookup = {}
-        for key, el_list in element_info.items():
-            for el in el_list:
-                line_lookup.setdefault(el.lineno, []).append(el)
+        # The parser does not account for indentation, when assigning `start_char`,
+        # so we do that here
+        content_lines = content.splitlines()
+        for inline in inline_objs:
+            line = content_lines[inline.lineno - 1]
+            inline.start_char += len(line) - len(line.lstrip())
+        for block in block_objs:
+            line = content_lines[block.lineno - 1]
+            block.start_char = len(line) - len(line.lstrip())
+
+        # from pprint import pprint
+        # pprint(block_objs)
+        # pprint(inline_objs)
 
     return SourceAssessResult(
+        document,
         sphinx_init.app.env,
         sphinx_init.roles,
         sphinx_init.directives,
-        element_info,
-        line_lookup,
+        block_objs,
+        inline_objs,
         reporter.log_capture,
     )
 
