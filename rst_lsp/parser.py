@@ -16,6 +16,7 @@ For example a lot of the state functions return 'Body', as mapping to the Body c
 from contextlib import contextmanager
 from collections import namedtuple
 import copy
+from enum import Enum
 from io import StringIO
 from importlib import import_module
 import locale
@@ -29,11 +30,7 @@ from docutils.frontend import OptionParser
 
 # from docutils.parsers import get_parser_class
 from docutils.parsers.rst import Parser as RSTParser
-
-# from docutils.parsers.rst.directives import _directives
-# from docutils.parsers.rst.roles import _roles
-# from docutils.parsers.rst import states
-from docutils.parsers.rst.states import Body, MarkupError, RSTState
+from docutils.parsers.rst.states import Body, RSTState
 
 # from docutils.utils import new_document
 from docutils.utils import (
@@ -48,10 +45,9 @@ from sphinx.util.console import nocolor, color_terminal, terminal_safe  # noqa
 from sphinx.util.docutils import docutils_namespace, patch_docutils
 from sphinx.util.docutils import sphinx_domains
 
-from .inliner import CustomInliner
-from .elements import SectionElement, DirectiveElement
-
-_BLOCK_OBJECTS = []
+from rst_lsp.handle_inlines import CustomInliner
+from .handle_blocks import nested_parse, parse_directive_block
+from .elements import InfoNodeInline
 
 
 sphinx_init = namedtuple(
@@ -63,7 +59,11 @@ sphinx_init = namedtuple(
 def init_sphinx(
     confdir=None, confoverrides=None, source_dir=None, output_dir=None
 ) -> sphinx_init:
-    """Initialise the Sphinx Application"""
+    """Yield a Sphinx Application, within a context.
+
+    This context implements the standard sphinx patches to docutils,
+    including the addition of builtin and extension roles and directives.
+    """
 
     # below is taken from sphinx.cmd.build.main
     # note: this may be removed in future
@@ -158,138 +158,25 @@ def init_sphinx(
             shutil.rmtree(outputdir, ignore_errors=True)
 
 
-def parse_directive_block(self, indented, line_offset, directive, option_presets):
-
-    option_spec = directive.option_spec
-    has_content = directive.has_content
-    if indented and not indented[0].strip():
-        indented.trim_start()
-        line_offset += 1
-    while indented and not indented[-1].strip():
-        indented.trim_end()
-    if indented and (
-        directive.required_arguments or directive.optional_arguments or option_spec
-    ):
-        for i, line in enumerate(indented):
-            if not line.strip():
-                break
-        else:
-            i += 1
-        arg_block = indented[:i]
-        content = indented[i + 1 :]
-        content_offset = line_offset + i + 1
-    else:
-        content = indented
-        content_offset = line_offset
-        arg_block = []
-    if option_spec:
-        options, arg_block = self.parse_directive_options(
-            option_presets, option_spec, arg_block
-        )
-    else:
-        options = {}
-    if arg_block and not (directive.required_arguments or directive.optional_arguments):
-        content = arg_block + indented[i:]
-        content_offset = line_offset
-        arg_block = []
-
-    while content and not content[0].strip():
-        content.trim_start()
-        content_offset += 1
-    if directive.required_arguments or directive.optional_arguments:
-        arguments = self.parse_directive_arguments(directive, arg_block)
-    else:
-        arguments = []
-    # patch
-    _BLOCK_OBJECTS.append(
-        DirectiveElement(
-            lineno=line_offset,
-            arguments=arguments,
-            options=options,
-            klass=f"{directive.__module__}.{directive.__name__}",
-        )
-    )
-    # end patch
-    if content and not has_content:
-        raise MarkupError("no content permitted")
-    return (arguments, options, content, content_offset)
-
-
-def nested_parse(
-    self,
-    block,
-    input_offset,
-    node,
-    match_titles=False,
-    state_machine_class=None,
-    state_machine_kwargs=None,
-):
-    """
-    Create a new StateMachine rooted at `node` and run it over the input
-    `block`.
-    """
-    # patch
-    if isinstance(node, nodes.section):
-        _BLOCK_OBJECTS.append(
-            SectionElement(
-                lineno=input_offset, level=self.memo.section_level, length=len(block)
-            )
-        )
-    # end patch
-    use_default = 0
-    if state_machine_class is None:
-        state_machine_class = self.nested_sm
-        use_default += 1
-    if state_machine_kwargs is None:
-        state_machine_kwargs = self.nested_sm_kwargs
-        use_default += 1
-    block_length = len(block)
-
-    state_machine = None
-    if use_default == 2:
-        try:
-            state_machine = self.nested_sm_cache.pop()
-        except IndexError:
-            pass
-    if not state_machine:
-        state_machine = state_machine_class(debug=self.debug, **state_machine_kwargs)
-    state_machine.run(
-        block, input_offset, memo=self.memo, node=node, match_titles=match_titles
-    )
-    if use_default == 2:
-        self.nested_sm_cache.append(state_machine)
-    else:
-        state_machine.unlink()
-    new_offset = state_machine.abs_line_offset()
-    # No `block.parent` implies disconnected -- lines aren't in sync:
-    if block.parent and (len(block) - block_length) != 0:
-        # Adjustment for block if modified in nested parse:
-        self.state_machine.next_line(len(block) - block_length)
-    return new_offset
-
-
 # TODO see also sphinx/testing/restructuredtext.py
 # small function to parse a string as reStructuredText with premade Sphinx application
-# @mock.patch.object(states, "Inliner", CustomInliner)
 @mock.patch.object(Body, "parse_directive_block", parse_directive_block)
 @mock.patch.object(RSTState, "nested_parse", nested_parse)
 def run_parser(source, doc):
     """Parse the document, and return the gathered document elements."""
     # TODO https://www.sphinx-doc.org/en/master/extdev/index.html#build-phases
-    global _BLOCK_OBJECTS
-    _BLOCK_OBJECTS = []
-    # CustomInliner.reset_inline_objects()
+    from .handle_blocks import _BLOCK_OBJECTS
+
+    _BLOCK_OBJECTS.clear()
     inliner = CustomInliner(doc_text=source)
     parser = RSTParser(inliner=inliner)
     parser.parse(source, doc)
-    return (
-        _BLOCK_OBJECTS[:],
-        # CustomInliner.inline_objects[:],
-        inliner.inline_objects[:]
-    )
+    return _BLOCK_OBJECTS[:]
 
 
 class CustomReporter(Reporter):
+    """Reporter that captures reports as JSON objects,"""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.log_capture = []
@@ -347,6 +234,62 @@ def new_document_custom(source_path, settings=None):
     return document, reporter
 
 
+class ElementType(Enum):
+    role = "role"
+    reference = "reference"
+
+
+class DocInfoVisitor(nodes.GenericNodeVisitor):
+    """Extract info nodes from the document."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.info_datas = []
+
+    def unknown_visit(self, node):
+        """Override for generic, uniform traversals."""
+        if isinstance(node, InfoNodeInline):
+            if node.dtype == "phrase_ref":
+                # followed by reference, then optionally by target
+                self.info_datas.append(
+                    {
+                        "type": "Inline",
+                        "element": ElementType.reference.value,
+                        "lineno": node.doc_lineno,
+                        "start_char": node.doc_char,
+                        "alias": node.other_data["alias"],
+                        "raw": node.other_data["raw"]
+                    }
+                )
+            elif node.dtype == "role":
+                # followed by nodes created by role function
+                # (or problematic, if the role does not exist)
+                self.info_datas.append(
+                    {
+                        "type": "Inline",
+                        "element": ElementType.role.value,
+                        "lineno": node.doc_lineno,
+                        "start_char": node.doc_char,
+                        "role": node.other_data["role"],
+                        "content": node.other_data["content"],
+                        "raw": node.other_data["raw"]
+                    }
+                )
+            else:
+                raise TypeError(f"unknown InfoNodeInline.dtype = {node.dtype}")
+            node.parent.remove(node)
+
+    def unknown_departure(self, node):
+        """Override for generic, uniform traversals."""
+        pass
+
+    def default_visit(self, node):
+        pass
+
+    def default_departure(self, node):
+        pass
+
+
 SourceAssessResult = namedtuple(
     "SourceAssessResult",
     [
@@ -377,7 +320,11 @@ def assess_source(content, filename="input.rst", confdir=None, confoverrides=Non
 
         document, reporter = new_document_custom(content, settings=settings)
 
-        block_objs, inline_objs = run_parser(content, document)
+        block_objs = run_parser(content, document)
+
+        visitor = DocInfoVisitor(document)
+        document.walk(visitor)
+        inline_objs = visitor.info_datas[:]
 
         # The parser does not account for indentation, when assigning `start_char`
         # (for inline_objs, this is handled by the custom Inliner)

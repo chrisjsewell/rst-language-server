@@ -3,10 +3,15 @@ from docutils.nodes import fully_normalize_name as normalize_name
 from docutils.nodes import whitespace_normalize_name
 from docutils.parsers.rst import roles
 from docutils.parsers.rst.states import Inliner, MarkupMismatch
-from docutils.utils import (escape2null, punctuation_chars,
-                            split_escaped_whitespace, unescape, urischemes)
+from docutils.utils import (
+    escape2null,
+    punctuation_chars,
+    split_escaped_whitespace,
+    unescape,
+    urischemes,
+)
 
-from .elements import LinkElement, RefElement, RoleElement
+from .elements import InfoNodeInline
 
 
 class CustomInliner(Inliner):
@@ -20,7 +25,6 @@ class CustomInliner(Inliner):
         """List of (pattern, bound method) tuples, used by
         `self.implicit_inline`."""
         self.implicit_dispatch = []
-        self.inline_objects = []
         if doc_text:
             self.content_lines = doc_text.splitlines()
         else:
@@ -109,7 +113,7 @@ class CustomInliner(Inliner):
         return processed, messages
 
     # Inline object recognition
-    # -------------------------
+    # ---------------f----------
     # See also init_customizations().
     non_whitespace_before = r"(?<!\s)"
     non_whitespace_escape_before = r"(?<![\s\x00])"
@@ -258,11 +262,17 @@ class CustomInliner(Inliner):
                     unescape(escaped),
                     lineno=lineno,
                     start_char=start_char + matchstart,
+                    match=match,
                 )
             else:
                 rawsource = unescape(string[rolestart:textend], True)
                 nodelist, messages = self.interpreted(
-                    rawsource, escaped, role, lineno, start_char=start_char + rolestart
+                    rawsource,
+                    escaped,
+                    role,
+                    lineno,
+                    start_char=start_char + rolestart,
+                    match=match,
                 )
                 return (string[:rolestart], nodelist, string[textend:], messages)
         msg = self.reporter.warning(
@@ -275,12 +285,12 @@ class CustomInliner(Inliner):
         return string[:matchstart], [prb], string[matchend:], [msg]
 
     def phrase_ref(
-        self, before, after, rawsource, escaped, text, lineno=None, start_char=None
+        self, before, after, rawsource, escaped, text, lineno, start_char, match
     ):
+        doc_lineno, doc_char = self.char2docplace[start_char]
         match = self.patterns.embedded_link.search(escaped)
-        alt_text = ""
         if match:  # embedded <URI> or <alias_>
-            text = alt_text = unescape(escaped[: match.start(0)])
+            text = unescape(escaped[: match.start(0)])
             rawtext = unescape(escaped[: match.start(0)], True)
             aliastext = unescape(match.group(2))
             rawaliastext = unescape(match.group(2), True)
@@ -292,20 +302,6 @@ class CustomInliner(Inliner):
                 alias = normalize_name(aliastext[:-1])
                 target = nodes.target(match.group(1), refname=alias)
                 target.indirect_reference_name = aliastext[:-1]
-
-                # patch
-                doc_lineno, doc_char = self.char2docplace[start_char]
-                self.inline_objects.append(
-                    RefElement(
-                        parent=self.parent,
-                        lineno=lineno,
-                        start_char=doc_char,
-                        raw=rawsource,
-                        ref_type=aliastype,
-                        alias=alias
-
-                    )
-                )
             else:
                 aliastype = "uri"
                 alias_parts = split_escaped_whitespace(match.group(2))
@@ -317,19 +313,6 @@ class CustomInliner(Inliner):
                     alias = alias[:-2] + "_"
                 target = nodes.target(match.group(1), refuri=alias)
                 target.referenced = 1
-                # patch
-                doc_lineno, doc_char = self.char2docplace[start_char]
-                self.inline_objects.append(
-                    RefElement(
-                        parent=self.parent,
-                        lineno=lineno,
-                        start_char=doc_char,
-                        raw=rawsource,
-                        ref_type=aliastype,
-                        alias=alias
-
-                    )
-                )
             if not aliastext:
                 raise ApplicationError("problem with embedded link: %r" % aliastext)
             if not text:
@@ -345,7 +328,21 @@ class CustomInliner(Inliner):
         )
         reference[0].rawsource = rawtext
 
-        node_list = [reference]
+        node_list = [
+            InfoNodeInline(
+                self,
+                match=match,
+                dtype="phrase_ref",
+                doc_lineno=doc_lineno,
+                doc_char=doc_char,
+                data=dict(
+                    raw=rawsource,
+                    alias=alias,
+                    # link_type=ref_type, alt_text=alt_text,
+                ),
+            ),
+            reference,
+        ]
 
         if rawsource[-2:] == "__":
             if target and (aliastype == "name"):
@@ -356,7 +353,6 @@ class CustomInliner(Inliner):
                 reference["refuri"] = alias
             else:
                 reference["anonymous"] = 1
-            ref_type = "anonymous"
         else:
             if target:
                 target["names"].append(refname)
@@ -372,21 +368,6 @@ class CustomInliner(Inliner):
             else:
                 reference["refname"] = refname
                 self.document.note_refname(reference)
-            ref_type = "standard"
-        # patch
-        doc_lineno, doc_char = self.char2docplace[start_char]
-        self.inline_objects.append(
-            LinkElement(
-                parent=self.parent,
-                lineno=doc_lineno,
-                start_char=doc_char,
-                raw=rawsource,
-                alias=alias,
-                link_type=ref_type,
-                alt_text=alt_text,
-            )
-        )
-        # end patch
         return before, node_list, after, []
 
     def adjust_uri(self, uri):
@@ -396,33 +377,29 @@ class CustomInliner(Inliner):
         else:
             return uri
 
-    def interpreted(self, rawsource, text, role, lineno, start_char=None):
+    def interpreted(self, rawsource, text, role, lineno, start_char, match):
         role_fn, messages = roles.role(role, self.language, lineno, self.reporter)
-        # patch
         doc_lineno, doc_char = self.char2docplace[start_char]
-        self.inline_objects.append(
-            RoleElement(
-                parent=self.parent,
-                lineno=doc_lineno,
-                start_char=doc_char,
-                raw=rawsource,
-                role=role,
-                content=text,
-            )
+        info = InfoNodeInline(
+            self,
+            match,
+            dtype="role",
+            doc_lineno=doc_lineno,
+            doc_char=doc_char,
+            data=dict(raw=rawsource, role=role, content=text),
         )
-        # end patch
         if role_fn:
             nodes, messages2 = role_fn(role, rawsource, text, lineno, self)
             try:
                 nodes[0][0].rawsource = unescape(text, True)
             except IndexError:
                 pass
-            return nodes, messages + messages2
+            return [info] + nodes, messages + messages2
         else:
             msg = self.reporter.error(
                 'Unknown interpreted text role "%s".' % role, line=lineno
             )
-            return ([self.problematic(rawsource, rawsource, msg)], messages + [msg])
+            return ([info, self.problematic(rawsource, rawsource, msg)], messages + [msg])
 
     def literal(self, match, lineno, start_char=None):
         before, inlines, remaining, sysmessages, endstring = self.inline_obj(

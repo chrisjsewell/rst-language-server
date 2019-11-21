@@ -42,12 +42,7 @@ def get_element_json(block_objects: list, inline_objects: list):
         dct["type"] = "Block"
         dct["element"] = obj.__class__.__name__
         objs.append(dct)
-    for obj in inline_objects:
-        dct = attr.asdict(obj)
-        dct.pop("parent", None)
-        dct["type"] = "Inline"
-        dct["element"] = obj.__class__.__name__
-        objs.append(dct)
+    objs.extend(inline_objects)
     return objs
 
 

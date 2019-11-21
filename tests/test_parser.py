@@ -344,113 +344,90 @@ def test_1_inline_objects(get_test_file_content):
         content, confoverrides={"extensions": ["sphinxcontrib.bibtex"]}
     )
 
-    objs = []
-    for obj in results.inline_objects:
-        dct = attr.asdict(obj)
-        dct.pop("parent", None)
-        dct["element"] = obj.__class__.__name__
-        objs.append(dct)
-    print(objs)
-    assert objs == [
+    print(results.inline_objects)
+    assert results.inline_objects == [
         {
+            "type": "Inline",
+            "element": "reference",
             "lineno": 18,
             "start_char": 0,
-            "raw": "`<sdf>`__",
             "alias": "sdf",
-            "ref_type": "uri",
-            "element": "RefElement",
+            "raw": "`<sdf>`__",
         },
         {
-            "lineno": 18,
-            "start_char": 0,
-            "raw": "`<sdf>`__",
-            "alias": "sdf",
-            "link_type": "anonymous",
-            "alt_text": "",
-            "element": "LinkElement",
-        },
-        {
+            "type": "Inline",
+            "element": "reference",
             "lineno": 23,
             "start_char": 0,
-            "raw": "`<http://www.python.org/>`_",
             "alias": "http://www.python.org/",
-            "ref_type": "uri",
-            "element": "RefElement",
+            "raw": "`<http://www.python.org/>`_",
         },
         {
-            "lineno": 23,
-            "start_char": 0,
-            "raw": "`<http://www.python.org/>`_",
-            "alias": "http://www.python.org/",
-            "link_type": "standard",
-            "alt_text": "",
-            "element": "LinkElement",
-        },
-        {
+            "type": "Inline",
+            "element": "reference",
             "lineno": 27,
             "start_char": 12,
-            "raw": "`a link to python <www.python.org>`_",
             "alias": "www.python.org",
-            "ref_type": "uri",
-            "element": "RefElement",
+            "raw": "`a link to python <www.python.org>`_",
         },
         {
-            "lineno": 27,
-            "start_char": 12,
-            "raw": "`a link to python <www.python.org>`_",
-            "alias": "www.python.org",
-            "link_type": "standard",
-            "alt_text": "a link to python",
-            "element": "LinkElement",
-        },
-        {
+            "type": "Inline",
+            "element": "role",
             "lineno": 28,
             "start_char": 4,
-            "raw": ":sdf:`asdasx`",
             "role": "sdf",
             "content": "asdasx",
-            "element": "RoleElement",
+            "raw": ":sdf:`asdasx`",
         },
         {
+            "type": "Inline",
+            "element": "role",
             "lineno": 37,
             "start_char": 0,
-            "raw": ":cite:`sadasd`",
             "role": "cite",
             "content": "sadasd",
-            "element": "RoleElement",
+            "raw": ":cite:`sadasd`",
         },
         {
+            "type": "Inline",
+            "element": "role",
             "lineno": 38,
             "start_char": 0,
-            "raw": ":cite:`asd`",
             "role": "cite",
             "content": "asd",
-            "element": "RoleElement",
+            "raw": ":cite:`asd`",
         },
         {
+            "type": "Inline",
+            "element": "role",
             "lineno": 44,
             "start_char": 0,
-            "raw": ":sdf:`saasf`",
             "role": "sdf",
             "content": "saasf",
-            "element": "RoleElement",
+            "raw": ":sdf:`saasf`",
         },
         {
+            "type": "Inline",
+            "element": "role",
             "lineno": 44,
             "start_char": 14,
-            "raw": ":abcf:`saasf`",
             "role": "abcf",
             "content": "saasf",
-            "element": "RoleElement",
+            "raw": ":abcf:`saasf`",
         },
     ]
 
 
 def test_doctest():
     results = assess_source(
-        ".. _sdf:",
+        """\
+.. _sdf:
+
+:ref:`zffx`
+
+|A|
+""",
         confoverrides={"extensions": ["sphinxcontrib.bibtex"]},
     )
     print(results.errors)
     print(results.doctree.pformat())
-    print(results.doctree.children[0])
