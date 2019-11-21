@@ -1,116 +1,192 @@
+from types import FunctionType, MethodType
+
 from docutils import nodes
-from docutils.parsers.rst.states import MarkupError
+from docutils.parsers.rst.states import MarkupError, Body
+from docutils.parsers.rst import DirectiveError
 
-from .elements import SectionElement, DirectiveElement
-
-_BLOCK_OBJECTS = []
+from .elements import InfoNodeBlock
 
 
-def parse_directive_block(self, indented, line_offset, directive, option_presets):
+# from docutils.parsers.rst.states.Block
+def run_directive(self, directive, match, type_name, option_presets):
+    """
+    Parse a directive then run its directive function.
 
-    option_spec = directive.option_spec
-    has_content = directive.has_content
-    if indented and not indented[0].strip():
-        indented.trim_start()
-        line_offset += 1
-    while indented and not indented[-1].strip():
-        indented.trim_end()
-    if indented and (
-        directive.required_arguments or directive.optional_arguments or option_spec
-    ):
-        for i, line in enumerate(indented):
-            if not line.strip():
-                break
-        else:
-            i += 1
-        arg_block = indented[:i]
-        content = indented[i + 1 :]
-        content_offset = line_offset + i + 1
-    else:
-        content = indented
-        content_offset = line_offset
-        arg_block = []
-    if option_spec:
-        options, arg_block = self.parse_directive_options(
-            option_presets, option_spec, arg_block
+    Parameters:
+
+    - `directive`: The class implementing the directive.  Must be
+        a subclass of `rst.Directive`.
+
+    - `match`: A regular expression match object which matched the first
+        line of the directive.
+
+    - `type_name`: The directive name, as used in the source text.
+
+    - `option_presets`: A dictionary of preset options, defaults for the
+        directive options.  Currently, only an "alt" option is passed by
+        substitution definitions (value: the substitution name), which may
+        be used by an embedded image directive.
+
+    Returns a 2-tuple: list of nodes, and a "blank finish" boolean.
+    """
+    if isinstance(directive, (FunctionType, MethodType)):
+        from docutils.parsers.rst import convert_directive_function
+
+        directive = convert_directive_function(directive)
+    lineno = self.state_machine.abs_line_number()
+    initial_line_offset = self.state_machine.line_offset
+    (
+        indented,
+        indent,
+        line_offset,
+        blank_finish,
+    ) = self.state_machine.get_first_known_indented(match.end(), strip_top=0)
+    block_text = "\n".join(
+        self.state_machine.input_lines[
+            initial_line_offset : self.state_machine.line_offset + 1
+        ]
+    )
+    try:
+        arguments, options, content, content_offset = self.parse_directive_block(
+            indented, line_offset, directive, option_presets
         )
-    else:
-        options = {}
-    if arg_block and not (directive.required_arguments or directive.optional_arguments):
-        content = arg_block + indented[i:]
-        content_offset = line_offset
-        arg_block = []
-
-    while content and not content[0].strip():
-        content.trim_start()
-        content_offset += 1
-    if directive.required_arguments or directive.optional_arguments:
-        arguments = self.parse_directive_arguments(directive, arg_block)
-    else:
-        arguments = []
-    # patch
-    _BLOCK_OBJECTS.append(
-        DirectiveElement(
-            lineno=line_offset,
+    except MarkupError as detail:
+        error = self.reporter.error(
+            'Error in "%s" directive:\n%s.' % (type_name, " ".join(detail.args)),
+            nodes.literal_block(block_text, block_text),
+            line=lineno,
+        )
+        return [error], blank_finish
+    directive_instance = directive(
+        type_name,
+        arguments,
+        options,
+        content,
+        lineno,
+        content_offset,
+        block_text,
+        self,
+        self.state_machine,
+    )
+    try:
+        result = directive_instance.run()
+    except DirectiveError as error:
+        msg_node = self.reporter.system_message(error.level, error.msg, line=lineno)
+        msg_node += nodes.literal_block(block_text, block_text)
+        result = [msg_node]
+    assert isinstance(result, list), (
+        'Directive "%s" must return a list of nodes.' % type_name
+    )
+    for i in range(len(result)):
+        assert isinstance(result[i], nodes.Node), (
+            'Directive "%s" returned non-Node object (index %s): %r'
+            % (type_name, i, result[i])
+        )
+    info = InfoNodeBlock(
+        dtype="directive",
+        doc_lineno=line_offset + 1,
+        match=match,
+        data=dict(
+            type_name=type_name,
             arguments=arguments,
             options=options,
             klass=f"{directive.__module__}.{directive.__name__}",
-        )
+        ),
     )
-    # end patch
-    if content and not has_content:
-        raise MarkupError("no content permitted")
-    return (arguments, options, content, content_offset)
+    return ([info] + result, blank_finish or self.state_machine.is_next_line_blank())
 
 
-def nested_parse(
-    self,
-    block,
-    input_offset,
-    node,
-    match_titles=False,
-    state_machine_class=None,
-    state_machine_kwargs=None,
-):
-    """
-    Create a new StateMachine rooted at `node` and run it over the input
-    `block`.
-    """
-    # patch
-    if isinstance(node, nodes.section):
-        _BLOCK_OBJECTS.append(
-            SectionElement(
-                lineno=input_offset, level=self.memo.section_level, length=len(block)
-            )
+# from docutils.parsers.rst.states.RSTState
+def section(self, title, source, style, lineno, messages):
+    """Check for a valid subsection and create one if it checks out."""
+    if self.check_subsection(source, style, lineno):
+        info = InfoNodeBlock(
+            dtype="section",
+            doc_lineno=lineno,
+            data={"level": self.memo.section_level + 1, "title": title},
         )
-    # end patch
-    use_default = 0
-    if state_machine_class is None:
-        state_machine_class = self.nested_sm
-        use_default += 1
-    if state_machine_kwargs is None:
-        state_machine_kwargs = self.nested_sm_kwargs
-        use_default += 1
-    block_length = len(block)
+        self.parent += info
+        self.new_subsection(title, lineno, messages)
+        info.other_data["endline"] = self.state_machine.abs_line_offset()
 
-    state_machine = None
-    if use_default == 2:
-        try:
-            state_machine = self.nested_sm_cache.pop()
-        except IndexError:
-            pass
-    if not state_machine:
-        state_machine = state_machine_class(debug=self.debug, **state_machine_kwargs)
-    state_machine.run(
-        block, input_offset, memo=self.memo, node=node, match_titles=match_titles
-    )
-    if use_default == 2:
-        self.nested_sm_cache.append(state_machine)
-    else:
-        state_machine.unlink()
-    new_offset = state_machine.abs_line_offset()
-    # No `block.parent` implies disconnected -- lines aren't in sync:
-    if block.parent and (len(block) - block_length) != 0:
-        # Adjustment for block if modified in nested parse:
-        self.state_machine.next_line(len(block) - block_length)
-    return new_offset
+
+def explicit_construct(self, match):
+    """Determine which explicit construct this is, parse & return it."""
+    errors = []
+    for method, pattern in self.explicit.constructs:
+        expmatch = pattern.match(match.string)
+        if expmatch:
+            lineno = self.state_machine.abs_line_number()
+            try:
+                nodelist, finish = method(self, expmatch)
+            except MarkupError as error:
+                message = " ".join(error.args)
+                errors.append(self.reporter.warning(message, line=lineno))
+                break
+            else:
+                ctype = None
+                info = []
+                for meth, name in [
+                    (Body.footnote, "footnote"),
+                    (Body.citation, "citation"),
+                    (Body.hyperlink_target, "hyperlink_target"),
+                    (Body.substitution_def, "substitution_def"),
+                ]:
+                    if meth == method:
+                        ctype = name
+                        break
+                if ctype:
+                    info = [
+                        InfoNodeBlock(
+                            dtype="explicit_construct",
+                            doc_lineno=lineno,
+                            data={"ctype": ctype, "raw": match.string},
+                        )
+                    ]
+                return info + nodelist, finish
+    nodelist, blank_finish = self.comment(match)
+    return nodelist + errors, blank_finish
+
+    # explicit.constructs = [
+    #       (footnote,
+    #        re.compile(r"""
+    #                   \.\.[ ]+          # explicit markup start
+    #                   \[
+    #                   (                 # footnote label:
+    #                       [0-9]+          # manually numbered footnote
+    #                     |               # *OR*
+    #                       \#              # anonymous auto-numbered footnote
+    #                     |               # *OR*
+    #                       \#%s            # auto-number ed?) footnote label
+    #                     |               # *OR*
+    #                       \*              # auto-symbol footnote
+    #                   )
+    #                   \]
+    #                   ([ ]+|$)          # whitespace or end of line
+    #                   """ % Inliner.simplename, re.VERBOSE | re.UNICODE)),
+    #       (citation,
+    #        re.compile(r"""
+    #                   \.\.[ ]+          # explicit markup start
+    #                   \[(%s)\]          # citation label
+    #                   ([ ]+|$)          # whitespace or end of line
+    #                   """ % Inliner.simplename, re.VERBOSE | re.UNICODE)),
+    #       (hyperlink_target,
+    #        re.compile(r"""
+    #                   \.\.[ ]+          # explicit markup start
+    #                   _                 # target indicator
+    #                   (?![ ]|$)         # first char. not space or EOL
+    #                   """, re.VERBOSE | re.UNICODE)),
+    #       (substitution_def,
+    #        re.compile(r"""
+    #                   \.\.[ ]+          # explicit markup start
+    #                   \|                # substitution indicator
+    #                   (?![ ]|$)         # first char. not space or EOL
+    #                   """, re.VERBOSE | re.UNICODE)),
+    #       (directive,
+    #        re.compile(r"""
+    #                   \.\.[ ]+          # explicit markup start
+    #                   (%s)              # directive name
+    #                   [ ]?              # optional space
+    #                   ::                # directive delimiter
+    #                   ([ ]+|$)          # whitespace or end of line
+    #                   """ % Inliner.simplename, re.VERBOSE | re.UNICODE))]

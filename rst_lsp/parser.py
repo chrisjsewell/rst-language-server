@@ -46,8 +46,8 @@ from sphinx.util.docutils import docutils_namespace, patch_docutils
 from sphinx.util.docutils import sphinx_domains
 
 from rst_lsp.handle_inlines import CustomInliner
-from .handle_blocks import nested_parse, parse_directive_block
-from .elements import InfoNodeInline
+from .handle_blocks import run_directive, section, explicit_construct
+from .elements import InfoNodeInline, InfoNodeBlock
 
 
 sphinx_init = namedtuple(
@@ -160,18 +160,15 @@ def init_sphinx(
 
 # TODO see also sphinx/testing/restructuredtext.py
 # small function to parse a string as reStructuredText with premade Sphinx application
-@mock.patch.object(Body, "parse_directive_block", parse_directive_block)
-@mock.patch.object(RSTState, "nested_parse", nested_parse)
+@mock.patch.object(Body, "explicit_construct", explicit_construct)
+@mock.patch.object(Body, "run_directive", run_directive)
+@mock.patch.object(RSTState, "section", section)
 def run_parser(source, doc):
     """Parse the document, and return the gathered document elements."""
     # TODO https://www.sphinx-doc.org/en/master/extdev/index.html#build-phases
-    from .handle_blocks import _BLOCK_OBJECTS
-
-    _BLOCK_OBJECTS.clear()
     inliner = CustomInliner(doc_text=source)
     parser = RSTParser(inliner=inliner)
     parser.parse(source, doc)
-    return _BLOCK_OBJECTS[:]
 
 
 class CustomReporter(Reporter):
@@ -235,6 +232,8 @@ def new_document_custom(source_path, settings=None):
 
 
 class ElementType(Enum):
+    section = "section"
+    directive = "directive"
     role = "role"
     link = "link"
     reference = "reference"
@@ -244,13 +243,60 @@ class ElementType(Enum):
 class DocInfoVisitor(nodes.GenericNodeVisitor):
     """Extract info nodes from the document."""
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, document, source):
+        super().__init__(document)
         self.info_datas = []
+        self.lines = source.splitlines()
 
     def unknown_visit(self, node):
         """Override for generic, uniform traversals."""
-        if isinstance(node, InfoNodeInline):
+        if isinstance(node, InfoNodeBlock):
+            if node.dtype == "section":
+                self.info_datas.append(
+                    {
+                        "type": "Block",
+                        "element": ElementType.section.value,
+                        "start_char": 0,
+                        "lineno": node.doc_lineno,
+                        "level": node.other_data["level"],
+                        "title": node.other_data["title"],
+                    }
+                )
+            elif node.dtype == "directive":
+                line = self.lines[node.doc_lineno - 1]
+                print(line)
+                self.info_datas.append(
+                    {
+                        "type": "Block",
+                        "element": ElementType.directive.value,
+                        "start_char": len(line) - len(line.lstrip()),
+                        "lineno": node.doc_lineno,
+                        "type_name": node.other_data["type_name"],
+                        "klass": node.other_data["klass"],
+                        "arguments": node.other_data["arguments"],
+                        "options": node.other_data["options"],
+                    }
+                )
+            elif node.dtype == "explicit_construct":
+                # one of "footnote", "citation",  "hyperlink_target", "substitution_def"
+                next_node = node.next_node(siblings=True)
+                info = {
+                    "type": "Block",
+                    "element": node.other_data["ctype"],
+                    "start_char": 0,
+                    "lineno": node.doc_lineno,
+                    "raw": node.other_data["raw"],
+                }
+                try:
+                    if node.other_data["ctype"] == "hyperlink_target":
+                        info["target"] = next_node.attributes["ids"][0]
+                    elif node.other_data["ctype"] == "substitution_def":
+                        info["sub"] = next_node.attributes["names"][0]
+                except IndexError:
+                    pass
+                self.info_datas.append(info)
+
+        elif isinstance(node, InfoNodeInline):
             if node.dtype == "phrase_ref":
                 # followed by reference, then optionally by target
                 self.info_datas.append(
@@ -260,7 +306,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                         "lineno": node.doc_lineno,
                         "start_char": node.doc_char,
                         "alias": node.other_data["alias"],
-                        "raw": node.other_data["raw"]
+                        "raw": node.other_data["raw"],
                     }
                 )
             elif node.dtype == "role":
@@ -274,7 +320,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                         "start_char": node.doc_char,
                         "role": node.other_data["role"],
                         "content": node.other_data["content"],
-                        "raw": node.other_data["raw"]
+                        "raw": node.other_data["raw"],
                     }
                 )
             elif node.dtype == "inline_internal_target":
@@ -315,7 +361,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                         "lineno": node.doc_lineno,
                         "start_char": node.doc_char,
                         "refname": node.other_data["refname"],
-                        "raw": node.other_data["raw"]
+                        "raw": node.other_data["raw"],
                     }
                 )
             else:
@@ -335,15 +381,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
 
 SourceAssessResult = namedtuple(
     "SourceAssessResult",
-    [
-        "doctree",
-        "environment",
-        "roles",
-        "directives",
-        "block_objects",
-        "inline_objects",
-        "errors",
-    ],
+    ["doctree", "environment", "roles", "directives", "elements", "errors",],
 )
 
 
@@ -363,18 +401,18 @@ def assess_source(content, filename="input.rst", confdir=None, confoverrides=Non
 
         document, reporter = new_document_custom(content, settings=settings)
 
-        block_objs = run_parser(content, document)
+        run_parser(content, document)
 
-        visitor = DocInfoVisitor(document)
+        visitor = DocInfoVisitor(document, content)
         document.walk(visitor)
-        inline_objs = visitor.info_datas[:]
+        elements = visitor.info_datas[:]
 
         # The parser does not account for indentation, when assigning `start_char`
         # (for inline_objs, this is handled by the custom Inliner)
-        content_lines = content.splitlines()
-        for block in block_objs:
-            line = content_lines[block.lineno - 1]
-            block.start_char = len(line) - len(line.lstrip())
+        # content_lines = content.splitlines()
+        # for block in block_objs:
+        #     line = content_lines[block.lineno - 1]
+        #     block.start_char = len(line) - len(line.lstrip())
 
         # from pprint import pprint
         # pprint(block_objs)
@@ -385,8 +423,7 @@ def assess_source(content, filename="input.rst", confdir=None, confoverrides=Non
         sphinx_init.app.env,
         sphinx_init.roles,
         sphinx_init.directives,
-        block_objs,
-        inline_objs,
+        elements,
         reporter.log_capture,
     )
 

@@ -1,12 +1,12 @@
 """These are effectively a copy of the standard docutils element,
 but only containing JSON friendly data, to store in the database.
 """
-import attr
 from docutils import nodes
 
 
 class InfoNodeInline(nodes.Node):
     """A node for highlighting a position in the document."""
+
     def __init__(self, inliner, match, dtype, doc_lineno, doc_char, data={}):
         self.parent = inliner.parent
         self.document = inliner.document
@@ -17,23 +17,21 @@ class InfoNodeInline(nodes.Node):
         self.other_data = data or {}
         self.children = []
 
-
-@attr.s(kw_only=True)
-class BlockElement:
-    lineno: int = attr.ib()
-    start_char = attr.ib(None)
+    def pformat(self, indent="    ", level=0):
+        """Return an indented pseudo-XML representation, for test purposes."""
+        return indent * level + f"InfoNodeInline({self.dtype})\n"
 
 
-@attr.s(kw_only=True)
-class SectionElement(BlockElement):
-    level: int = attr.ib()
-    length: int = attr.ib()
-    # node
+class InfoNodeBlock(nodes.Node):
+    """A node for highlighting a position in the document."""
 
+    def __init__(self, dtype, doc_lineno, match=None, data={}):
+        self.match = match
+        self.dtype = dtype
+        self.doc_lineno = doc_lineno
+        self.other_data = data or {}
+        self.children = []
 
-@attr.s(kw_only=True)
-class DirectiveElement(BlockElement):
-    arguments: str = attr.ib()
-    options: int = attr.ib()
-    klass: str = attr.ib()
-    # indented
+    def pformat(self, indent="    ", level=0):
+        """Return an indented pseudo-XML representation, for test purposes."""
+        return indent * level + f"InfoNodeBlock({self.dtype})\n"
