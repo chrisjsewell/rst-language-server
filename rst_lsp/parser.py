@@ -277,7 +277,7 @@ def run_parser(source, doc):
     global _BLOCK_OBJECTS
     _BLOCK_OBJECTS = []
     # CustomInliner.reset_inline_objects()
-    inliner = CustomInliner()
+    inliner = CustomInliner(doc_text=source)
     parser = RSTParser(inliner=inliner)
     parser.parse(source, doc)
     return (
@@ -374,12 +374,9 @@ def assess_source(content, filename="input.rst", confdir=None, confoverrides=Non
 
         block_objs, inline_objs = run_parser(content, document)
 
-        # The parser does not account for indentation, when assigning `start_char`,
-        # so we do that here
+        # The parser does not account for indentation, when assigning `start_char`
+        # (for inline_objs, this is handled by the custom Inliner)
         content_lines = content.splitlines()
-        for inline in inline_objs:
-            line = content_lines[inline.lineno - 1]
-            inline.start_char += len(line) - len(line.lstrip())
         for block in block_objs:
             line = content_lines[block.lineno - 1]
             block.start_char = len(line) - len(line.lstrip())

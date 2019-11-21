@@ -1,11 +1,9 @@
-import re
-
 from docutils import nodes, utils
 from docutils import ApplicationError
 from docutils.nodes import fully_normalize_name as normalize_name
 from docutils.nodes import whitespace_normalize_name
 from docutils.parsers.rst import roles
-from docutils.parsers.rst.states import build_regexp, MarkupMismatch, Struct
+from docutils.parsers.rst.states import MarkupMismatch, Inliner
 from docutils.utils import escape2null, unescape
 from docutils.utils import punctuation_chars, urischemes
 from docutils.utils import split_escaped_whitespace
@@ -13,209 +11,22 @@ from docutils.utils import split_escaped_whitespace
 from .elements import RoleElement, LinkElement
 
 
-class CustomInliner:
-    """Parse inline markup; call the `parse()` method."""
+class CustomInliner(Inliner):
+    """Parse inline markup; call the `parse()` method.
 
-    # patch
-    # note: this needs to be a class property,
-    # because new instances will be called recursively
-    # inline_objects = []
+    This is a subclass of that propagates the starting character number of elements,
+    and records certain elements as data-structures containing this information.
+    """
 
-    # @classmethod
-    # def reset_inline_objects(cls):
-    #     cls.inline_objects = []
-
-    def __init__(self):
+    def __init__(self, doc_text=None):
         """List of (pattern, bound method) tuples, used by
         `self.implicit_inline`."""
         self.implicit_dispatch = []
         self.inline_objects = []
-
-    def init_customizations(self, settings):
-        # lookahead and look-behind expressions for inline markup rules
-        if getattr(settings, "character_level_inline_markup", False):
-            start_string_prefix = "(^|(?<!\x00))"
-            end_string_suffix = ""
+        if doc_text:
+            self.content_lines = doc_text.splitlines()
         else:
-            start_string_prefix = "(^|(?<=\\s|[%s%s]))" % (
-                punctuation_chars.openers,
-                punctuation_chars.delimiters,
-            )
-            end_string_suffix = "($|(?=\\s|[\x00%s%s%s]))" % (
-                punctuation_chars.closing_delimiters,
-                punctuation_chars.delimiters,
-                punctuation_chars.closers,
-            )
-        args = locals().copy()
-        args.update(vars(self.__class__))
-
-        parts = (
-            "initial_inline",
-            start_string_prefix,
-            "",
-            [
-                (
-                    "start",
-                    "",
-                    self.non_whitespace_after,  # simple start-strings
-                    [
-                        r"\*\*",  # strong
-                        r"\*(?!\*)",  # emphasis but not strong
-                        r"``",  # literal
-                        r"_`",  # inline internal target
-                        r"\|(?!\|)",
-                    ],  # substitution reference
-                ),
-                (
-                    "whole",
-                    "",
-                    end_string_suffix,  # whole constructs
-                    [  # reference name & end-string
-                        r"(?P<refname>%s)(?P<refend>__?)" % self.simplename,
-                        (
-                            "footnotelabel",
-                            r"\[",
-                            r"(?P<fnend>\]_)",
-                            [
-                                r"[0-9]+",  # manually numbered
-                                r"\#(%s)?"
-                                % self.simplename,  # auto-numbered (w/ label?)
-                                r"\*",  # auto-symbol
-                                r"(?P<citationlabel>%s)" % self.simplename,
-                            ],  # citation reference
-                        ),
-                    ],
-                ),
-                (
-                    "backquote",  # interpreted text or phrase reference
-                    "(?P<role>(:%s:)?)" % self.simplename,  # optional role
-                    self.non_whitespace_after,
-                    ["`(?!`)"],  # but not literal
-                ),
-            ],
-        )
-        self.start_string_prefix = start_string_prefix
-        self.end_string_suffix = end_string_suffix
-        self.parts = parts
-
-        self.patterns = Struct(
-            initial=build_regexp(parts),
-            emphasis=re.compile(
-                self.non_whitespace_escape_before + r"(\*)" + end_string_suffix,
-                re.UNICODE,
-            ),
-            strong=re.compile(
-                self.non_whitespace_escape_before + r"(\*\*)" + end_string_suffix,
-                re.UNICODE,
-            ),
-            interpreted_or_phrase_ref=re.compile(
-                r"""
-              %(non_unescaped_whitespace_escape_before)s
-              (
-                `
-                (?P<suffix>
-                  (?P<role>:%(simplename)s:)?
-                  (?P<refend>__?)?
-                )
-              )
-              %(end_string_suffix)s
-              """
-                % args,
-                re.VERBOSE | re.UNICODE,
-            ),
-            embedded_link=re.compile(
-                r"""
-              (
-                (?:[ \n]+|^)            # spaces or beginning of line/string
-                <                       # open bracket
-                %(non_whitespace_after)s
-                (([^<>]|\x00[<>])+)     # anything but unescaped angle brackets
-                %(non_whitespace_escape_before)s
-                >                       # close bracket
-              )
-              $                         # end of string
-              """
-                % args,
-                re.VERBOSE | re.UNICODE,
-            ),
-            literal=re.compile(
-                self.non_whitespace_before + "(``)" + end_string_suffix, re.UNICODE
-            ),
-            target=re.compile(
-                self.non_whitespace_escape_before + r"(`)" + end_string_suffix,
-                re.UNICODE,
-            ),
-            substitution_ref=re.compile(
-                self.non_whitespace_escape_before + r"(\|_{0,2})" + end_string_suffix,
-                re.UNICODE,
-            ),
-            email=re.compile(self.email_pattern % args + "$", re.VERBOSE | re.UNICODE),
-            uri=re.compile(
-                (
-                    r"""
-                %(start_string_prefix)s
-                (?P<whole>
-                  (?P<absolute>           # absolute URI
-                    (?P<scheme>             # scheme (http, ftp, mailto)
-                      [a-zA-Z][a-zA-Z0-9.+-]*
-                    )
-                    :
-                    (
-                      (                       # either:
-                        (//?)?                  # hierarchical URI
-                        %(uric)s*               # URI characters
-                        %(uri_end)s             # final URI char
-                      )
-                      (                       # optional query
-                        \?%(uric)s*
-                        %(uri_end)s
-                      )?
-                      (                       # optional fragment
-                        \#%(uric)s*
-                        %(uri_end)s
-                      )?
-                    )
-                  )
-                |                       # *OR*
-                  (?P<email>              # email address
-                    """
-                    + self.email_pattern
-                    + r"""
-                  )
-                )
-                %(end_string_suffix)s
-                """
-                )
-                % args,
-                re.VERBOSE | re.UNICODE,
-            ),
-            pep=re.compile(
-                r"""
-                %(start_string_prefix)s
-                (
-                  (pep-(?P<pepnum1>\d+)(.txt)?) # reference to source file
-                |
-                  (PEP\s+(?P<pepnum2>\d+))      # reference by name
-                )
-                %(end_string_suffix)s"""
-                % args,
-                re.VERBOSE | re.UNICODE,
-            ),
-            rfc=re.compile(
-                r"""
-                %(start_string_prefix)s
-                (RFC(-|\s+)?(?P<rfcnum>\d+))
-                %(end_string_suffix)s"""
-                % args,
-                re.VERBOSE | re.UNICODE,
-            ),
-        )
-
-        self.implicit_dispatch.append((self.patterns.uri, self.standalone_uri))
-        if settings.pep_references:
-            self.implicit_dispatch.append((self.patterns.pep, self.pep_reference))
-        if settings.rfc_references:
-            self.implicit_dispatch.append((self.patterns.rfc, self.rfc_reference))
+            self.content_lines = None
 
     def parse(self, text, lineno, memo, parent):
         # Needs to be refactored for nested inline markup.
@@ -233,19 +44,25 @@ class CustomInliner:
         and ignore the start-string.  Implicit inline markup (e.g. standalone
         URIs) is found last.
         """
-        # NOTE lineno or in basis 1 (i.e. to access line in file lines[lineno-1])
-        # TODO the text supplied here is 'dedented'
-        # meaning that the `start_char` is only relative to the initial indent
+        # PATCH START
+        # NOTE lineno are in basis 1
+        # NOTE the text supplied here is 'dedented',
+        # so must add on the initial indentation
+        indent = 0
+        if self.content_lines:
+            line = self.content_lines[lineno - 1]
+            indent = len(line) - len(line.lstrip())
         # create a mapping of column to doc line/column, taking into account line breaks
         self.char2docplace = {}
         line_offset = char_count = 0
         for i, char in enumerate(text):
-            self.char2docplace[i] = (lineno + line_offset, char_count)
+            self.char2docplace[i] = (lineno + line_offset, indent + char_count)
             char_count += 1
             if char in ["\n", "\r"]:
                 # NOTE: this would not work for the old \n\r mac standard.
                 line_offset += 1
                 char_count = 0
+        # PATCH END
         self.reporter = memo.reporter
         self.document = memo.document
         self.language = memo.language
@@ -539,7 +356,7 @@ class CustomInliner:
                 raw=rawsource,
                 alias=alias,
                 ref_type=ref_type,
-                alt_text=alt_text
+                alt_text=alt_text,
             )
         )
         # end patch
