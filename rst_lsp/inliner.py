@@ -1,14 +1,12 @@
-from docutils import nodes, utils
-from docutils import ApplicationError
+from docutils import ApplicationError, nodes, utils
 from docutils.nodes import fully_normalize_name as normalize_name
 from docutils.nodes import whitespace_normalize_name
 from docutils.parsers.rst import roles
-from docutils.parsers.rst.states import MarkupMismatch, Inliner
-from docutils.utils import escape2null, unescape
-from docutils.utils import punctuation_chars, urischemes
-from docutils.utils import split_escaped_whitespace
+from docutils.parsers.rst.states import Inliner, MarkupMismatch
+from docutils.utils import (escape2null, punctuation_chars,
+                            split_escaped_whitespace, unescape, urischemes)
 
-from .elements import RoleElement, LinkElement
+from .elements import LinkElement, RefElement, RoleElement
 
 
 class CustomInliner(Inliner):
@@ -28,6 +26,28 @@ class CustomInliner(Inliner):
         else:
             self.content_lines = None
 
+    def update_char2docplace(self, lineno, text):
+        """the text supplied tp parse is 'dedented', and can contain line-breaks,
+        so both the reported lineno and character position may be wrong.
+        This function updates a mapping of a character to its actual place in the document
+
+        NOTE lineno are in basis 1
+        """
+        indent = 0
+        if self.content_lines:
+            line = self.content_lines[lineno - 1]
+            indent = len(line) - len(line.lstrip())
+        # create a mapping of column to doc line/column, taking into account line breaks
+        self.char2docplace = {}
+        line_offset = char_count = 0
+        for i, char in enumerate(text):
+            self.char2docplace[i] = (lineno + line_offset, indent + char_count)
+            char_count += 1
+            if char in ["\n", "\r"]:
+                # NOTE: this would not work for the old \n\r mac standard.
+                line_offset += 1
+                char_count = 0
+
     def parse(self, text, lineno, memo, parent):
         # Needs to be refactored for nested inline markup.
         # Add nested_parse() method?
@@ -44,25 +64,8 @@ class CustomInliner(Inliner):
         and ignore the start-string.  Implicit inline markup (e.g. standalone
         URIs) is found last.
         """
-        # PATCH START
-        # NOTE lineno are in basis 1
-        # NOTE the text supplied here is 'dedented',
-        # so must add on the initial indentation
-        indent = 0
-        if self.content_lines:
-            line = self.content_lines[lineno - 1]
-            indent = len(line) - len(line.lstrip())
-        # create a mapping of column to doc line/column, taking into account line breaks
-        self.char2docplace = {}
-        line_offset = char_count = 0
-        for i, char in enumerate(text):
-            self.char2docplace[i] = (lineno + line_offset, indent + char_count)
-            char_count += 1
-            if char in ["\n", "\r"]:
-                # NOTE: this would not work for the old \n\r mac standard.
-                line_offset += 1
-                char_count = 0
-        # PATCH END
+        self.update_char2docplace(lineno, text)
+
         self.reporter = memo.reporter
         self.document = memo.document
         self.language = memo.language
@@ -289,6 +292,20 @@ class CustomInliner(Inliner):
                 alias = normalize_name(aliastext[:-1])
                 target = nodes.target(match.group(1), refname=alias)
                 target.indirect_reference_name = aliastext[:-1]
+
+                # patch
+                doc_lineno, doc_char = self.char2docplace[start_char]
+                self.inline_objects.append(
+                    RefElement(
+                        parent=self.parent,
+                        lineno=lineno,
+                        start_char=doc_char,
+                        raw=rawsource,
+                        ref_type=aliastype,
+                        alias=alias
+
+                    )
+                )
             else:
                 aliastype = "uri"
                 alias_parts = split_escaped_whitespace(match.group(2))
@@ -301,8 +318,18 @@ class CustomInliner(Inliner):
                 target = nodes.target(match.group(1), refuri=alias)
                 target.referenced = 1
                 # patch
-                target.start_char = start_char
-                # end patch
+                doc_lineno, doc_char = self.char2docplace[start_char]
+                self.inline_objects.append(
+                    RefElement(
+                        parent=self.parent,
+                        lineno=lineno,
+                        start_char=doc_char,
+                        raw=rawsource,
+                        ref_type=aliastype,
+                        alias=alias
+
+                    )
+                )
             if not aliastext:
                 raise ApplicationError("problem with embedded link: %r" % aliastext)
             if not text:
@@ -355,7 +382,7 @@ class CustomInliner(Inliner):
                 start_char=doc_char,
                 raw=rawsource,
                 alias=alias,
-                ref_type=ref_type,
+                link_type=ref_type,
                 alt_text=alt_text,
             )
         )

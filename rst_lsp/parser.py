@@ -274,6 +274,8 @@ def nested_parse(
 @mock.patch.object(Body, "parse_directive_block", parse_directive_block)
 @mock.patch.object(RSTState, "nested_parse", nested_parse)
 def run_parser(source, doc):
+    """Parse the document, and return the gathered document elements."""
+    # TODO https://www.sphinx-doc.org/en/master/extdev/index.html#build-phases
     global _BLOCK_OBJECTS
     _BLOCK_OBJECTS = []
     # CustomInliner.reset_inline_objects()
@@ -363,6 +365,9 @@ def assess_source(content, filename="input.rst", confdir=None, confoverrides=Non
 
     with init_sphinx(confdir=confdir, confoverrides=confoverrides) as sphinx_init:
 
+        # TODO maybe sub-class sphinx.io.SphinxStandaloneReader?
+        # (see also sphinx.testing.restructuredtext.parse, for a basic implementation)
+
         settings = OptionParser(components=(RSTParser,)).get_default_values()
         sphinx_init.app.env.prepare_settings(filename)
         settings.env = sphinx_init.app.env
@@ -395,8 +400,6 @@ def assess_source(content, filename="input.rst", confdir=None, confoverrides=Non
         reporter.log_capture,
     )
 
-    # print(document.pformat())
-    # print(document.children)
     # from docutils.parsers.rst import states
     # for state in states.state_classes:
     #     print(state)

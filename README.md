@@ -7,6 +7,7 @@
   - [Docutils Element Reference](http://docutils.sourceforge.net/docs/ref/doctree.html#id201)
   - [Docutils Transforms](http://docutils.sourceforge.net/docs/ref/transforms.html)
 - [Syntax Cheat Sheet](https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html)
+- [Sphinx build phases](https://www.sphinx-doc.org/en/master/extdev/index.html#build-phases)
 - [doc8](https://github.com/PyCQA/doc8) RST linter
   - very basic, only accepts docutils directives, doesn't check roles, etc
 - [vscode-restructuredtext](https://github.com/vscode-restructuredtext/vscode-restructuredtext)

@@ -350,15 +350,22 @@ def test_1_inline_objects(get_test_file_content):
         dct.pop("parent", None)
         dct["element"] = obj.__class__.__name__
         objs.append(dct)
-    # import pprint
-    # pprint.pprint(objs)
+    print(objs)
     assert objs == [
         {
             "lineno": 18,
             "start_char": 0,
             "raw": "`<sdf>`__",
             "alias": "sdf",
-            "ref_type": "anonymous",
+            "ref_type": "uri",
+            "element": "RefElement",
+        },
+        {
+            "lineno": 18,
+            "start_char": 0,
+            "raw": "`<sdf>`__",
+            "alias": "sdf",
+            "link_type": "anonymous",
             "alt_text": "",
             "element": "LinkElement",
         },
@@ -367,7 +374,15 @@ def test_1_inline_objects(get_test_file_content):
             "start_char": 0,
             "raw": "`<http://www.python.org/>`_",
             "alias": "http://www.python.org/",
-            "ref_type": "standard",
+            "ref_type": "uri",
+            "element": "RefElement",
+        },
+        {
+            "lineno": 23,
+            "start_char": 0,
+            "raw": "`<http://www.python.org/>`_",
+            "alias": "http://www.python.org/",
+            "link_type": "standard",
             "alt_text": "",
             "element": "LinkElement",
         },
@@ -376,7 +391,15 @@ def test_1_inline_objects(get_test_file_content):
             "start_char": 12,
             "raw": "`a link to python <www.python.org>`_",
             "alias": "www.python.org",
-            "ref_type": "standard",
+            "ref_type": "uri",
+            "element": "RefElement",
+        },
+        {
+            "lineno": 27,
+            "start_char": 12,
+            "raw": "`a link to python <www.python.org>`_",
+            "alias": "www.python.org",
+            "link_type": "standard",
             "alt_text": "a link to python",
             "element": "LinkElement",
         },
@@ -423,12 +446,11 @@ def test_1_inline_objects(get_test_file_content):
     ]
 
 
-# def test_doctest():
-#     results = assess_source(
-#         # ".. _sdf:",
-#         ":ref:`~sdf.dsf`",
-#         confoverrides={"extensions": ["sphinxcontrib.bibtex"]},
-#     )
-#     print(results.errors)
-#     print(type(results.doctree.children[0].children[0]))
-#     raise
+def test_doctest():
+    results = assess_source(
+        ".. _sdf:",
+        confoverrides={"extensions": ["sphinxcontrib.bibtex"]},
+    )
+    print(results.errors)
+    print(results.doctree.pformat())
+    print(results.doctree.children[0])

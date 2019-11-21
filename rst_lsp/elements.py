@@ -27,7 +27,7 @@ class DirectiveElement(BlockElement):
 
 @attr.s(kw_only=True)
 class InlineElement:
-    parent: object = attr.ib()
+    parent: object = attr.ib(None)
     lineno: int = attr.ib()
     # NB: start_char count currently starts at the indentation level
     # and may continue to the next line, if no blank line
@@ -44,5 +44,11 @@ class RoleElement(InlineElement):
 @attr.s(kw_only=True)
 class LinkElement(InlineElement):
     alias: str = attr.ib()
-    ref_type: str = attr.ib()
+    link_type: str = attr.ib()
     alt_text: str = attr.ib()
+
+
+@attr.s(kw_only=True)
+class RefElement(InlineElement):
+    alias: str = attr.ib()
+    ref_type: str = attr.ib()
