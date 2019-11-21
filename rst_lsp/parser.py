@@ -236,7 +236,9 @@ def new_document_custom(source_path, settings=None):
 
 class ElementType(Enum):
     role = "role"
+    link = "link"
     reference = "reference"
+    internal_target = "internal_target"
 
 
 class DocInfoVisitor(nodes.GenericNodeVisitor):
@@ -254,7 +256,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                 self.info_datas.append(
                     {
                         "type": "Inline",
-                        "element": ElementType.reference.value,
+                        "element": ElementType.link.value,
                         "lineno": node.doc_lineno,
                         "start_char": node.doc_char,
                         "alias": node.other_data["alias"],
@@ -272,6 +274,47 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                         "start_char": node.doc_char,
                         "role": node.other_data["role"],
                         "content": node.other_data["content"],
+                        "raw": node.other_data["raw"]
+                    }
+                )
+            elif node.dtype == "inline_internal_target":
+                self.info_datas.append(
+                    {
+                        "type": "Inline",
+                        "element": ElementType.internal_target.value,
+                        "lineno": node.doc_lineno,
+                        "start_char": node.doc_char,
+                    }
+                )
+            elif node.dtype == "substitution_reference":
+                self.info_datas.append(
+                    {
+                        "type": "Inline",
+                        "element": ElementType.reference.value,
+                        "ref_type": "substitution",
+                        "lineno": node.doc_lineno,
+                        "start_char": node.doc_char,
+                    }
+                )
+            elif node.dtype == "footnote_reference":
+                self.info_datas.append(
+                    {
+                        "type": "Inline",
+                        "element": ElementType.reference.value,
+                        "ref_type": "footnote",
+                        "lineno": node.doc_lineno,
+                        "start_char": node.doc_char,
+                    }
+                )
+            elif node.dtype in ["anonymous_reference", "std_reference"]:
+                self.info_datas.append(
+                    {
+                        "type": "Inline",
+                        "element": ElementType.reference.value,
+                        "ref_type": "anonymous",
+                        "lineno": node.doc_lineno,
+                        "start_char": node.doc_char,
+                        "refname": node.other_data["refname"],
                         "raw": node.other_data["raw"]
                     }
                 )

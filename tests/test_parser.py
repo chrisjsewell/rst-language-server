@@ -241,7 +241,7 @@ def test_1_errors(get_test_file_content):
             "description": 'Unknown interpreted text role "abcf".',
         },
         {
-            "line": 51,
+            "line": 53,
             "type": "WARNING",
             "level": 2,
             "description": (
@@ -270,7 +270,7 @@ def test_1_block_objects(get_test_file_content):
             "lineno": 5,
             "start_char": 0,
             "level": 1,
-            "length": 46,
+            "length": 48,
             "element": "SectionElement",
         },
         {
@@ -301,7 +301,7 @@ def test_1_block_objects(get_test_file_content):
             "lineno": 21,
             "start_char": 0,
             "level": 2,
-            "length": 30,
+            "length": 32,
             "element": "SectionElement",
         },
         {
@@ -316,11 +316,11 @@ def test_1_block_objects(get_test_file_content):
             "lineno": 31,
             "start_char": 0,
             "level": 1,
-            "length": 20,
+            "length": 22,
             "element": "SectionElement",
         },
         {
-            "lineno": 47,
+            "lineno": 49,
             "start_char": 0,
             "arguments": ["file.png"],
             "options": {"alt": "REF1", "uri": "file.png"},
@@ -328,7 +328,7 @@ def test_1_block_objects(get_test_file_content):
             "element": "DirectiveElement",
         },
         {
-            "lineno": 48,
+            "lineno": 50,
             "start_char": 0,
             "arguments": [],
             "options": {},
@@ -348,7 +348,7 @@ def test_1_inline_objects(get_test_file_content):
     assert results.inline_objects == [
         {
             "type": "Inline",
-            "element": "reference",
+            "element": "link",
             "lineno": 18,
             "start_char": 0,
             "alias": "sdf",
@@ -356,7 +356,7 @@ def test_1_inline_objects(get_test_file_content):
         },
         {
             "type": "Inline",
-            "element": "reference",
+            "element": "link",
             "lineno": 23,
             "start_char": 0,
             "alias": "http://www.python.org/",
@@ -364,7 +364,7 @@ def test_1_inline_objects(get_test_file_content):
         },
         {
             "type": "Inline",
-            "element": "reference",
+            "element": "link",
             "lineno": 27,
             "start_char": 12,
             "alias": "www.python.org",
@@ -415,6 +415,36 @@ def test_1_inline_objects(get_test_file_content):
             "content": "saasf",
             "raw": ":abcf:`saasf`",
         },
+        {
+            "type": "Inline",
+            "element": "reference",
+            "ref_type": "substitution",
+            "lineno": 46,
+            "start_char": 0,
+        },
+        {
+            "type": "Inline",
+            "element": "reference",
+            "ref_type": "substitution",
+            "lineno": 46,
+            "start_char": 14,
+        },
+        {
+            "type": "Inline",
+            "element": "reference",
+            "ref_type": "substitution",
+            "lineno": 46,
+            "start_char": 25,
+        },
+        {
+            "type": "Inline",
+            "element": "reference",
+            "ref_type": "anonymous",
+            'refname': 'headerlink',
+            'raw': 'headerlink_',
+            "lineno": 48,
+            "start_char": 2,
+        },
     ]
 
 
@@ -424,6 +454,8 @@ def test_doctest():
 .. _sdf:
 
 :ref:`zffx`
+
+a headerlink_
 
 |A|
 """,

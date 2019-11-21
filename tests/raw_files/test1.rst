@@ -43,7 +43,9 @@ header 2
 
 :sdf:`saasf`  :abcf:`saasf`
 
-|REF1| |REF2|_ |REF3|
+|REF1| lkjlkj |REF2| sdf |REF3|
+
+a headerlink_
 
 .. |REF1| image:: file.png
 .. |REF2| replace:: MyText

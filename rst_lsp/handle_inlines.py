@@ -261,7 +261,7 @@ class CustomInliner(Inliner):
                     escaped,
                     unescape(escaped),
                     lineno=lineno,
-                    start_char=start_char + matchstart,
+                    start_char=start_char,
                     match=match,
                 )
             else:
@@ -287,7 +287,6 @@ class CustomInliner(Inliner):
     def phrase_ref(
         self, before, after, rawsource, escaped, text, lineno, start_char, match
     ):
-        doc_lineno, doc_char = self.char2docplace[start_char]
         match = self.patterns.embedded_link.search(escaped)
         if match:  # embedded <URI> or <alias_>
             text = unescape(escaped[: match.start(0)])
@@ -328,6 +327,7 @@ class CustomInliner(Inliner):
         )
         reference[0].rawsource = rawtext
 
+        doc_lineno, doc_char = self.char2docplace[start_char + len(before)]
         node_list = [
             InfoNodeInline(
                 self,
@@ -399,7 +399,10 @@ class CustomInliner(Inliner):
             msg = self.reporter.error(
                 'Unknown interpreted text role "%s".' % role, line=lineno
             )
-            return ([info, self.problematic(rawsource, rawsource, msg)], messages + [msg])
+            return (
+                [info, self.problematic(rawsource, rawsource, msg)],
+                messages + [msg],
+            )
 
     def literal(self, match, lineno, start_char=None):
         before, inlines, remaining, sysmessages, endstring = self.inline_obj(
@@ -411,7 +414,7 @@ class CustomInliner(Inliner):
         )
         return before, inlines, remaining, sysmessages
 
-    def inline_internal_target(self, match, lineno, start_char=None):
+    def inline_internal_target(self, match, lineno, start_char):
         before, inlines, remaining, sysmessages, endstring = self.inline_obj(
             match, lineno, self.patterns.target, nodes.target
         )
@@ -421,9 +424,17 @@ class CustomInliner(Inliner):
             name = normalize_name(target.astext())
             target["names"].append(name)
             self.document.note_explicit_target(target, self.parent)
-        return before, inlines, remaining, sysmessages
+        doc_lineno, doc_char = self.char2docplace[start_char + len(before)]
+        info = InfoNodeInline(
+            self,
+            match=match,
+            dtype="inline_internal_target",
+            doc_lineno=doc_lineno,
+            doc_char=doc_char,
+        )
+        return before, [info] + inlines, remaining, sysmessages
 
-    def substitution_reference(self, match, lineno, start_char=None):
+    def substitution_reference(self, match, lineno, start_char):
         before, inlines, remaining, sysmessages, endstring = self.inline_obj(
             match, lineno, self.patterns.substitution_ref, nodes.substitution_reference
         )
@@ -443,8 +454,15 @@ class CustomInliner(Inliner):
                         self.document.note_refname(reference_node)
                     reference_node += subref_node
                     inlines = [reference_node]
-
-        return before, inlines, remaining, sysmessages
+        doc_lineno, doc_char = self.char2docplace[start_char + len(before)]
+        info = InfoNodeInline(
+            self,
+            match=match,
+            dtype="substitution_reference",
+            doc_lineno=doc_lineno,
+            doc_char=doc_char,
+        )
+        return before, [info] + inlines, remaining, sysmessages
 
     def footnote_reference(self, match, lineno, start_char=None):
         """
@@ -477,7 +495,15 @@ class CustomInliner(Inliner):
                 self.document.note_footnote_ref(refnode)
             if utils.get_trim_footnote_ref_space(self.document.settings):
                 before = before.rstrip()
-        return (before, [refnode], remaining, [])
+        doc_lineno, doc_char = self.char2docplace[start_char + len(before)]
+        info = InfoNodeInline(
+            self,
+            match=match,
+            dtype="footnote_reference",
+            doc_lineno=doc_lineno,
+            doc_char=doc_char,
+        )
+        return (before, [info, refnode], remaining, [])
 
     def reference(self, match, lineno, anonymous=False, start_char=None):
         referencename = match.group("refname")
@@ -496,10 +522,22 @@ class CustomInliner(Inliner):
         string = match.string
         matchstart = match.start("whole")
         matchend = match.end("whole")
-        return (string[:matchstart], [referencenode], string[matchend:], [])
+        doc_lineno, doc_char = self.char2docplace[start_char + matchstart]
+        info = InfoNodeInline(
+            self,
+            match=match,
+            dtype="anonymous_reference" if anonymous else "std_reference",
+            doc_lineno=doc_lineno,
+            doc_char=doc_char,
+            data={"refname": refname, "raw": string[matchstart:matchend]},
+        )
+        return (string[:matchstart], [info, referencenode], string[matchend:], [])
 
-    def anonymous_reference(self, match, lineno, start_char=None):
-        return self.reference(match, lineno, anonymous=1)
+    def anonymous_reference(self, match, lineno, start_char):
+        before, inlines, remaining, msg = self.reference(
+            match, lineno, anonymous=1, start_char=start_char
+        )
+        return (before, inlines, remaining, msg)
 
     def standalone_uri(self, match, lineno):
         if (
