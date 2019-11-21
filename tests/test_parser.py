@@ -1,4 +1,4 @@
-from rst_lsp.analyse.parser import assess_source
+from rst_lsp.analyse.main import assess_source
 
 
 def test_1_roles(get_test_file_content):
@@ -344,7 +344,7 @@ def test_doctest():
             "lineno": 10,
             "type_name": "versionadded",
             "klass": "sphinx.domains.changeset.VersionChange",
-            "arguments": ['1.0'],
+            "arguments": ["1.0"],
             "options": {},
         },
         {

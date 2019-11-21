@@ -1,3 +1,14 @@
+"""This module provides a custom for subclass of ``docutils.parsers.rst.states.Inliner``.
+
+This subclass adds:
+
+- Propagation of the starting line character, for matched patterns.
+- injection of ``InfoNodeInline`` docutils elements into the parsed doctree,
+  to allow for line numbers and character columns to be obtained, for certain elements,
+  during a subsequent ``document.walk``.
+
+
+"""
 from docutils import ApplicationError, nodes, utils
 from docutils.nodes import fully_normalize_name as normalize_name
 from docutils.nodes import whitespace_normalize_name
@@ -11,10 +22,31 @@ from docutils.utils import (
     urischemes,
 )
 
-from .elements import InfoNodeInline
+__all__ = ("InfoNodeInline", "LSPInliner")
 
 
-class CustomInliner(Inliner):
+class InfoNodeInline(nodes.Node):
+    """A node for highlighting an inline element position in the document."""
+
+    def __init__(self, inliner, match, dtype, doc_lineno, doc_char, data={}):
+        self.parent = inliner.parent
+        self.document = inliner.document
+        self.match = match
+        self.dtype = dtype
+        self.doc_lineno = doc_lineno
+        self.doc_char = doc_char
+        self.other_data = data or {}
+        self.children = []
+
+    def astext(self):
+        return f"InfoNodeInline({self.dtype})"
+
+    def pformat(self, indent="    ", level=0):
+        """Return an indented pseudo-XML representation, for test purposes."""
+        return indent * level + f"InfoNodeInline({self.dtype})\n"
+
+
+class LSPInliner(Inliner):
     """Parse inline markup; call the `parse()` method.
 
     This is a subclass of that propagates the starting character number of elements,

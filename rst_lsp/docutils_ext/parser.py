@@ -1,10 +1,47 @@
+"""This module provides a patch for classes in ``docutils.parsers.rst.states``.
+
+``parse_source`` provides a parsing function with patches applied,
+to inject ``InfoNodeBlock`` docutils elements into the parsed doctree.
+This allows for line numbers and character columns to be obtained for certain elements,
+during a subsequent ``document.walk``.
+
+TODO it would be desirable to subclass these classes,
+and inject them into the parsing process.
+However, it is not readily apparent how this is achievable,
+since docutils appears to hard-wire in a number of class dependencies.
+
+"""
+from unittest import mock
 from types import FunctionType, MethodType
 
 from docutils import nodes
-from docutils.parsers.rst.states import MarkupError, Body
+
+# from docutils.parsers import get_parser_class
+from docutils.parsers.rst import Parser as RSTParser
+from docutils.parsers.rst.states import MarkupError, Body, RSTState
 from docutils.parsers.rst import DirectiveError
 
-from .elements import InfoNodeBlock
+from rst_lsp.docutils_ext.inliner import LSPInliner
+
+__all__ = ("InfoNodeBlock", "parse_source")
+
+
+class InfoNodeBlock(nodes.Node):
+    """A node for highlighting a position in the document."""
+
+    def __init__(self, dtype, doc_lineno, match=None, data={}):
+        self.match = match
+        self.dtype = dtype
+        self.doc_lineno = doc_lineno
+        self.other_data = data or {}
+        self.children = []
+
+    def astext(self):
+        return f"InfoNodeBlock({self.dtype})"
+
+    def pformat(self, indent="    ", level=0):
+        """Return an indented pseudo-XML representation, for test purposes."""
+        return indent * level + f"InfoNodeBlock({self.dtype})\n"
 
 
 # from docutils.parsers.rst.states.Block
@@ -110,6 +147,7 @@ def section(self, title, source, style, lineno, messages):
         info.other_data["endline"] = self.state_machine.abs_line_offset()
 
 
+# from docutils.parsers.rst.states.Block
 def explicit_construct(self, match):
     """Determine which explicit construct this is, parse & return it."""
     errors = []
@@ -190,3 +228,29 @@ def explicit_construct(self, match):
     #                   ::                # directive delimiter
     #                   ([ ]+|$)          # whitespace or end of line
     #                   """ % Inliner.simplename, re.VERBOSE | re.UNICODE))]
+
+
+@mock.patch.object(Body, "explicit_construct", explicit_construct)
+@mock.patch.object(Body, "run_directive", run_directive)
+@mock.patch.object(RSTState, "section", section)
+def parse_source(
+    source: str,
+    document: nodes.document,
+    parser_cls: RSTParser = None,
+    inliner_cls: LSPInliner = None,
+) -> None:
+    """Parse source text to populate a document
+
+    The parsing runs with patches applied to the standard docutils state classes,
+    to inject ``InfoNodeBlock`` docutils elements into the populated doctree.
+
+    """
+    # TODO see also sphinx/testing/restructuredtext.py
+    # NOTE https://www.sphinx-doc.org/en/master/extdev/index.html#build-phases
+    if inliner_cls is None:
+        inliner_cls = LSPInliner
+    if parser_cls is None:
+        parser_cls = RSTParser
+    inliner = inliner_cls(doc_text=source)
+    parser = parser_cls(inliner=inliner)  # type: RSTParser
+    parser.parse(source, document)
