@@ -17,6 +17,9 @@ class InfoNodeInline(nodes.Node):
         self.other_data = data or {}
         self.children = []
 
+    def astext(self):
+        return f"InfoNodeInline({self.dtype})"
+
     def pformat(self, indent="    ", level=0):
         """Return an indented pseudo-XML representation, for test purposes."""
         return indent * level + f"InfoNodeInline({self.dtype})\n"
@@ -31,6 +34,9 @@ class InfoNodeBlock(nodes.Node):
         self.doc_lineno = doc_lineno
         self.other_data = data or {}
         self.children = []
+
+    def astext(self):
+        return f"InfoNodeBlock({self.dtype})"
 
     def pformat(self, indent="    ", level=0):
         """Return an indented pseudo-XML representation, for test purposes."""

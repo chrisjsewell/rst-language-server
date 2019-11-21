@@ -1,4 +1,4 @@
-from rst_lsp.parser import init_sphinx
+from rst_lsp.analyse.parser import init_sphinx
 from rst_lsp.database import Database
 
 

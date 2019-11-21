@@ -45,7 +45,7 @@ from sphinx.util.console import nocolor, color_terminal, terminal_safe  # noqa
 from sphinx.util.docutils import docutils_namespace, patch_docutils
 from sphinx.util.docutils import sphinx_domains
 
-from rst_lsp.handle_inlines import CustomInliner
+from .handle_inlines import CustomInliner
 from .handle_blocks import run_directive, section, explicit_construct
 from .elements import InfoNodeInline, InfoNodeBlock
 

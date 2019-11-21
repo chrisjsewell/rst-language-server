@@ -1,6 +1,4 @@
-import attr
-
-from rst_lsp.parser import assess_source
+from rst_lsp.analyse.parser import assess_source
 
 
 def test_1_roles(get_test_file_content):
@@ -261,18 +259,117 @@ def test_1_elements(get_test_file_content, data_regression):
 
 
 def test_doctest():
-    results = assess_source(
+    # NOTE this is used in example in rst_lsp.analyse
+    from textwrap import dedent
+
+    source = dedent(
         """\
-.. _sdf:
+        .. _title:
 
-:ref:`zffx`
+        Title
+        -----
 
-a headerlink_
+        :ref:`title`
+        :cite:`citation`
+        :unknown:`abc`
 
-|A|
-""",
-        confoverrides={"extensions": ["sphinxcontrib.bibtex"]},
+        .. versionadded:: 1.0
+
+            A note about |RST|
+
+        .. |RST| replace:: ReStructuredText
+        """
     )
-    print(results.errors)
-    print(results.doctree.pformat())
-    # raise
+    results = assess_source(
+        source, confoverrides={"extensions": ["sphinxcontrib.bibtex"]},
+    )
+    # print(results.errors)
+    # print(results.elements)
+    assert results.errors == [
+        {
+            "line": 6,
+            "type": "ERROR",
+            "level": 3,
+            "description": 'Unknown interpreted text role "unknown".',
+        }
+    ]
+    assert results.elements == [
+        {
+            "type": "Block",
+            "element": "hyperlink_target",
+            "start_char": 0,
+            "lineno": 1,
+            "raw": ".. _title:",
+            "target": "title",
+        },
+        {
+            "type": "Block",
+            "element": "section",
+            "start_char": 0,
+            "lineno": 3,
+            "level": 1,
+            "title": "Title",
+        },
+        {
+            "type": "Inline",
+            "element": "role",
+            "lineno": 6,
+            "start_char": 0,
+            "role": "ref",
+            "content": "title",
+            "raw": ":ref:`title`",
+        },
+        {
+            "type": "Inline",
+            "element": "role",
+            "lineno": 7,
+            "start_char": 0,
+            "role": "cite",
+            "content": "citation",
+            "raw": ":cite:`citation`",
+        },
+        {
+            "type": "Inline",
+            "element": "role",
+            "lineno": 8,
+            "start_char": 0,
+            "role": "unknown",
+            "content": "abc",
+            "raw": ":unknown:`abc`",
+        },
+        {
+            "type": "Block",
+            "element": "directive",
+            "start_char": 0,
+            "lineno": 10,
+            "type_name": "versionadded",
+            "klass": "sphinx.domains.changeset.VersionChange",
+            "arguments": ['1.0'],
+            "options": {},
+        },
+        {
+            "type": "Inline",
+            "element": "reference",
+            "ref_type": "substitution",
+            "lineno": 12,
+            "start_char": 17,
+        },
+        {
+            "type": "Block",
+            "element": "directive",
+            "start_char": 0,
+            "lineno": 14,
+            "type_name": "replace",
+            "klass": "docutils.parsers.rst.directives.misc.Replace",
+            "arguments": [],
+            "options": {},
+        },
+        {
+            "type": "Block",
+            "element": "substitution_def",
+            "start_char": 0,
+            "lineno": 14,
+            "raw": ".. |RST| replace:: ReStructuredText",
+            "sub": "RST",
+        },
+    ]
