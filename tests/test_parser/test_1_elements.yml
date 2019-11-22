@@ -1,12 +1,12 @@
 - element: hyperlink_target
-  lineno: 2
+  lineno: 1
   raw: '.. _headerlink:'
   start_char: 0
   target: headerlink
   type: Block
 - element: section
   level: 1
-  lineno: 4
+  lineno: 3
   start_char: 0
   title: header 1
   type: Block
@@ -14,7 +14,7 @@
   - html
   element: directive
   klass: sphinx.directives.other.Only
-  lineno: 7
+  lineno: 6
   options: {}
   start_char: 0
   type: Block
@@ -22,7 +22,7 @@
 - arguments: []
   element: directive
   klass: docutils.parsers.rst.directives.admonitions.Note
-  lineno: 9
+  lineno: 8
   options: {}
   start_char: 4
   type: Block
@@ -31,7 +31,7 @@
   - python
   element: directive
   klass: sphinx.directives.code.CodeBlock
-  lineno: 13
+  lineno: 12
   options:
     linenos: null
   start_char: 0
@@ -39,94 +39,94 @@
   type_name: code-block
 - alias: sdf
   element: link
-  lineno: 18
+  lineno: 17
   raw: '`<sdf>`__'
   start_char: 0
   type: Inline
 - element: section
   level: 2
-  lineno: 20
+  lineno: 19
   start_char: 0
   title: sub-title
   type: Block
 - alias: http://www.python.org/
   element: link
-  lineno: 23
+  lineno: 22
   raw: '`<http://www.python.org/>`_'
   start_char: 0
   type: Inline
 - arguments: []
   element: directive
   klass: docutils.parsers.rst.directives.admonitions.Note
-  lineno: 25
+  lineno: 24
   options: {}
   start_char: 0
   type: Block
   type_name: note
 - alias: www.python.org
   element: link
-  lineno: 27
+  lineno: 26
   raw: '`a link to python <www.python.org>`_'
   start_char: 12
   type: Inline
 - content: asdasx
   element: role
-  lineno: 28
+  lineno: 27
   raw: :sdf:`asdasx`
   role: sdf
   start_char: 4
   type: Inline
 - element: section
   level: 1
-  lineno: 30
+  lineno: 29
   start_char: 0
   title: header 2
   type: Block
 - content: sadasd
   element: role
-  lineno: 37
+  lineno: 36
   raw: :cite:`sadasd`
   role: cite
   start_char: 0
   type: Inline
 - content: asd
   element: role
-  lineno: 38
+  lineno: 37
   raw: :cite:`asd`
   role: cite
   start_char: 0
   type: Inline
 - content: saasf
   element: role
-  lineno: 44
+  lineno: 43
   raw: :sdf:`saasf`
   role: sdf
   start_char: 0
   type: Inline
 - content: saasf
   element: role
-  lineno: 44
+  lineno: 43
   raw: :abcf:`saasf`
   role: abcf
   start_char: 14
   type: Inline
 - element: reference
-  lineno: 46
+  lineno: 45
   ref_type: substitution
   start_char: 0
   type: Inline
 - element: reference
-  lineno: 46
+  lineno: 45
   ref_type: substitution
   start_char: 14
   type: Inline
 - element: reference
-  lineno: 46
+  lineno: 45
   ref_type: substitution
   start_char: 25
   type: Inline
 - element: reference
-  lineno: 48
+  lineno: 47
   raw: headerlink_
   ref_type: anonymous
   refname: headerlink
@@ -136,7 +136,7 @@
   - file.png
   element: directive
   klass: docutils.parsers.rst.directives.images.Image
-  lineno: 50
+  lineno: 49
   options:
     alt: REF1
     uri: file.png
@@ -144,7 +144,7 @@
   type: Block
   type_name: image
 - element: substitution_def
-  lineno: 50
+  lineno: 49
   raw: '.. |REF1| image:: file.png'
   start_char: 0
   sub: REF1
@@ -152,25 +152,25 @@
 - arguments: []
   element: directive
   klass: docutils.parsers.rst.directives.misc.Replace
-  lineno: 51
+  lineno: 50
   options: {}
   start_char: 0
   type: Block
   type_name: replace
 - element: substitution_def
-  lineno: 51
+  lineno: 50
   raw: '.. |REF2| replace:: MyText'
   start_char: 0
   sub: REF2
   type: Block
 - element: hyperlink_target
-  lineno: 52
+  lineno: 51
   raw: '.. _REF3: http://sdfsdf/dsf'
   start_char: 0
   target: ref3
   type: Block
 - element: substitution_def
-  lineno: 53
+  lineno: 52
   raw: '.. |REF4| replace: bad syntax'
   start_char: 0
   type: Block

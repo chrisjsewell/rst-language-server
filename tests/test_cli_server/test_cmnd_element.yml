@@ -1,18 +1,18 @@
 - element: section
   level: 1
-  lineno: 4
+  lineno: 3
   start_char: 0
   title: header 1
   type: Block
 - element: section
   level: 2
-  lineno: 20
+  lineno: 19
   start_char: 0
   title: sub-title
   type: Block
 - element: section
   level: 1
-  lineno: 30
+  lineno: 29
   start_char: 0
   title: header 2
   type: Block

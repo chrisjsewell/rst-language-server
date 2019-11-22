@@ -8,16 +8,6 @@
   line: 32
   source: docutils
   type: ERROR
-- description: Unknown interpreted text role "cite".
-  level: 3
-  line: 36
-  source: docutils
-  type: ERROR
-- description: Unknown interpreted text role "cite".
-  level: 3
-  line: 36
-  source: docutils
-  type: ERROR
 - description: Unknown interpreted text role "sdf".
   level: 3
   line: 43

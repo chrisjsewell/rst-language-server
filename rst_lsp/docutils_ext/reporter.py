@@ -21,10 +21,12 @@ class JSONReporter(Reporter):
     def system_message(self, level, message, *children, **kwargs):
         sys_message = super().system_message(level, message, *children, **kwargs)
         if level >= self.report_level:
+            line = sys_message.get("line", None)
+            line = line - 1 if line is not None else line  # lines should be zero-based
             self.log_capture.append(
                 {
                     "source": "docutils",
-                    "line": sys_message.get("line", ""),
+                    "line": line,
                     "type": sys_message["type"],
                     "level": sys_message["level"],
                     "description": nodes.Element.astext(sys_message),

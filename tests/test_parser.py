@@ -204,55 +204,13 @@ def test_1_directives(get_test_file_content):
     }
 
 
-def test_1_linting(get_test_file_content):
+def test_1_linting(get_test_file_content, data_regression):
     content = get_test_file_content("test1.rst")
     results = assess_source(
         content, confoverrides={"extensions": ["sphinxcontrib.bibtex"]}
     )
-    # print(results.linting)
-    # TODO inline errors may refer to wrong line, if there a line breaks
-    assert results.linting == [
-        {
-            "line": 27,
-            "type": "ERROR",
-            "level": 3,
-            "source": "docutils",
-            "description": 'Unknown interpreted text role "sdf".',
-        },
-        {
-            "line": 33,
-            "type": "ERROR",
-            "level": 3,
-            "source": "docutils",
-            "description": (
-                'Unknown directive type "dsfsdf".\n\n.. dsfsdf::\n\n    import a\n'
-            ),
-        },
-        {
-            "line": 44,
-            "type": "ERROR",
-            "level": 3,
-            "source": "docutils",
-            "description": 'Unknown interpreted text role "sdf".',
-        },
-        {
-            "line": 44,
-            "type": "ERROR",
-            "level": 3,
-            "source": "docutils",
-            "description": 'Unknown interpreted text role "abcf".',
-        },
-        {
-            "line": 53,
-            "type": "WARNING",
-            "level": 2,
-            "source": "docutils",
-            "description": (
-                'Substitution definition "REF4" empty or invalid.\n\n'
-                ".. |REF4| replace: bad syntax"
-            ),
-        },
-    ]
+    # TODO inline errors from docutils refers to wrong line, if after line break
+    data_regression.check(results.linting)
 
 
 def test_1_elements(get_test_file_content, data_regression):
@@ -292,7 +250,7 @@ def test_doctest():
     # print(results.elements)
     assert results.linting == [
         {
-            "line": 6,
+            "line": 5,
             "type": "ERROR",
             "level": 3,
             "source": "docutils",
@@ -304,7 +262,7 @@ def test_doctest():
             "type": "Block",
             "element": "hyperlink_target",
             "start_char": 0,
-            "lineno": 1,
+            "lineno": 0,
             "raw": ".. _title:",
             "target": "title",
         },
@@ -312,14 +270,14 @@ def test_doctest():
             "type": "Block",
             "element": "section",
             "start_char": 0,
-            "lineno": 3,
+            "lineno": 2,
             "level": 1,
             "title": "Title",
         },
         {
             "type": "Inline",
             "element": "role",
-            "lineno": 6,
+            "lineno": 5,
             "start_char": 0,
             "role": "ref",
             "content": "title",
@@ -328,7 +286,7 @@ def test_doctest():
         {
             "type": "Inline",
             "element": "role",
-            "lineno": 7,
+            "lineno": 6,
             "start_char": 0,
             "role": "cite",
             "content": "citation",
@@ -337,7 +295,7 @@ def test_doctest():
         {
             "type": "Inline",
             "element": "role",
-            "lineno": 8,
+            "lineno": 7,
             "start_char": 0,
             "role": "unknown",
             "content": "abc",
@@ -347,7 +305,7 @@ def test_doctest():
             "type": "Block",
             "element": "directive",
             "start_char": 0,
-            "lineno": 10,
+            "lineno": 9,
             "type_name": "versionadded",
             "klass": "sphinx.domains.changeset.VersionChange",
             "arguments": ["1.0"],
@@ -357,14 +315,14 @@ def test_doctest():
             "type": "Inline",
             "element": "reference",
             "ref_type": "substitution",
-            "lineno": 12,
+            "lineno": 11,
             "start_char": 17,
         },
         {
             "type": "Block",
             "element": "directive",
             "start_char": 0,
-            "lineno": 14,
+            "lineno": 13,
             "type_name": "replace",
             "klass": "docutils.parsers.rst.directives.misc.Replace",
             "arguments": [],
@@ -374,7 +332,7 @@ def test_doctest():
             "type": "Block",
             "element": "substitution_def",
             "start_char": 0,
-            "lineno": 14,
+            "lineno": 13,
             "raw": ".. |RST| replace:: ReStructuredText",
             "sub": "RST",
         },

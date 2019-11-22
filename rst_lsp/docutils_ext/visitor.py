@@ -30,6 +30,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
 
     def unknown_visit(self, node):
         """Override for generic, uniform traversals."""
+        # NOTE and line and character offsets should be zero-based
         if isinstance(node, InfoNodeBlock):
             if node.dtype == "section":
                 self.info_datas.append(
@@ -37,7 +38,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                         "type": "Block",
                         "element": ElementType.section.value,
                         "start_char": 0,
-                        "lineno": node.doc_lineno,
+                        "lineno": node.doc_lineno - 1,
                         "level": node.other_data["level"],
                         "title": node.other_data["title"],
                     }
@@ -49,7 +50,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                         "type": "Block",
                         "element": ElementType.directive.value,
                         "start_char": len(line) - len(line.lstrip()),
-                        "lineno": node.doc_lineno,
+                        "lineno": node.doc_lineno - 1,
                         "type_name": node.other_data["type_name"],
                         "klass": node.other_data["klass"],
                         "arguments": node.other_data["arguments"],
@@ -63,7 +64,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                     "type": "Block",
                     "element": node.other_data["ctype"],
                     "start_char": 0,
-                    "lineno": node.doc_lineno,
+                    "lineno": node.doc_lineno - 1,
                     "raw": node.other_data["raw"],
                 }
                 try:
@@ -82,7 +83,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                     {
                         "type": "Inline",
                         "element": ElementType.link.value,
-                        "lineno": node.doc_lineno,
+                        "lineno": node.doc_lineno - 1,
                         "start_char": node.doc_char,
                         "alias": node.other_data["alias"],
                         "raw": node.other_data["raw"],
@@ -95,7 +96,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                     {
                         "type": "Inline",
                         "element": ElementType.role.value,
-                        "lineno": node.doc_lineno,
+                        "lineno": node.doc_lineno - 1,
                         "start_char": node.doc_char,
                         "role": node.other_data["role"],
                         "content": node.other_data["content"],
@@ -107,7 +108,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                     {
                         "type": "Inline",
                         "element": ElementType.internal_target.value,
-                        "lineno": node.doc_lineno,
+                        "lineno": node.doc_lineno - 1,
                         "start_char": node.doc_char,
                     }
                 )
@@ -117,7 +118,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                         "type": "Inline",
                         "element": ElementType.reference.value,
                         "ref_type": "substitution",
-                        "lineno": node.doc_lineno,
+                        "lineno": node.doc_lineno - 1,
                         "start_char": node.doc_char,
                     }
                 )
@@ -127,7 +128,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                         "type": "Inline",
                         "element": ElementType.reference.value,
                         "ref_type": "footnote",
-                        "lineno": node.doc_lineno,
+                        "lineno": node.doc_lineno - 1,
                         "start_char": node.doc_char,
                     }
                 )
@@ -137,7 +138,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                         "type": "Inline",
                         "element": ElementType.reference.value,
                         "ref_type": "anonymous",
-                        "lineno": node.doc_lineno,
+                        "lineno": node.doc_lineno - 1,
                         "start_char": node.doc_char,
                         "refname": node.other_data["refname"],
                         "raw": node.other_data["raw"],
