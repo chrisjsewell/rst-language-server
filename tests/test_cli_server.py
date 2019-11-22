@@ -73,3 +73,12 @@ def test_cmnd_lint(temp_cwd, get_test_file_path, data_regression):
     data_regression.check(
         [{k: v for k, v in d.items() if k != "uri"} for d in json.loads(result.output)]
     )
+
+
+def test_cmnd_folding_range(temp_cwd, get_test_file_path, data_regression):
+    runner = CliRunner()
+    path = get_test_file_path("test1.rst")
+    result = runner.invoke(cli.cmnd_source_file, [path])
+    result = runner.invoke(cli.cmnd_folding_range, [path])
+    assert result.exit_code == 0, result.output
+    data_regression.check(json.loads(result.output))

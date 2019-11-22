@@ -1,7 +1,7 @@
 """Basic CLI implementation of the language-server.
 
 See https://github.com/palantir/python-language-server/blob/develop/pyls/plugins/,
-for a relatively complete set of implemented language-server features.
+for a relatively complete set of python implemented language-server features.
 
 For testing, before implementing actual JSON RPC 2.0 protocol
 (see https://github.com/palantir/python-jsonrpc-server)
@@ -142,14 +142,21 @@ def cmnd_source_file(database: Database, path: str):
     echo_db(database)
     conf_file = database.query_conf_file()
     with click.open_file(path) as handle:
+        content = handle.read()
         result = assess_source(
-            handle.read(),
+            content,
             path,
             confdir=os.path.dirname(conf_file["uri"])
             if conf_file is not None
             else None,
         )
-    database.update_doc(path, result.elements, result.linting)
+    database.update_doc(
+        path,
+        endline=len(content.splitlines()) - 1,
+        endchar=len(content.splitlines()[-1]) - 1,
+        elements=result.elements,
+        lints=result.linting,
+    )
     echo_success(f"updated source of {path}")
 
 
@@ -231,3 +238,74 @@ def cmnd_lint(database: Database, uri: str, raw: bool):
     if issues is None:
         issues = []
     echo_dictionary([dict(i) for i in issues])
+
+
+@cli_entry.group("lsp")
+def group_lsp_features():
+    """Implement actual LSP features interfaces.
+
+    See:
+    https://microsoft.github.io/language-server-protocol/specifications/specification-3-14/
+    """
+    # see also
+    # https://github.com/palantir/python-language-server/blob/develop/pyls/plugins/
+
+
+@group_lsp_features.command("foldingRange")
+@pass_database
+@click.argument("uri", type=str)
+def cmnd_folding_range(database: Database, uri: str):
+    """Return folding ranges for a document."""
+    # note all zero-based offsets
+    results = []
+    document = database.query_doc(uri)
+
+    # TODO do we actually want startCharacter to be at the end of the starlines?
+
+    # Get section folding
+    sections = database.query_elements([ElementType.section.value], uri)
+    start_stack = {}
+    for section in sorted(sections or [], key=lambda d: d["lineno"]):
+        for level, start in list(start_stack.items()):
+            if level >= section["level"]:
+                start = start_stack.pop(level)
+                results.append(
+                    {
+                        "kind": "region",
+                        "startLine": start["line"],
+                        "startCharacter": start["char"],
+                        "endLine": section["lineno"],
+                        "endCharacter": 0,
+                    }
+                )
+        start_stack[section["level"]] = {
+            "line": section["lineno"],
+            "char": section["start_char"],
+        }
+    for level, start in start_stack.items():
+        results.append(
+            {
+                "kind": "region",
+                "startLine": start["line"],
+                "startCharacter": start["char"],
+                "endLine": document["endline"],
+                "endCharacter": document["endchar"],
+            }
+        )
+
+    # Get directive folding
+    directives = database.query_elements([ElementType.directive.value], uri)
+    for directive in directives or []:
+        # don't bother folding single line directives
+        if directive["lineno"] != directive["endline"]:
+            results.append(
+                {
+                    "kind": "region",
+                    "startLine": directive["lineno"],
+                    "startCharacter": directive["start_char"],
+                    "endLine": directive["endline"],
+                    "endCharacter": directive["end_char"],
+                }
+            )
+
+    echo_dictionary(results)

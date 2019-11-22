@@ -1,0 +1,72 @@
+elements:
+- element: hyperlink_target
+  lineno: 0
+  raw: '.. _title:'
+  start_char: 0
+  target: title
+  type: Block
+- element: section
+  level: 1
+  lineno: 2
+  start_char: 0
+  title: Title
+  type: Block
+- content: title
+  element: role
+  lineno: 5
+  raw: :ref:`title`
+  role: ref
+  start_char: 0
+  type: Inline
+- content: citation
+  element: role
+  lineno: 6
+  raw: :cite:`citation`
+  role: cite
+  start_char: 0
+  type: Inline
+- content: abc
+  element: role
+  lineno: 7
+  raw: :unknown:`abc`
+  role: unknown
+  start_char: 0
+  type: Inline
+- arguments:
+  - '1.0'
+  element: directive
+  end_char: 21
+  endline: 11
+  klass: sphinx.domains.changeset.VersionChange
+  lineno: 9
+  options: {}
+  start_char: 0
+  type: Block
+  type_name: versionadded
+- element: reference
+  lineno: 11
+  ref_type: substitution
+  start_char: 17
+  type: Inline
+- arguments: []
+  element: directive
+  end_char: 34
+  endline: 13
+  klass: docutils.parsers.rst.directives.misc.Replace
+  lineno: 13
+  options: {}
+  start_char: 9
+  type: Block
+  type_name: replace
+- element: substitution_def
+  lineno: 13
+  raw: '.. |RST| replace:: ReStructuredText'
+  start_char: 0
+  sub: RST
+  type: Block
+lints:
+- description: Unknown interpreted text role "unknown".
+  level: 3
+  line: 5
+  source: docutils
+  type: ERROR

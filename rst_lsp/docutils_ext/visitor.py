@@ -45,12 +45,16 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                 )
             elif node.dtype == "directive":
                 line = self.lines[node.doc_lineno - 1]
+                dlines = node.other_data["block_text"].rstrip().splitlines()
+                endline = node.doc_lineno - 2 + len(dlines)
                 self.info_datas.append(
                     {
                         "type": "Block",
                         "element": ElementType.directive.value,
-                        "start_char": len(line) - len(line.lstrip()),
+                        "start_char": len(line) - len(dlines[0]),
                         "lineno": node.doc_lineno - 1,
+                        "endline": endline,
+                        "end_char": len(self.lines[endline]) - 1,
                         "type_name": node.other_data["type_name"],
                         "klass": node.other_data["klass"],
                         "arguments": node.other_data["arguments"],
@@ -63,7 +67,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                 info = {
                     "type": "Block",
                     "element": node.other_data["ctype"],
-                    "start_char": 0,
+                    "start_char": 0,  # TODO get proper start character (using raw?)
                     "lineno": node.doc_lineno - 1,
                     "raw": node.other_data["raw"],
                 }

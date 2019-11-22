@@ -134,6 +134,7 @@ def run_directive(self, directive, match, type_name, option_presets):
             arguments=arguments,
             options=options,
             klass=f"{directive.__module__}.{directive.__name__}",
+            block_text=block_text,
         ),
     )
     return ([info] + result, blank_finish or self.state_machine.is_next_line_blank())

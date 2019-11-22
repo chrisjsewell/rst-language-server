@@ -36,10 +36,11 @@ class Database:
         # define tables
         # FYI can also set query sizes for tables
 
+        # TODO configuration table
         # stores information about all roles and directives available
         self._tbl_classes = self._db.table("classes")  # type: Table
-        # stores information related to which documents,
-        # e.g. the last time they were updated
+        # stores information related to loaded documents,
+        # e.g. their uri and last time they were updated
         self._tbl_documents = self._db.table("documents")  # type: Table
         # stores information about the elements contained in each document
         self._tbl_elements = self._db.table("elements")  # type: Table
@@ -129,23 +130,48 @@ class Database:
             db_docs.append(doc)
         self._tbl_elements.insert_multiple(db_docs)
 
-    def update_doc(self, uri: str, elements: List[dict], lints: List[dict]):
+    def update_doc(
+        self,
+        uri: str,
+        endline: int,
+        endchar: int,
+        elements: List[dict],
+        lints: List[dict],
+    ):
         self._tbl_documents.upsert(
-            {"dtype": "rst", "uri": uri, "modified": self.get_current_time()},
+            {
+                "dtype": "rst",
+                "uri": uri,
+                "modified": self.get_current_time(),
+                "endline": endline,
+                "endchar": endchar,
+            },
             (where("dtype") == "rst") & (where("uri") == uri),
         )
         self._update_doc_elements(uri, elements)
         self._update_doc_lint(uri, lints)
 
+    def query_doc(self, uri):
+        return self._tbl_documents.get(
+            (where("dtype") == "rst") & (where("uri") == uri)
+        )
+
     def query_docs(self, uris: list = None):
         if uris is None:
             return self._tbl_documents.search(where("dtype") == "rst")
-        return self._tbl_classes.search(
+        return self._tbl_documents.search(
             (where("dtype") == "rst") & (where("uri").one_of(uris))
         )
 
     def query_element(self, name: str):
         return self._tbl_elements.search(where("element") == name)
+
+    def query_elements(self, names: Optional[list] = None, uri: Optional[str] = None):
+        if names is None and uri is None:
+            return self._tbl_elements.all()
+        if names is None:
+            return self._tbl_elements.search(where("uri") == uri)
+        return self._tbl_elements.search(where("element").one_of(names))
 
     def query_lint(self, uri: str):
         return self._tbl_linting.search(where("uri") == uri)

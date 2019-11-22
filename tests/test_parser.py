@@ -221,8 +221,8 @@ def test_1_elements(get_test_file_content, data_regression):
     data_regression.check(results.elements)
 
 
-def test_doctest():
-    # NOTE this is used in example in rst_lsp.analyse
+def test_doctest(data_regression):
+    # NOTE this is used in example in rst_lsp.analyse example
     from textwrap import dedent
 
     source = dedent(
@@ -246,94 +246,7 @@ def test_doctest():
     results = assess_source(
         source, confoverrides={"extensions": ["sphinxcontrib.bibtex"]},
     )
-    # print(results.linting)
-    # print(results.elements)
-    assert results.linting == [
-        {
-            "line": 5,
-            "type": "ERROR",
-            "level": 3,
-            "source": "docutils",
-            "description": 'Unknown interpreted text role "unknown".',
-        }
-    ]
-    assert results.elements == [
-        {
-            "type": "Block",
-            "element": "hyperlink_target",
-            "start_char": 0,
-            "lineno": 0,
-            "raw": ".. _title:",
-            "target": "title",
-        },
-        {
-            "type": "Block",
-            "element": "section",
-            "start_char": 0,
-            "lineno": 2,
-            "level": 1,
-            "title": "Title",
-        },
-        {
-            "type": "Inline",
-            "element": "role",
-            "lineno": 5,
-            "start_char": 0,
-            "role": "ref",
-            "content": "title",
-            "raw": ":ref:`title`",
-        },
-        {
-            "type": "Inline",
-            "element": "role",
-            "lineno": 6,
-            "start_char": 0,
-            "role": "cite",
-            "content": "citation",
-            "raw": ":cite:`citation`",
-        },
-        {
-            "type": "Inline",
-            "element": "role",
-            "lineno": 7,
-            "start_char": 0,
-            "role": "unknown",
-            "content": "abc",
-            "raw": ":unknown:`abc`",
-        },
-        {
-            "type": "Block",
-            "element": "directive",
-            "start_char": 0,
-            "lineno": 9,
-            "type_name": "versionadded",
-            "klass": "sphinx.domains.changeset.VersionChange",
-            "arguments": ["1.0"],
-            "options": {},
-        },
-        {
-            "type": "Inline",
-            "element": "reference",
-            "ref_type": "substitution",
-            "lineno": 11,
-            "start_char": 17,
-        },
-        {
-            "type": "Block",
-            "element": "directive",
-            "start_char": 0,
-            "lineno": 13,
-            "type_name": "replace",
-            "klass": "docutils.parsers.rst.directives.misc.Replace",
-            "arguments": [],
-            "options": {},
-        },
-        {
-            "type": "Block",
-            "element": "substitution_def",
-            "start_char": 0,
-            "lineno": 13,
-            "raw": ".. |RST| replace:: ReStructuredText",
-            "sub": "RST",
-        },
-    ]
+    # import pprint
+    # pprint.pprint(results.linting)
+    # pprint.pprint(results.elements)
+    data_regression.check({"lints": results.linting, "elements": results.elements})

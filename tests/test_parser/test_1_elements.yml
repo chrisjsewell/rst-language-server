@@ -13,6 +13,8 @@
 - arguments:
   - html
   element: directive
+  end_char: 19
+  endline: 10
   klass: sphinx.directives.other.Only
   lineno: 6
   options: {}
@@ -21,6 +23,8 @@
   type_name: only
 - arguments: []
   element: directive
+  end_char: 19
+  endline: 10
   klass: docutils.parsers.rst.directives.admonitions.Note
   lineno: 8
   options: {}
@@ -30,6 +34,8 @@
 - arguments:
   - python
   element: directive
+  end_char: 11
+  endline: 15
   klass: sphinx.directives.code.CodeBlock
   lineno: 12
   options:
@@ -57,6 +63,8 @@
   type: Inline
 - arguments: []
   element: directive
+  end_char: 16
+  endline: 27
   klass: docutils.parsers.rst.directives.admonitions.Note
   lineno: 24
   options: {}
@@ -135,12 +143,14 @@
 - arguments:
   - file.png
   element: directive
+  end_char: 25
+  endline: 49
   klass: docutils.parsers.rst.directives.images.Image
   lineno: 49
   options:
     alt: REF1
     uri: file.png
-  start_char: 0
+  start_char: 10
   type: Block
   type_name: image
 - element: substitution_def
@@ -151,10 +161,12 @@
   type: Block
 - arguments: []
   element: directive
+  end_char: 25
+  endline: 50
   klass: docutils.parsers.rst.directives.misc.Replace
   lineno: 50
   options: {}
-  start_char: 0
+  start_char: 10
   type: Block
   type_name: replace
 - element: substitution_def
