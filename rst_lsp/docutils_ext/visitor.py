@@ -44,7 +44,6 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                 )
             elif node.dtype == "directive":
                 line = self.lines[node.doc_lineno - 1]
-                print(line)
                 self.info_datas.append(
                     {
                         "type": "Block",

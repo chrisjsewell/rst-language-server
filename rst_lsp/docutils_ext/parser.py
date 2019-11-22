@@ -37,11 +37,17 @@ class InfoNodeBlock(nodes.Node):
         self.children = []
 
     def astext(self):
-        return f"InfoNodeBlock({self.dtype})"
+        return f'<InfoNodeBlock "{self.dtype}" doc_line={self.doc_lineno}>'
 
     def pformat(self, indent="    ", level=0):
         """Return an indented pseudo-XML representation, for test purposes."""
-        return indent * level + f"InfoNodeBlock({self.dtype})\n"
+        return indent * level + self.astext() + "\n"
+
+    def __repr__(self):
+        return self.astext()
+
+    def shortrepr(self):
+        return self.astext()
 
 
 # from docutils.parsers.rst.states.Block

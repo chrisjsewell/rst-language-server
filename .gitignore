@@ -125,3 +125,4 @@ dmypy.json
 .pyre/
 
 _archive/
+.rst-lsp-db.json

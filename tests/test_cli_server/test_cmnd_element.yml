@@ -1,0 +1,18 @@
+- element: section
+  level: 1
+  lineno: 4
+  start_char: 0
+  title: header 1
+  type: Block
+- element: section
+  level: 2
+  lineno: 20
+  start_char: 0
+  title: sub-title
+  type: Block
+- element: section
+  level: 1
+  lineno: 30
+  start_char: 0
+  title: header 2
+  type: Block

@@ -31,7 +31,7 @@ Examples
     results = assess_source(
         source, confoverrides={"extensions": ["sphinxcontrib.bibtex"]},
     )
-    assert results.errors == [
+    assert results.linting == [
         {
             "line": 6,
             "type": "ERROR",

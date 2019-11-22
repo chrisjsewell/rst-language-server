@@ -22,3 +22,11 @@ def get_test_file_content(get_test_file_path):
         return content
 
     return _get_test_file_content
+
+
+@pytest.fixture()
+def temp_cwd(tmp_path):
+    original_path = os.getcwd()
+    os.chdir(str(tmp_path))
+    yield tmp_path
+    os.chdir(original_path)

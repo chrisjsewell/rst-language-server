@@ -23,7 +23,7 @@ class JSONReporter(Reporter):
         if level >= self.report_level:
             self.log_capture.append(
                 {
-                    # "source": sys_message["source"],
+                    "source": "docutils",
                     "line": sys_message.get("line", ""),
                     "type": sys_message["type"],
                     "level": sys_message["level"],

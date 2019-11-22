@@ -204,24 +204,26 @@ def test_1_directives(get_test_file_content):
     }
 
 
-def test_1_errors(get_test_file_content):
+def test_1_linting(get_test_file_content):
     content = get_test_file_content("test1.rst")
     results = assess_source(
         content, confoverrides={"extensions": ["sphinxcontrib.bibtex"]}
     )
-    # print(results.errors)
+    # print(results.linting)
     # TODO inline errors may refer to wrong line, if there a line breaks
-    assert results.errors == [
+    assert results.linting == [
         {
             "line": 27,
             "type": "ERROR",
             "level": 3,
+            "source": "docutils",
             "description": 'Unknown interpreted text role "sdf".',
         },
         {
             "line": 33,
             "type": "ERROR",
             "level": 3,
+            "source": "docutils",
             "description": (
                 'Unknown directive type "dsfsdf".\n\n.. dsfsdf::\n\n    import a\n'
             ),
@@ -230,18 +232,21 @@ def test_1_errors(get_test_file_content):
             "line": 44,
             "type": "ERROR",
             "level": 3,
+            "source": "docutils",
             "description": 'Unknown interpreted text role "sdf".',
         },
         {
             "line": 44,
             "type": "ERROR",
             "level": 3,
+            "source": "docutils",
             "description": 'Unknown interpreted text role "abcf".',
         },
         {
             "line": 53,
             "type": "WARNING",
             "level": 2,
+            "source": "docutils",
             "description": (
                 'Substitution definition "REF4" empty or invalid.\n\n'
                 ".. |REF4| replace: bad syntax"
@@ -283,13 +288,14 @@ def test_doctest():
     results = assess_source(
         source, confoverrides={"extensions": ["sphinxcontrib.bibtex"]},
     )
-    # print(results.errors)
+    # print(results.linting)
     # print(results.elements)
-    assert results.errors == [
+    assert results.linting == [
         {
             "line": 6,
             "type": "ERROR",
             "level": 3,
+            "source": "docutils",
             "description": 'Unknown interpreted text role "unknown".',
         }
     ]

@@ -1,12 +1,12 @@
 from rst_lsp.analyse.main import init_sphinx
-from rst_lsp.database import Database
+from rst_lsp.database.tinydb import Database
 
 
-def test_update_classes(tmp_path):
+def test_update_conf_file(tmp_path):
     database = Database(str(tmp_path / "db.json"))
     with init_sphinx(confdir=None, confoverrides=None) as sphinx_init:
-        database.update_classes(sphinx_init.roles, sphinx_init.directives)
-    assert len(database.tbl_global) == 181
+        database.update_conf_file("conf.py", sphinx_init.roles, sphinx_init.directives)
+    assert len(database._tbl_classes) == 181
     assert database.query_role("index") == {
         "element": "role",
         "name": "index",
@@ -37,13 +37,13 @@ def test_update_classes(tmp_path):
             "number-lines": "optional_int",
         },
     }
-    database.update_classes({}, {})
-    assert len(database.tbl_global) == 0
+    database.update_conf_file("conf.py", {}, {})
+    assert len(database._tbl_classes) == 0
 
 
 def test_update_doc_lint(tmp_path):
     database = Database(str(tmp_path / "db.json"))
-    database.update_doc_lint(
+    database._update_doc_lint(
         "test.rst",
         [
             {
@@ -75,12 +75,12 @@ def test_update_doc_lint(tmp_path):
             },
         ],
     )
-    assert len(database.tbl_linting) == 4
+    assert len(database._tbl_linting) == 4
 
 
 def test_update_doc_elements(tmp_path):
     database = Database(str(tmp_path / "db.json"))
-    database.update_doc_elements(
+    database._update_doc_elements(
         "test.rst",
         [
             {
@@ -101,8 +101,8 @@ def test_update_doc_elements(tmp_path):
             },
         ],
     )
-    assert len(database.tbl_elements) == 2
-    database.update_doc_elements(
+    assert len(database._tbl_elements) == 2
+    database._update_doc_elements(
         "test.rst",
         [
             {
@@ -114,4 +114,4 @@ def test_update_doc_elements(tmp_path):
             },
         ],
     )
-    assert len(database.tbl_elements) == 1
+    assert len(database._tbl_elements) == 1

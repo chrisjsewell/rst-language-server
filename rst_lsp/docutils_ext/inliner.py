@@ -39,11 +39,17 @@ class InfoNodeInline(nodes.Node):
         self.children = []
 
     def astext(self):
-        return f"InfoNodeInline({self.dtype})"
+        return f'<InfoNodeInline "{self.dtype}" doc_line={self.doc_lineno}>'
 
     def pformat(self, indent="    ", level=0):
         """Return an indented pseudo-XML representation, for test purposes."""
-        return indent * level + f"InfoNodeInline({self.dtype})\n"
+        return indent * level + self.astext() + "\n"
+
+    def __repr__(self):
+        return self.astext()
+
+    def shortrepr(self):
+        return self.astext()
 
 
 class LSPInliner(Inliner):

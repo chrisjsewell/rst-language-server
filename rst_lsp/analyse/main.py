@@ -6,6 +6,7 @@ outside of the command-line, and also collects all available roles and directive
 
 """
 # TODO improve efficiency for multiple calls, e.g. by caching (using lru_cache?)
+# TODO subclass Sphinx, so we can only initialise the parts we require.
 from contextlib import contextmanager
 from collections import namedtuple
 import copy
@@ -15,14 +16,18 @@ import locale
 import os
 import shutil
 import tempfile
+from typing import List
 
+import attr
+
+from docutils.nodes import document
 from docutils.frontend import OptionParser
-
 from docutils.parsers.rst import Parser as RSTParser
 
 from sphinx import package_dir
 import sphinx.locale
 from sphinx.application import Sphinx
+from sphinx.environment import BuildEnvironment
 from sphinx.util.console import nocolor, color_terminal, terminal_safe  # noqa
 from sphinx.util.docutils import docutils_namespace, patch_docutils
 from sphinx.util.docutils import sphinx_domains
@@ -32,7 +37,7 @@ from rst_lsp.docutils_ext.reporter import new_document
 from rst_lsp.docutils_ext.visitor import DocInfoVisitor
 
 sphinx_init = namedtuple(
-    "sphinx_init", ["app", "directives", "roles", "log_status", "log_warnings"]
+    "sphinx_init", ["env", "directives", "roles", "log_status", "log_warnings"]
 )
 
 
@@ -56,6 +61,7 @@ def init_sphinx(
     confoverrides = confoverrides or {}
 
     builder = "html"
+    # TODO this is not efficient, to create temp directories on every call
     # these are not needed before build, but there existence is checked in ``Sphinx```
     sourcedir = source_dir or tempfile.mkdtemp()  # path to documentation source files
     # path for the cached environment and doctree
@@ -123,7 +129,7 @@ def init_sphinx(
                 # note this with statement redirects docutils role/directive getters,
                 # to include loading from domains
                 yield sphinx_init(
-                    app,
+                    app.env,
                     all_directives,
                     all_roles,
                     log_stream_status.getvalue(),
@@ -139,22 +145,48 @@ def init_sphinx(
             shutil.rmtree(outputdir, ignore_errors=True)
 
 
-SourceAssessResult = namedtuple(
-    "SourceAssessResult",
-    ["doctree", "environment", "roles", "directives", "elements", "errors"],
-)
+@attr.s
+class SourceAssessResult:
+    doctree: document = attr.ib()
+    environment: BuildEnvironment = attr.ib()
+    roles: dict = attr.ib()
+    directives: dict = attr.ib()
+    elements: List[dict] = attr.ib()
+    linting: List[dict] = attr.ib()
 
 
-def assess_source(content, filename="input.rst", confdir=None, confoverrides=None):
+def assess_source(
+    content: str,
+    filename: str = "input.rst",
+    confdir: str = None,
+    confoverrides: dict = None,
+) -> SourceAssessResult:
+    """Assess the content of an file.
 
+    Parameters
+    ----------
+    content : str
+        the content of the file
+    filename : str
+        the file path
+    confdir : str or None
+        path where configuration file (conf.py) is located
+    confoverrides : dict or None
+        dictionary containing parameters that will update those set from conf.py
+
+    Returns
+    -------
+    SourceAssessResult
+
+    """
     with init_sphinx(confdir=confdir, confoverrides=confoverrides) as sphinx_init:
 
         # TODO maybe sub-class sphinx.io.SphinxStandaloneReader?
         # (see also sphinx.testing.restructuredtext.parse, for a basic implementation)
 
         settings = OptionParser(components=(RSTParser,)).get_default_values()
-        sphinx_init.app.env.prepare_settings(filename)
-        settings.env = sphinx_init.app.env
+        sphinx_init.env.prepare_settings(filename)
+        settings.env = sphinx_init.env
         doc_warning_stream = StringIO()
         settings.warning_stream = doc_warning_stream
         settings.report_level = 2  # warning
@@ -169,10 +201,13 @@ def assess_source(content, filename="input.rst", confdir=None, confoverrides=Non
 
     return SourceAssessResult(
         document,
-        sphinx_init.app.env,
+        # TODO what can we extract data from environment to use in the database?
+        sphinx_init.env,
         sphinx_init.roles,
         sphinx_init.directives,
         elements,
+        # TODO should also capture additional formatting warnings,
+        # like trailing whitespace, final newline, etc (look at doc8)
         reporter.log_capture,
     )
 

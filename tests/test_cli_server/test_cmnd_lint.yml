@@ -1,0 +1,38 @@
+- description: Unknown interpreted text role "sdf".
+  level: 3
+  line: 27
+  source: docutils
+  type: ERROR
+- description: "Unknown directive type \"dsfsdf\".\n\n.. dsfsdf::\n\n    import a\n"
+  level: 3
+  line: 33
+  source: docutils
+  type: ERROR
+- description: Unknown interpreted text role "cite".
+  level: 3
+  line: 37
+  source: docutils
+  type: ERROR
+- description: Unknown interpreted text role "cite".
+  level: 3
+  line: 37
+  source: docutils
+  type: ERROR
+- description: Unknown interpreted text role "sdf".
+  level: 3
+  line: 44
+  source: docutils
+  type: ERROR
+- description: Unknown interpreted text role "abcf".
+  level: 3
+  line: 44
+  source: docutils
+  type: ERROR
+- description: 'Substitution definition "REF4" empty or invalid.
+
+
+    .. |REF4| replace: bad syntax'
+  level: 2
+  line: 53
+  source: docutils
+  type: WARNING
