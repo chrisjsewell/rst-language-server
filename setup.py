@@ -17,8 +17,14 @@ setup(
     ],
     extras_require={
         "cli": ["click>=7,<8"],
+        "jsonrpc": ["python-jsonrpc-server>0.3,<0.4"],
         "testing": ["pytest", "pytest-regressions", "sphinxcontrib-bibtex>=1.0.0"],
         "code_style": ["black", "flake8"],
     },
-    entry_points={"console_scripts": ["rst-lsp-cli=rst_lsp.cli_server:cli_entry"]},
+    entry_points={
+        "console_scripts": [
+            "rst-lsp-cli=rst_lsp.click_cli:cli_entry",
+            "rst-lsp-serve=rst_lsp.server.cli_entry:main",
+        ]
+    },
 )

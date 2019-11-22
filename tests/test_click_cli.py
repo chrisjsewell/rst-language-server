@@ -2,7 +2,7 @@ import json
 
 from click.testing import CliRunner
 
-import rst_lsp.cli_server as cli
+import rst_lsp.click_cli as cli
 
 
 def test_cmnd_conf_file(temp_cwd, get_test_file_path):
