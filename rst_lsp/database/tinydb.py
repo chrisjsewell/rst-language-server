@@ -8,7 +8,12 @@ from tinydb.middlewares import CachingMiddleware
 from tinydb.storages import JSONStorage
 
 
-from rst_lsp.database.base import get_role_json, get_directive_json
+from rst_lsp.database.base import (
+    RoleInfo,
+    DirectiveInfo,
+    get_role_json,
+    get_directive_json,
+)
 
 
 # TODO make abstract base class
@@ -88,24 +93,24 @@ class Database:
     def query_conf_file(self):
         return self._tbl_documents.get(where("dtype") == "configuration")
 
-    def query_role(self, name: str):
+    def query_role(self, name: str) -> RoleInfo:
         return self._tbl_classes.get(
             (where("element") == "role") & (where("name") == name)
         )
 
-    def query_roles(self, names: list = None):
+    def query_roles(self, names: list = None) -> List[RoleInfo]:
         if names is None:
             return self._tbl_classes.search(where("element") == "role")
         return self._tbl_classes.search(
             (where("element") == "role") & (where("name").one_of(names))
         )
 
-    def query_directive(self, name: str):
+    def query_directive(self, name: str) -> DirectiveInfo:
         return self._tbl_classes.get(
             (where("element") == "directive") & (where("name") == name)
         )
 
-    def query_directives(self, names: list = None):
+    def query_directives(self, names: list = None) -> List[DirectiveInfo]:
         if names is None:
             return self._tbl_classes.search(where("element") == "directive")
         return self._tbl_classes.search(

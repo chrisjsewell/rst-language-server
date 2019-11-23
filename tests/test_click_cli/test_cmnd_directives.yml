@@ -1,10 +1,10 @@
-- class: sphinx.directives.patches.Code
-  description: 'Parse and mark up content of a code block.
+- description: 'Parse and mark up content of a code block.
 
 
     This is compatible with docutils'' :rst:dir:`code` directive.'
   element: directive
   has_content: true
+  klass: sphinx.directives.patches.Code
   name: code
   optional_arguments: 1
   options:

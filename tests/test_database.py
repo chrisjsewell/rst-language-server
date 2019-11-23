@@ -26,7 +26,7 @@ def test_update_conf_file(tmp_path):
             "Parse and mark up content of a code block.\n\n"
             "This is compatible with docutils' :rst:dir:`code` directive."
         ),
-        "class": "sphinx.directives.patches.Code",
+        "klass": "sphinx.directives.patches.Code",
         "required_arguments": 0,
         "optional_arguments": 1,
         "has_content": True,

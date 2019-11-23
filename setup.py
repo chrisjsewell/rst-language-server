@@ -14,6 +14,7 @@ setup(
         "docutils>=0.15.2,<0.16",
         "pyyaml",
         "tinydb>=3.15,<4",
+        "typing-extensions",
     ],
     extras_require={
         "cli": ["click>=7,<8"],

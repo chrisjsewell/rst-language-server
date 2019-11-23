@@ -1,9 +1,31 @@
 from inspect import getdoc  # , getmro
+try:
+    from typing import TypedDict
+except ImportError:
+    from typing_extensions import TypedDict
 
 import attr
 
 
-def get_role_json(name, role):
+class RoleInfo(TypedDict):
+    element: str
+    name: str
+    description: str
+    module: str
+
+
+class DirectiveInfo(TypedDict):
+    element: str
+    name: str
+    description: str
+    klass: str
+    required_arguments: int
+    optional_arguments: int
+    has_content: bool
+    options: dict
+
+
+def get_role_json(name, role) -> RoleInfo:
     return {
         "element": "role",
         "name": name,
@@ -12,12 +34,12 @@ def get_role_json(name, role):
     }
 
 
-def get_directive_json(name, direct):
+def get_directive_json(name, direct) -> DirectiveInfo:
     data = {
         "element": "directive",
         "name": name,
         "description": getdoc(direct) or "",
-        "class": f"{direct.__module__}.{direct.__name__}",
+        "klass": f"{direct.__module__}.{direct.__name__}",
         "required_arguments": direct.required_arguments,
         "optional_arguments": direct.optional_arguments,
         "has_content": direct.has_content,
@@ -28,6 +50,7 @@ def get_directive_json(name, direct):
     return data
 
 
+# TODO use TypedDict with undefined keys?
 def get_element_json(block_objects: list, inline_objects: list):
     objs = []
     for obj in block_objects:

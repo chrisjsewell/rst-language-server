@@ -1,0 +1,74 @@
+{
+    "name": "rst-language-server",
+    "description": "ReStructuredText language server",
+    "author": "Sourcegraph",
+    "repository": "https://github.com/chrisjsewell/rst-language-server",
+    "license": "MIT",
+    "version": "0.0.1",
+    "publisher": "chrisjsewell",
+    "engines": {
+        "vscode": "^1.38.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "activationEvents": [
+        "onLanguage:restructuredtext"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "restructuredtext",
+                "aliases": [
+                    "reStructuredText",
+                    "restructuredtext",
+                    "ReStructured Text",
+                    "reStructured Text",
+                    "RST",
+                    "ReST",
+                    "reST"
+                ],
+                "extensions": [
+                    ".rst",
+                    ".rest"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "restructuredtext",
+                "scopeName": "text.restructuredtext",
+                "path": "./syntaxes/restructuredtext.tmLanguage"
+            }
+        ],
+        "configuration": {
+            "title": "RST Language Server Configuration",
+            "type": "object",
+            "properties": {
+                "rst_lsp.executable": {
+                    "type": "string",
+                    "default": "//anaconda/envs/rst-lsp/bin/rst-lsp-serve",
+                    "description": "Language server executable"
+                }
+            }
+        }
+    },
+    "main": "./out/extension",
+    "scripts": {
+        "vscode:prepublish": "tsc -p ./",
+        "compile": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "vscode": "npm run vscode:prepublish && VSCODE=$(which code-insiders || which code || echo echo ERROR: neither the code nor code-insiders vscode executable is installed); USER=dummy-dont-share-vscode-instance $VSCODE --user-data-dir=$PWD/.vscode-dev/user-data --extensionHomePath=$PWD/.vscode-dev/extensions --extensionDevelopmentPath=$PWD $*"
+    },
+    "devDependencies": {
+        "typescript": "^2.3.4",
+        "vscode": "^1.1.4",
+        "mocha": "^2.3.3",
+        "@types/node": "^6.0.40",
+        "@types/mocha": "^2.2.32"
+    },
+    "dependencies": {
+        "vscode-languageclient": "^5.2.1"
+    }
+}

@@ -6,6 +6,8 @@ import os
 import re
 from urllib import parse
 
+__all__ = ("urlparse", "urlunparse", "to_fs_path", "from_fs_path", "uri_with")
+
 
 IS_WIN = os.name == 'nt'
 RE_DRIVE_LETTER_PATH = re.compile(r"^\/[a-zA-Z]:")
@@ -84,9 +86,7 @@ def from_fs_path(path):
 def uri_with(
     uri, scheme=None, netloc=None, path=None, params=None, query=None, fragment=None
 ):
-    """Return a URI with the given part(s) replaced.
-    Parts are decoded / encoded.
-    """
+    """Return a URI with the given part(s) replaced (parts are decoded / encoded)."""
     old_scheme, old_netloc, old_path, old_params, old_query, old_fragment = urlparse(
         uri
     )
