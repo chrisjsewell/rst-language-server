@@ -14,11 +14,11 @@ setup(
         "docutils>=0.15.2,<0.16",
         "pyyaml",
         "tinydb>=3.15,<4",
-        "typing-extensions",
+        'typing-extensions; python_version<"3.8"',
     ],
     extras_require={
         "cli": ["click>=7,<8"],
-        "jsonrpc": ["python-jsonrpc-server>0.3,<0.4"],
+        "jsonrpc": ["python-jsonrpc-server>0.3,<0.4", "pluggy"],
         "testing": ["pytest", "pytest-regressions", "sphinxcontrib-bibtex>=1.0.0"],
         "code_style": ["black", "flake8"],
     },
@@ -26,6 +26,10 @@ setup(
         "console_scripts": [
             "rst-lsp-cli=rst_lsp.click_cli:cli_entry",
             "rst-lsp-serve=rst_lsp.server.cli_entry:main",
+        ],
+        "rst_lsp": [
+            "folding = rst_lsp.server.plugins.folding",
+            "completions = rst_lsp.server.plugins.completions"
         ]
     },
 )

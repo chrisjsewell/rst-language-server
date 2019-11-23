@@ -5,8 +5,9 @@ https://github.com/palantir/python-language-server/blob/b08891f9345a5bbd543c657d
 
 """
 # TODO how to show status bar of server status (https://github.com/onivim/oni/pull/524)
-from functools import partial
+from functools import partial, wraps
 from concurrent.futures import Future
+import inspect
 import logging
 import os
 import socketserver
@@ -22,9 +23,11 @@ from . import uri_utils as uris
 from .workspace import Config, Document, Workspace
 from .workspace import match_uri_to_workspace as uri2workspace
 from .datatypes import CompletionList, Position, TextDocument, TextEdit
+from .plugins import PluginTypes
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
+PARSING_DEBOUNCE = 0.5  # 500 ms
 PARENT_PROCESS_WATCH_INTERVAL = 10  # 10 s
 MAX_WORKERS = 64
 # SOURCE_FILE_EXTENSIONS = (".rst",)
@@ -60,7 +63,7 @@ def start_tcp_lang_server(bind_addr, port, check_parent_process, handler_class):
 
     def shutdown_server(*args):
         # pylint: disable=unused-argument
-        log.debug("Shutting down server")
+        logger.debug("Shutting down server")
         # Shutdown call must be done on a thread, to prevent deadlocks
         stop_thread = threading.Thread(target=server.shutdown)
         stop_thread.start()
@@ -81,19 +84,50 @@ def start_tcp_lang_server(bind_addr, port, check_parent_process, handler_class):
     server.allow_reuse_address = True
 
     try:
-        log.info("Serving %s on (%s, %s)", handler_class.__name__, bind_addr, port)
+        logger.info("Serving %s on (%s, %s)", handler_class.__name__, bind_addr, port)
         server.serve_forever()
     finally:
-        log.info("Shutting down")
+        logger.info("Shutting down")
         server.server_close()
 
 
 def start_io_lang_server(rfile, wfile, check_parent_process, handler_class):
     if not issubclass(handler_class, RstLanguageServer):
         raise ValueError("Handler class must be an instance of RstLanguageServer")
-    log.info("Starting %s IO language server", handler_class.__name__)
+    logger.info("Starting %s IO language server", handler_class.__name__)
     server = handler_class(rfile, wfile, check_parent_process)
     server.start()
+
+
+def debounce(interval_s, keyed_by=None):
+    """Debounce calls to this function until interval_s seconds have passed."""
+
+    def wrapper(func):
+        timers = {}
+        lock = threading.Lock()
+
+        @wraps(func)
+        def debounced(*args, **kwargs):
+            call_args = inspect.getcallargs(func, *args, **kwargs)
+            key = call_args[keyed_by] if keyed_by else None
+
+            def run():
+                with lock:
+                    del timers[key]
+                return func(*args, **kwargs)
+
+            with lock:
+                old_timer = timers.get(key)
+                if old_timer:
+                    old_timer.cancel()
+
+                timer = threading.Timer(interval_s, run)
+                timers[key] = timer
+                timer.start()
+
+        return debounced
+
+    return wrapper
 
 
 class RstLanguageServer(MethodDispatcher):
@@ -136,7 +170,7 @@ class RstLanguageServer(MethodDispatcher):
             # "signatureHelpProvider": {"triggerCharacters": []},
             # "experimental": any,
         }
-        log.info("Server capabilities: %s", server_capabilities)
+        logger.info("Server capabilities: %s", server_capabilities)
         return server_capabilities
 
     def __init__(self, rx, tx, check_parent_process=False):
@@ -211,7 +245,7 @@ class RstLanguageServer(MethodDispatcher):
         """Override getitem to fallback through multiple dispatchers."""
         if self._shutdown and item != "exit":
             # exit is the only allowed method during shutdown
-            log.debug("Ignoring non-exit method during shutdown: %s", item)
+            logger.debug("Ignoring non-exit method during shutdown: %s", item)
             raise KeyError
         try:
             return super(RstLanguageServer, self).__getitem__(item)
@@ -241,6 +275,40 @@ class RstLanguageServer(MethodDispatcher):
         workspace = uri2workspace(uri, self.workspaces, self.workspace)
         return workspace.get_document(uri)
 
+    def call_plugins(self, hook_name, doc_uri: Optional[str] = None, **kwargs):
+        """Calls hook_name and returns a list of results from all registered handlers"""
+        workspace = self.match_uri_to_workspace(doc_uri)
+        doc = workspace.get_document(doc_uri) if doc_uri else None
+        hook_handlers = self.config.plugin_manager.subset_hook_caller(
+            hook_name, self.config.disabled_plugins
+        )
+        return hook_handlers(
+            config=self.config, workspace=workspace, document=doc, **kwargs
+        )
+
+    @debounce(PARSING_DEBOUNCE, keyed_by="doc_uri")
+    def lint(self, doc_uri, is_saved):
+        workspace = self.match_uri_to_workspace(doc_uri)
+        if doc_uri in workspace.documents:
+            # workspace.publish_diagnostics(
+            diagnostics = [
+                {
+                    "source": "flake8",
+                    "code": "asdgasdg",
+                    "range": {
+                        "start": {"line": 1, "character": 7},
+                        "end": {"line": 1, "character": 9},
+                    },
+                    "message": "hallo",
+                    "severity": constants.DiagnosticSeverity.Warning,
+                }
+            ]
+            # flatten(self.call_plugins('rst_lint', doc_uri, is_saved=is_saved))
+            self._endpoint.notify(
+                "textDocument/publishDiagnostics",
+                params={"uri": doc_uri, "diagnostics": diagnostics},
+            )
+
     def m_initialize(
         self,
         processId: Optional[int] = None,
@@ -249,7 +317,7 @@ class RstLanguageServer(MethodDispatcher):
         initializationOptions: Optional[Any] = None,
         **_kwargs,
     ):
-        log.debug(
+        logger.debug(
             "Language server initialized with %s %s %s %s",
             processId,
             rootUri,
@@ -278,7 +346,7 @@ class RstLanguageServer(MethodDispatcher):
             def watch_parent_process(pid):
                 # exit when the given pid is not alive
                 if not utils.is_process_alive(pid):
-                    log.info("parent process %s is not alive, exiting!", pid)
+                    logger.info("parent process %s is not alive, exiting!", pid)
                     self.m_exit()
                 else:
                     threading.Timer(
@@ -315,8 +383,7 @@ class RstLanguageServer(MethodDispatcher):
                 added_uri, server=self, config=self.config
             )
 
-        # Migrate documents that are on the root workspace and have a better
-        # match now
+        # Migrate documents that are on the root workspace and have a better match now
         doc_uris = list(self.workspace.documents.keys())
         for uri in doc_uris:
             doc = self.workspace._docs.pop(uri)
@@ -329,6 +396,7 @@ class RstLanguageServer(MethodDispatcher):
     def m_text_document__did_open(self, textDocument: TextDocument, **_kwargs):
         workspace = self.match_uri_to_workspace(textDocument["uri"])
         workspace.put_document(textDocument)
+        self.lint(textDocument["uri"], is_saved=False)
 
     def m_text_document__did_close(self, textDocument: TextDocument, **_kwargs):
         workspace = self.match_uri_to_workspace(textDocument["uri"])
@@ -346,56 +414,18 @@ class RstLanguageServer(MethodDispatcher):
                 textDocument["uri"], change, version=textDocument.get("version")
             )
 
+    # FEATURES
+    # --------
+
     def m_text_document__folding_range(self, textDocument: TextDocument, **_kwargs):
-        return [
-            {
-                "kind": "region",
-                "startLine": 3,
-                "startCharacter": 0,
-                "endLine": 12,
-                "endCharacter": 0,
-            }
-        ]
+        return self.call_plugins(
+            PluginTypes.rst_folding_range.value, textDocument["uri"]
+        )
 
     def m_text_document__completion(
         self, textDocument: TextDocument, position: Position, **_kwargs
     ) -> CompletionList:
-        import re
-
-        doc = self.match_uri_to_document(textDocument["uri"])
-        before = doc.get_line_before(position)[::-1]  # reverse
-        self.log_message(before)
-        items = []
-        if re.match("^[a-z]*:", before):
-            items = [
-                {
-                    "label": r["name"],
-                    "insertText": f"{r['name']}:`$0`",  # TODO replace with textEdit
-                    "kind": constants.CompletionItemKind.Function,
-                    "detail": f"Module: {r['module']}",
-                    "documentation": r["description"],
-                    "insertTextFormat": 2,
-                }
-                for r in doc.workspace.database.query_roles()
-            ]
-        if re.match(r"^\.\.", before):
-            items = [
-                {
-                    "label": d["name"],
-                    "insertText": f" {d['name']}:: $0",  # TODO replace with textEdit
-                    "kind": constants.CompletionItemKind.Class,
-                    "detail": (
-                        f"Class: {d['klass']}"
-                        f"\nRequired Args: {d['required_arguments']}"
-                        f"\nOptional Args: {d['optional_arguments']}"
-                        f"\nHas Content: {d['has_content']}"
-                    ),
-                    "documentation": d["description"],
-                    "insertTextFormat": 2,
-                }
-                for d in doc.workspace.database.query_directives()
-            ]
-        return {
-            "isIncomplete": False,
-            "items": items,
-        }
+        completions = self.call_plugins(
+            PluginTypes.rst_completions.value, textDocument["uri"], position=position
+        )
+        return {"isIncomplete": False, "items": utils.flatten(completions)}

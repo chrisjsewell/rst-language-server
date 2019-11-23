@@ -4,9 +4,17 @@ import logging
 import os
 from typing import List
 
-__all__ = ("is_process_alive", "find_parents")
+__all__ = ("flatten", "merge", "is_process_alive", "find_parents")
 
 logger = logging.getLogger(__name__)
+
+
+def flatten(list_of_lists):
+    return [item for lst in list_of_lists for item in lst]
+
+
+def merge(list_of_dicts):
+    return {k: v for dictionary in list_of_dicts for k, v in dictionary.items()}
 
 
 def is_process_alive(pid: int) -> bool:

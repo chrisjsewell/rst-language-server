@@ -1,4 +1,5 @@
 import io
+import logging
 import os
 import pathlib
 import re
@@ -9,7 +10,9 @@ from rst_lsp.analyse.main import init_sphinx
 from . import uri_utils as uris
 from .utils import find_parents
 from .datatypes import Position, TextDocument, TextEdit
+from .plugins import create_manager
 
+logger = logging.getLogger(__name__)
 
 # TODO: this is not the best e.g. we capture numbers
 RE_START_WORD = re.compile("[A-Za-z_0-9]*$")
@@ -26,6 +29,17 @@ class Config:
         self._process_id = process_id
         self._capabilities = capabilities
         self._settings = {}
+        self._plugin_manager = create_manager(logger)
+        # TODO extract settings from plugin manager
+        self._update_disabled_plugins()
+
+    def _update_disabled_plugins(self):
+        # All plugins default to enabled
+        self._disabled_plugins = [
+            plugin for name, plugin in self.plugin_manager.list_name_plugin()
+            if not self.settings.get('plugins', {}).get(name, {}).get('enabled', True)
+        ]
+        logger.info("Disabled plugins: %s", self._disabled_plugins)
 
     @property
     def init_opts(self):
@@ -46,6 +60,14 @@ class Config:
     @property
     def settings(self):
         return self._settings
+
+    @property
+    def plugin_manager(self):
+        return self._plugin_manager
+
+    @property
+    def disabled_plugins(self):
+        return self._disabled_plugins
 
     def update(self, settings: dict):
         """Recursively merge the given settings into the current settings."""
