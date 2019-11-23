@@ -8,7 +8,7 @@ CALL_TIMEOUT = 10
 
 def test_missing_message(client_server):  # pylint: disable=redefined-outer-name
     with pytest.raises(JsonRpcMethodNotFound):
-        client_server._endpoint.request('unknown_method').result(timeout=CALL_TIMEOUT)
+        client_server._endpoint.request("unknown_method").result(timeout=CALL_TIMEOUT)
 
 
 def test_initialize(client_server):

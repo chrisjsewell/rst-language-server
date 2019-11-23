@@ -1,4 +1,5 @@
 from inspect import getdoc  # , getmro
+
 try:
     from typing import TypedDict
 except ImportError:

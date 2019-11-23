@@ -9,7 +9,7 @@ from urllib import parse
 __all__ = ("urlparse", "urlunparse", "to_fs_path", "from_fs_path", "uri_with")
 
 
-IS_WIN = os.name == 'nt'
+IS_WIN = os.name == "nt"
 RE_DRIVE_LETTER_PATH = re.compile(r"^\/[a-zA-Z]:")
 
 

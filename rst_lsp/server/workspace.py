@@ -221,7 +221,7 @@ class Document:
 
     def get_line_before(self, position: Position) -> str:
         """Return the section of the position's line before the position."""
-        return self.lines[position["line"]][:position["character"]]
+        return self.lines[position["line"]][: position["character"]]
 
     def offset_at_position(self, position: Position):
         """Return the byte-offset pointed at by the given position."""
