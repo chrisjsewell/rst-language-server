@@ -10,7 +10,7 @@ def test_cmnd_conf_file(temp_cwd, get_test_file_path):
     result = runner.invoke(
         cli.cmnd_conf_file, ["--path", get_test_file_path("conf.py")]
     )
-    assert result.exit_code == 0, result.output
+    assert result.exit_code == 0, result.exception
     assert "SUCCESS" in result.output
     assert (temp_cwd / ".rst-lsp-db.json").exists()
     assert (temp_cwd / ".rst-lsp-db.json").stat().st_size > 0
@@ -19,7 +19,7 @@ def test_cmnd_conf_file(temp_cwd, get_test_file_path):
 def test_cmnd_source_file(temp_cwd, get_test_file_path):
     runner = CliRunner()
     result = runner.invoke(cli.cmnd_source_file, [get_test_file_path("test1.rst")])
-    assert result.exit_code == 0, result.output
+    assert result.exit_code == 0, result.exception
     assert "SUCCESS" in result.output
     assert (temp_cwd / ".rst-lsp-db.json").exists()
     assert (temp_cwd / ".rst-lsp-db.json").stat().st_size > 0
@@ -28,9 +28,9 @@ def test_cmnd_source_file(temp_cwd, get_test_file_path):
 def test_cmnd_documents(temp_cwd, get_test_file_path):
     runner = CliRunner()
     result = runner.invoke(cli.cmnd_source_file, [get_test_file_path("test1.rst")])
-    assert result.exit_code == 0, result.output
+    assert result.exit_code == 0, result.exception
     result = runner.invoke(cli.cmnd_documents)
-    assert result.exit_code == 0, result.output
+    assert result.exit_code == 0, result.exception
     assert "test1.rst" in result.output
 
 
@@ -38,18 +38,18 @@ def test_cmnd_roles(temp_cwd, get_test_file_path, data_regression):
     runner = CliRunner()
     path = get_test_file_path("conf.py")
     result = runner.invoke(cli.cmnd_conf_file, ["--path", path])
-    assert result.exit_code == 0, result.output
+    assert result.exit_code == 0, result.exception
     result = runner.invoke(cli.cmnd_roles, ["-n", "index", "-n", "ref", "--raw"])
-    assert result.exit_code == 0, result.output
+    assert result.exit_code == 0, result.exception
     data_regression.check(json.loads(result.output))
 
 
 def test_cmnd_directives(temp_cwd, get_test_file_path, data_regression):
     runner = CliRunner()
     result = runner.invoke(cli.cmnd_conf_file)
-    assert result.exit_code == 0, result.output
+    assert result.exit_code == 0, result.exception
     result = runner.invoke(cli.cmnd_directives, ["-n", "code", "--raw"])
-    assert result.exit_code == 0, result.output
+    assert result.exit_code == 0, result.exception
     data_regression.check(json.loads(result.output))
 
 
@@ -58,7 +58,7 @@ def test_cmnd_element(temp_cwd, get_test_file_path, data_regression):
     path = get_test_file_path("test1.rst")
     result = runner.invoke(cli.cmnd_source_file, [path])
     result = runner.invoke(cli.cmnd_element, ["section", "--raw"])
-    assert result.exit_code == 0, result.output
+    assert result.exit_code == 0, result.exception
     data_regression.check(
         [{k: v for k, v in d.items() if k != "uri"} for d in json.loads(result.output)]
     )
@@ -69,7 +69,7 @@ def test_cmnd_lint(temp_cwd, get_test_file_path, data_regression):
     path = get_test_file_path("test1.rst")
     result = runner.invoke(cli.cmnd_source_file, [path])
     result = runner.invoke(cli.cmnd_lint, [path, "--raw"])
-    assert result.exit_code == 0, result.output
+    assert result.exit_code == 0, result.exception
     data_regression.check(
         [{k: v for k, v in d.items() if k != "uri"} for d in json.loads(result.output)]
     )
@@ -80,5 +80,5 @@ def test_cmnd_folding_range(temp_cwd, get_test_file_path, data_regression):
     path = get_test_file_path("test1.rst")
     result = runner.invoke(cli.cmnd_source_file, [path])
     result = runner.invoke(cli.cmnd_folding_range, [path])
-    assert result.exit_code == 0, result.output
+    assert result.exit_code == 0, result.exception
     data_regression.check(json.loads(result.output))

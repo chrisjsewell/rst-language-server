@@ -1,11 +1,12 @@
-from rst_lsp.analyse.main import init_sphinx
+from rst_lsp.analyse.main import create_sphinx_app, retrieve_namespace
 from rst_lsp.database.tinydb import Database
 
 
 def test_update_conf_file(tmp_path):
     database = Database(str(tmp_path / "db.json"))
-    with init_sphinx(confdir=None, confoverrides=None) as sphinx_init:
-        database.update_conf_file("conf.py", sphinx_init.roles, sphinx_init.directives)
+    app_env = create_sphinx_app()
+    roles, directives = retrieve_namespace(app_env)
+    database.update_conf_file("conf.py", roles, directives)
     assert len(database._tbl_classes) == 181
     assert database.query_role("index") == {
         "element": "role",

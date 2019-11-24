@@ -6,7 +6,7 @@ import re
 from typing import Dict, List
 
 from rst_lsp.database.tinydb import Database
-from rst_lsp.analyse.main import init_sphinx
+from rst_lsp.analyse.main import create_sphinx_app, retrieve_namespace
 from . import uri_utils as uris
 from .utils import find_parents
 from .datatypes import Position, TextDocument, TextEdit
@@ -90,8 +90,9 @@ class Workspace(object):
         # db_path = os.path.join(self.root_path, ".rst-lsp-db.json")
         # TODO how to utilise persistent DB?
         self._db = Database(in_memory=True)
-        with init_sphinx(confdir=None) as sphinx_init:
-            self._db.update_conf_file(None, sphinx_init.roles, sphinx_init.directives)
+        app_env = create_sphinx_app()
+        roles, directives = retrieve_namespace(app_env)
+        self._db.update_conf_file(None, roles, directives)
         # self.server.log_message(f"Created database at: {db_path}")
 
     def close(self):

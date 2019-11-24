@@ -18,7 +18,7 @@ import click
 import yaml
 
 from rst_lsp import __version__
-from rst_lsp.analyse.main import init_sphinx, assess_source
+from rst_lsp.analyse.main import create_sphinx_app, retrieve_namespace, assess_source
 from rst_lsp.database.tinydb import Database
 from rst_lsp.docutils_ext.visitor import ElementType
 
@@ -126,11 +126,12 @@ def cmnd_conf_file(database: Database, path: Optional[str]):
         echo_error("the file must be named 'conf.py'")
     else:
         path = os.path.dirname(path)
-    with init_sphinx(confdir=path) as sphinx_init:
-        database.update_conf_file(path, sphinx_init.roles, sphinx_init.directives)
-        # TODO this also requires the re-assessment of all source files,
-        # but can we be smart about which files to reasses?
-        # (e.g. only those containing roles/directives added/removed)
+    app_env = create_sphinx_app(confdir=path)
+    roles, directives = retrieve_namespace(app_env)
+    database.update_conf_file(path, roles, directives)
+    # TODO this also requires the re-assessment of all source files,
+    # but can we be smart about which files to reasses?
+    # (e.g. only those containing roles/directives added/removed)
     echo_success(f"updated conf file {path}")
 
 
@@ -143,13 +144,16 @@ def cmnd_source_file(database: Database, path: str):
     conf_file = database.query_conf_file()
     with click.open_file(path) as handle:
         content = handle.read()
-        result = assess_source(
-            content,
-            path,
-            confdir=os.path.dirname(conf_file["uri"])
-            if conf_file is not None
-            else None,
-        )
+    app_env = create_sphinx_app(
+        confdir=os.path.dirname(conf_file["uri"])
+        if conf_file is not None
+        else None,
+    )
+    result = assess_source(
+        content,
+        app_env,
+        path,
+    )
     database.update_doc(
         path,
         endline=len(content.splitlines()) - 1,
