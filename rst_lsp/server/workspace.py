@@ -6,7 +6,13 @@ import re
 from typing import Dict, List
 
 from rst_lsp.database.tinydb import Database
-from rst_lsp.analyse.main import create_sphinx_app, retrieve_namespace
+from rst_lsp.analyse.main import (
+    assess_source,
+    create_sphinx_app,
+    retrieve_namespace,
+    SphinxAppEnv,
+    SourceAssessResult,
+)
 from . import uri_utils as uris
 from .utils import find_parents
 from .datatypes import Position, TextDocument, TextEdit
@@ -36,8 +42,9 @@ class Config:
     def _update_disabled_plugins(self):
         # All plugins default to enabled
         self._disabled_plugins = [
-            plugin for name, plugin in self.plugin_manager.list_name_plugin()
-            if not self.settings.get('plugins', {}).get(name, {}).get('enabled', True)
+            plugin
+            for name, plugin in self.plugin_manager.list_name_plugin()
+            if not self.settings.get("plugins", {}).get(name, {}).get("enabled", True)
         ]
         logger.info("Disabled plugins: %s", self._disabled_plugins)
 
@@ -90,8 +97,8 @@ class Workspace(object):
         # db_path = os.path.join(self.root_path, ".rst-lsp-db.json")
         # TODO how to utilise persistent DB?
         self._db = Database(in_memory=True)
-        app_env = create_sphinx_app()
-        roles, directives = retrieve_namespace(app_env)
+        self._app_env = create_sphinx_app()
+        roles, directives = retrieve_namespace(self._app_env)
         self._db.update_conf_file(None, roles, directives)
         # self.server.log_message(f"Created database at: {db_path}")
 
@@ -104,7 +111,12 @@ class Workspace(object):
 
     @property
     def database(self) -> Database:
+        # TODO ensure updated
         return self._db
+
+    @property
+    def app_env(self) -> SphinxAppEnv:
+        return self._app_env
 
     @property
     def root_path(self) -> str:
@@ -180,6 +192,7 @@ class Document:
         self._workspace = workspace
         self._local = local
         self._source = source
+        self._has_changed = True
 
     @property
     def workspace(self) -> Workspace:
@@ -198,6 +211,23 @@ class Document:
             with open(self.path, "r", encoding="utf-8") as f:
                 return f.read()
         return self._source
+
+    @property
+    def database(self) -> SourceAssessResult:
+        if self._has_changed:
+            # TODO partial reassessment of source
+            result = assess_source(
+                self.source, self.workspace.app_env, filename=self.uri
+            )
+            self._workspace.database.update_doc(
+                self.uri,
+                endline=len(self.lines) - 1,
+                endchar=len(self.lines[-1]) - 1,
+                elements=result.elements,
+                lints=result.linting,
+            )
+        self._has_changed = False
+        return self._workspace.database
 
     def update_config(self, config: Config):
         self._config = config
@@ -244,6 +274,7 @@ class Document:
                 new.write(line[end_col:])
 
         self._source = new.getvalue()
+        self._has_changed = True
 
     def get_line(self, position: Position) -> str:
         """Return the position's line."""
