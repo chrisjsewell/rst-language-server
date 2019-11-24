@@ -22,7 +22,7 @@ from . import constants, utils
 from . import uri_utils as uris
 from .workspace import Config, Document, Workspace
 from .workspace import match_uri_to_workspace as uri2workspace
-from .datatypes import CompletionList, Position, TextDocument, TextEdit
+from .datatypes import CompletionList, DocumentSymbol, Position, TextDocument, TextEdit
 from .plugins import PluginTypes
 
 logger = logging.getLogger(__name__)
@@ -158,7 +158,7 @@ class RstLanguageServer(MethodDispatcher):
             # "documentFormattingProvider": True,
             # "documentHighlightProvider": True,
             # "documentRangeFormattingProvider": True,
-            # "documentSymbolProvider": True,
+            "documentSymbolProvider": True,
             # "definitionProvider": True,
             # "executeCommandProvider": {
             #     "commands": flatten(self._hook("pyls_commands"))
@@ -242,7 +242,6 @@ class RstLanguageServer(MethodDispatcher):
             "textDocument/publishDiagnostics",
             params={"uri": doc_uri, "diagnostics": diagnostics},
         )
-
 
     # also available
     # 'workspace/applyEdit' request
@@ -437,3 +436,12 @@ class RstLanguageServer(MethodDispatcher):
             PluginTypes.rst_completions.value, textDocument["uri"], position=position
         )
         return {"isIncomplete": False, "items": utils.flatten(completions)}
+
+    def m_text_document__document_symbol(
+        self, textDocument: TextDocument, **_kwargs
+    ) -> List[DocumentSymbol]:
+        return utils.flatten(
+            self.call_plugins(
+                PluginTypes.rst_document_symbols.value, textDocument["uri"]
+            )
+        )

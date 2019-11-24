@@ -29,7 +29,8 @@ setup(
         ],
         "rst_lsp": [
             "folding = rst_lsp.server.plugins.folding",
-            "completions = rst_lsp.server.plugins.completions"
+            "completions = rst_lsp.server.plugins.completions",
+            "document_symbols = rst_lsp.server.plugins.doc_symbols"
         ]
     },
 )
