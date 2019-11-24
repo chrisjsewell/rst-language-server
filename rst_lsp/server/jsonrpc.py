@@ -12,7 +12,7 @@ import logging
 import os
 import socketserver
 import threading
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 from pyls_jsonrpc.dispatchers import MethodDispatcher
 from pyls_jsonrpc.endpoint import Endpoint
@@ -135,7 +135,7 @@ class RstLanguageServer(MethodDispatcher):
     https://github.com/Microsoft/language-server-protocol/blob/master/versions/protocol-1-x.md
     """
 
-    def capabilities(self):
+    def capabilities(self) -> dict:
         server_capabilities = {
             # Defines how text documents are synced
             "textDocumentSync": {
@@ -176,9 +176,8 @@ class RstLanguageServer(MethodDispatcher):
     def __init__(self, rx, tx, check_parent_process=False):
         """Initialise the server."""
         self.root_uri = None
-        self.config = None
-        self.workspaces = {}
-        self.uri_workspace_mapper = {}
+        self.config = None  # type: Optional[Config]
+        self.workspaces = {}  # type: Dict[str, Workspace]
         self.watching_thread = None
 
         self._jsonrpc_stream_reader = JsonRpcStreamReader(rx)
@@ -237,8 +236,15 @@ class RstLanguageServer(MethodDispatcher):
             "workspace/configuration", params={"items": items},
         )
 
+    def notify_lint(self, doc_uri: str, diagnostics: List[dict]):
+        """Request configuration settings from the client."""
+        self._endpoint.notify(
+            "textDocument/publishDiagnostics",
+            params={"uri": doc_uri, "diagnostics": diagnostics},
+        )
+
+
     # also available
-    # 'textDocument/publishDiagnostics' notification
     # 'workspace/applyEdit' request
 
     def __getitem__(self, item):
@@ -264,6 +270,10 @@ class RstLanguageServer(MethodDispatcher):
         return None
 
     def m_exit(self, **_kwargs):
+        # Note: LSP protocol indicates that the server process should remain alive after
+        # the client's Shutdown request, and wait for the client's Exit notification.
+        for workspace in self.workspaces.values():
+            workspace.close()
         self._endpoint.shutdown()
         self._jsonrpc_stream_reader.close()
         self._jsonrpc_stream_writer.close()
@@ -277,6 +287,7 @@ class RstLanguageServer(MethodDispatcher):
 
     def call_plugins(self, hook_name, doc_uri: Optional[str] = None, **kwargs):
         """Calls hook_name and returns a list of results from all registered handlers"""
+        logger.debug("calling plugins")
         workspace = self.match_uri_to_workspace(doc_uri)
         doc = workspace.get_document(doc_uri) if doc_uri else None
         hook_handlers = self.config.plugin_manager.subset_hook_caller(
@@ -304,10 +315,7 @@ class RstLanguageServer(MethodDispatcher):
                 }
             ]
             # flatten(self.call_plugins('rst_lint', doc_uri, is_saved=is_saved))
-            self._endpoint.notify(
-                "textDocument/publishDiagnostics",
-                params={"uri": doc_uri, "diagnostics": diagnostics},
-            )
+            self.notify_lint(doc_uri, diagnostics)
 
     def m_initialize(
         self,

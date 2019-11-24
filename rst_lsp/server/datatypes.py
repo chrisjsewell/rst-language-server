@@ -3,7 +3,7 @@ try:
 except ImportError:
     from typing_extensions import TypedDict
 
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 
 
 class TextDocument(TypedDict):
@@ -50,6 +50,17 @@ class CompletionItem(TypedDict):
     data: Optional[Any]
 
 
-def CompletionList(TypedDict):
+class CompletionList(TypedDict):
     items: List[CompletionItem]
     isIncomplete: bool
+
+
+class Diagnostic(TypedDict):
+    range: Range
+    severity: Optional[int]
+    code: Optional[Union[int, str]]
+    # A human-readable string describing the source of this
+    source: Optional[str]
+    message: str
+    # An array of related diagnostic information.
+    relatedInformation: Optional[list]

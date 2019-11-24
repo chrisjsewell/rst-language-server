@@ -5,7 +5,7 @@ from typing import List, Optional
 from tinydb import TinyDB, where
 from tinydb.database import Table
 from tinydb.middlewares import CachingMiddleware
-from tinydb.storages import JSONStorage
+from tinydb.storages import JSONStorage, MemoryStorage
 
 
 from rst_lsp.database.base import (
@@ -18,13 +18,15 @@ from rst_lsp.database.base import (
 
 # TODO make abstract base class
 class Database:
-    def __init__(self, path, cache_writes=False):
+    def __init__(self, path=None, in_memory=False, cache_writes=False):
         """A database for storing language-server data.
 
         Parameters
         ----------
         path : str
             path for the database file
+        in_memory: bool
+            whether the database is stored or not
         cache_writes : bool
             caches all read operations and writes data to disk,
             only after a configured number of write operations.
@@ -32,11 +34,16 @@ class Database:
             (see https://tinydb.readthedocs.io/en/latest/usage.html#cachingmiddleware)
 
         """
+        if in_memory:
+            self._db = TinyDB(
+                storage=MemoryStorage,
+            )
+        else:
+            self._db = TinyDB(
+                path,
+                storage=CachingMiddleware(JSONStorage) if cache_writes else JSONStorage,
+            )
         self._path = path
-        self._db = TinyDB(
-            path,
-            storage=CachingMiddleware(JSONStorage) if cache_writes else JSONStorage,
-        )
 
         # define tables
         # FYI can also set query sizes for tables
@@ -51,6 +58,10 @@ class Database:
         self._tbl_elements = self._db.table("elements")  # type: Table
         # stores information about linting errors/warnings in each document
         self._tbl_linting = self._db.table("linting")  # type: Table
+
+    def close(self):
+        """Close the database."""
+        self._db.close()
 
     @property
     def path(self) -> str:

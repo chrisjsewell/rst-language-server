@@ -87,11 +87,15 @@ class Workspace(object):
         self._init_database()
 
     def _init_database(self):
-        db_path = os.path.join(self.root_path, ".rst-lsp-db.json")
-        self._db = Database(db_path)
+        # db_path = os.path.join(self.root_path, ".rst-lsp-db.json")
+        # TODO how to utilise persistent DB?
+        self._db = Database(in_memory=True)
         with init_sphinx(confdir=None) as sphinx_init:
             self._db.update_conf_file(None, sphinx_init.roles, sphinx_init.directives)
-        self.server.log_message(f"Created database at: {db_path}")
+        # self.server.log_message(f"Created database at: {db_path}")
+
+    def close(self):
+        self._db.close()
 
     @property
     def documents(self):
@@ -123,7 +127,10 @@ class Workspace(object):
 
         See https://github.com/Microsoft/language-server-protocol/issues/177
         """
-        return self._docs.get(doc_uri) or self._create_document(doc_uri)
+        doc = self._docs.get(doc_uri)
+        if not doc:
+            doc = self._create_document({"uri": doc_uri})
+        return doc
 
     def put_document(self, document: TextDocument):
         self._docs[document["uri"]] = self._create_document(document)
@@ -150,8 +157,8 @@ class Workspace(object):
     def _create_document(self, document: TextDocument):
         return Document(
             document["uri"],
-            source=document["text"],
-            version=document["version"],
+            source=document.get("text", None),
+            version=document.get("version", None),
             config=self._config,
             workspace=self,
         )

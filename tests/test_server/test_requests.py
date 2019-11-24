@@ -12,10 +12,11 @@ def test_missing_message(client_server):  # pylint: disable=redefined-outer-name
 
 
 def test_initialize(client_server):
-    response = client_server._endpoint.request(
+    future = client_server._endpoint.request(
         "initialize",
         {"rootPath": os.path.dirname(__file__), "initializationOptions": {}},
-    ).result(timeout=CALL_TIMEOUT)
+    )
+    response = future.result(timeout=CALL_TIMEOUT)
     assert "capabilities" in response
     assert "textDocumentSync" in response["capabilities"]
 
@@ -30,10 +31,10 @@ def test_folding_provider(client_server):
         "text_document/folding_range",
         {
             "textDocument": {
-                "uri": "string",
+                "uri": "the uri",
                 "languageId": "str",
                 "version": 1,
-                "text": "string",
+                "text": "the text",
             }
         },
     ).result(timeout=CALL_TIMEOUT)
