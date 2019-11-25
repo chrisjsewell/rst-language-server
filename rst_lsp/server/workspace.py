@@ -14,6 +14,7 @@ from rst_lsp.analyse.main import (
     SphinxAppEnv,
 )
 from . import uri_utils as uris
+from .constants import MessageType
 from .utils import find_parents
 from .datatypes import Position, TextDocument, TextEdit
 from .plugin_manager import create_manager
@@ -91,16 +92,37 @@ class Workspace(object):
         self._root_uri_scheme = uris.urlparse(self._root_uri)[0]
         self._root_path = uris.to_fs_path(self._root_uri)
         self._docs = {}
-        self._init_database()
-
-    def _init_database(self):
-        # db_path = os.path.join(self.root_path, ".rst-lsp-db.json")
         # TODO how to utilise persistent DB?
         self._db = Database(in_memory=True)
-        self._app_env = create_sphinx_app()
+        self._update_env()
+
+    def _update_env(self):
+        """Update the sphinx application."""
+        # TODO how to watch conf.py for changes? (or at least have command to update)
+        conf_path = self._config.settings.get("conf_path", None)
+        if conf_path and not os.path.exists(conf_path):
+            self.server.show_message(
+                f"The path set in `rst_lsp.conf_path` does not exist: {conf_path}",
+                msg_type=MessageType.Error,
+            )
+            conf_path = None
+        elif conf_path:
+            conf_path = os.path.realpath(os.path.dirname(conf_path))
+        self.server.log_message(f"Using conf dir: {conf_path}")
+        try:
+            self._app_env = create_sphinx_app(conf_path)
+        except Exception as err:
+            self.server.show_message(
+                (
+                    f"An error occurred using `rst_lsp.conf_path`: {conf_path}.\n\n"
+                    f"{err}"
+                ),
+                msg_type=MessageType.Error,
+            )
+            conf_path = None
+            self._app_env = create_sphinx_app(conf_path)
         roles, directives = retrieve_namespace(self._app_env)
-        self._db.update_conf_file(None, roles, directives)
-        # self.server.log_message(f"Created database at: {db_path}")
+        self._db.update_conf_file(conf_path, roles, directives)
 
     def close(self):
         self._db.close()
@@ -171,6 +193,7 @@ class Workspace(object):
 
     def update_config(self, config):
         self._config = config
+        self._update_env()
         for doc_uri in self.documents:
             self.get_document(doc_uri).update_config(config)
 

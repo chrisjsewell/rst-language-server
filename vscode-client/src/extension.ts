@@ -16,9 +16,6 @@ function startLangServer(command: string, args: string[], documentSelector: Docu
 	};
 	const clientOptions: LanguageClientOptions = {
 		documentSelector: documentSelector,
-		synchronize: {
-			configurationSection: ["rst_lsp", "python"]
-		}
 	}
 	return new LanguageClient("RST Language Server", serverOptions, clientOptions).start();
 }
@@ -43,6 +40,8 @@ function startLangServerTCP(addr: number, documentSelector: string[]): Disposabl
 }
 
 export function activate(context: ExtensionContext) {
+	// TODO use python.pythonPath setting to specify where executable is?
+	// TODO launch command to install from pip/conda if executable missing
 	const executable = workspace.getConfiguration("rst_lsp").get<string>("executable");
 	let selector: DocumentSelector = [{ 
 		language: "restructuredtext",

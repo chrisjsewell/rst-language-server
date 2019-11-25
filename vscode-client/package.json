@@ -50,6 +50,12 @@
                     "type": "string",
                     "default": "//anaconda/envs/rst-lsp/bin/rst-lsp-serve",
                     "description": "Language server executable"
+                },
+                "rst_lsp.conf_path": {
+                    "type": ["string", "null"],
+                    "default": null,
+                    "pattern": ".*conf\\.py$",
+                    "description": "The path to the sphinx conf.py file."
                 }
             }
         }

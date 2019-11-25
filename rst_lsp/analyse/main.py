@@ -5,8 +5,6 @@ which is a context manager, that allows sphinx to be initialised,
 outside of the command-line.
 
 """
-# TODO improve efficiency for multiple calls, e.g. by caching (using lru_cache?)
-# TODO subclass Sphinx, so we can only initialise the parts we require.
 from contextlib import contextmanager
 import copy
 from io import StringIO
@@ -220,7 +218,3 @@ def assess_source(
         elements = visitor.info_datas[:]
 
     return SourceAssessResult(document, elements, reporter.log_capture,)
-
-    # from docutils.parsers.rst import states
-    # for state in states.state_classes:
-    #     print(state)

@@ -30,8 +30,6 @@ logger = logging.getLogger(__name__)
 LINT_DEBOUNCE = 0.5  # 500 ms
 PARENT_PROCESS_WATCH_INTERVAL = 10  # 10 s
 MAX_WORKERS = 64
-# SOURCE_FILE_EXTENSIONS = (".rst",)
-# CONFIG_FILES = ("conf.py",)
 
 CONFIG_NAMESPACE = "rst_lsp"
 
@@ -161,7 +159,7 @@ class RstLanguageServer(MethodDispatcher):
             "documentSymbolProvider": True,
             # "definitionProvider": True,
             # "executeCommandProvider": {
-            #     "commands": flatten(self._hook("pyls_commands"))
+            #     "commands": flatten(self.call_plugins("rst_commands"))
             # },
             "hoverProvider": True,
             # "referencesProvider": True,
