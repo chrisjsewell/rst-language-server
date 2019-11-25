@@ -13,10 +13,10 @@ def rst_completions(
     config: Config, workspace: Workspace, document: Document, position: Position
 ):
 
-    before = document.get_line_before(position)[::-1]  # reverse
-    workspace.server.log_message(before)
+    before_rev = document.get_line_before(position)[::-1]  # reverse
+    # workspace.server.log_message(before_rev)
     items = []
-    if re.match("^[a-z]*:", before):
+    if re.match("^[a-z]*:", before_rev):
         items = [
             {
                 "label": r["name"],
@@ -28,11 +28,13 @@ def rst_completions(
             }
             for r in workspace.database.query_roles()
         ]
-    if re.match(r"^\.\.", before):
+    if re.match(r"^\s?\.\.", before_rev):
         items = [
             {
                 "label": d["name"],
-                "insertText": f" {d['name']}:: $0",  # TODO replace with textEdit
+                "insertText": f"{d['name']}:: $0"
+                if before_rev.startswith(" ")
+                else f" {d['name']}:: $0",  # TODO replace with textEdit
                 "kind": CompletionItemKind.Class,
                 "detail": (
                     f"Class: {d['klass']}"
