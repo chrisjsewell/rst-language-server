@@ -1,18 +1,24 @@
 - element: section
   level: 1
   lineno: 3
+  section_uuid: null
   start_char: 0
   title: header 1
   type: Block
+  uuid: uuid_1
 - element: section
   level: 2
   lineno: 19
+  section_uuid: uuid_1
   start_char: 0
   title: sub-title
   type: Block
+  uuid: uuid_6
 - element: section
   level: 1
   lineno: 29
+  section_uuid: null
   start_char: 0
   title: header 2
   type: Block
+  uuid: uuid_11

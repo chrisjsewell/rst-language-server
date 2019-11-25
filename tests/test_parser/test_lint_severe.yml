@@ -59,4 +59,14 @@ elements:
   start_char: 0
   type: Inline
   uuid: uuid_7
-linting: []
+linting:
+- description: 'Title level inconsistent:
+
+
+    title 5
+
+    *******'
+  level: 4
+  line: 21
+  source: docutils
+  type: SEVERE
