@@ -1,15 +1,19 @@
 - element: hyperlink_target
   lineno: 1
   raw: '.. _headerlink:'
+  section_uuid: null
   start_char: 0
   target: headerlink
   type: Block
+  uuid: uuid_0
 - element: section
   level: 1
   lineno: 3
+  section_uuid: null
   start_char: 0
   title: header 1
   type: Block
+  uuid: uuid_1
 - arguments:
   - html
   element: directive
@@ -18,9 +22,11 @@
   klass: sphinx.directives.other.Only
   lineno: 6
   options: {}
+  section_uuid: uuid_1
   start_char: 0
   type: Block
   type_name: only
+  uuid: uuid_2
 - arguments: []
   element: directive
   end_char: 19
@@ -28,9 +34,11 @@
   klass: docutils.parsers.rst.directives.admonitions.Note
   lineno: 8
   options: {}
+  section_uuid: uuid_1
   start_char: 4
   type: Block
   type_name: note
+  uuid: uuid_3
 - arguments:
   - python
   element: directive
@@ -40,27 +48,35 @@
   lineno: 12
   options:
     linenos: null
+  section_uuid: uuid_1
   start_char: 0
   type: Block
   type_name: code-block
+  uuid: uuid_4
 - alias: sdf
   element: link
   lineno: 17
   raw: '`<sdf>`__'
+  section_uuid: uuid_1
   start_char: 0
   type: Inline
+  uuid: uuid_5
 - element: section
   level: 2
   lineno: 19
+  section_uuid: uuid_1
   start_char: 0
   title: sub-title
   type: Block
+  uuid: uuid_6
 - alias: http://www.python.org/
   element: link
   lineno: 22
   raw: '`<http://www.python.org/>`_'
+  section_uuid: uuid_6
   start_char: 0
   type: Inline
+  uuid: uuid_7
 - arguments: []
   element: directive
   end_char: 16
@@ -68,78 +84,102 @@
   klass: docutils.parsers.rst.directives.admonitions.Note
   lineno: 24
   options: {}
+  section_uuid: uuid_6
   start_char: 0
   type: Block
   type_name: note
+  uuid: uuid_8
 - alias: www.python.org
   element: link
   lineno: 26
   raw: '`a link to python <www.python.org>`_'
+  section_uuid: uuid_6
   start_char: 12
   type: Inline
+  uuid: uuid_9
 - content: asdasx
   element: role
   lineno: 27
   raw: :sdf:`asdasx`
   role: sdf
+  section_uuid: uuid_6
   start_char: 4
   type: Inline
+  uuid: uuid_10
 - element: section
   level: 1
   lineno: 29
+  section_uuid: null
   start_char: 0
   title: header 2
   type: Block
+  uuid: uuid_11
 - content: sadasd
   element: role
   lineno: 36
   raw: :cite:`sadasd`
   role: cite
+  section_uuid: uuid_11
   start_char: 0
   type: Inline
+  uuid: uuid_12
 - content: asd
   element: role
   lineno: 37
   raw: :cite:`asd`
   role: cite
+  section_uuid: uuid_11
   start_char: 0
   type: Inline
+  uuid: uuid_13
 - content: saasf
   element: role
   lineno: 43
   raw: :sdf:`saasf`
   role: sdf
+  section_uuid: uuid_11
   start_char: 0
   type: Inline
+  uuid: uuid_14
 - content: saasf
   element: role
   lineno: 43
   raw: :abcf:`saasf`
   role: abcf
+  section_uuid: uuid_11
   start_char: 14
   type: Inline
+  uuid: uuid_15
 - element: reference
   lineno: 45
   ref_type: substitution
+  section_uuid: uuid_11
   start_char: 0
   type: Inline
+  uuid: uuid_16
 - element: reference
   lineno: 45
   ref_type: substitution
+  section_uuid: uuid_11
   start_char: 14
   type: Inline
+  uuid: uuid_17
 - element: reference
   lineno: 45
   ref_type: substitution
+  section_uuid: uuid_11
   start_char: 25
   type: Inline
+  uuid: uuid_18
 - element: reference
   lineno: 47
   raw: headerlink_
   ref_type: anonymous
   refname: headerlink
+  section_uuid: uuid_11
   start_char: 2
   type: Inline
+  uuid: uuid_19
 - arguments:
   - file.png
   element: directive
@@ -150,15 +190,19 @@
   options:
     alt: REF1
     uri: file.png
+  section_uuid: uuid_11
   start_char: 10
   type: Block
   type_name: image
+  uuid: uuid_20
 - element: substitution_def
   lineno: 49
   raw: '.. |REF1| image:: file.png'
+  section_uuid: uuid_11
   start_char: 0
   sub: REF1
   type: Block
+  uuid: uuid_21
 - arguments: []
   element: directive
   end_char: 25
@@ -166,23 +210,31 @@
   klass: docutils.parsers.rst.directives.misc.Replace
   lineno: 50
   options: {}
+  section_uuid: uuid_11
   start_char: 10
   type: Block
   type_name: replace
+  uuid: uuid_22
 - element: substitution_def
   lineno: 50
   raw: '.. |REF2| replace:: MyText'
+  section_uuid: uuid_11
   start_char: 0
   sub: REF2
   type: Block
+  uuid: uuid_23
 - element: hyperlink_target
   lineno: 51
   raw: '.. _REF3: http://sdfsdf/dsf'
+  section_uuid: uuid_11
   start_char: 0
   target: ref3
   type: Block
+  uuid: uuid_24
 - element: substitution_def
   lineno: 52
   raw: '.. |REF4| replace: bad syntax'
+  section_uuid: uuid_11
   start_char: 0
   type: Block
+  uuid: uuid_25

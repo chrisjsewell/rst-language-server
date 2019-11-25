@@ -1,0 +1,157 @@
+elements:
+- element: section
+  level: 1
+  lineno: 0
+  section_uuid: null
+  start_char: 0
+  title: title 1
+  type: Block
+  uuid: uuid_0
+- element: reference
+  lineno: 3
+  ref_type: substitution
+  section_uuid: uuid_0
+  start_char: 0
+  type: Inline
+  uuid: uuid_1
+- element: section
+  level: 2
+  lineno: 5
+  section_uuid: uuid_0
+  start_char: 0
+  title: title 2
+  type: Block
+  uuid: uuid_2
+- element: reference
+  lineno: 8
+  ref_type: substitution
+  section_uuid: uuid_2
+  start_char: 0
+  type: Inline
+  uuid: uuid_3
+- element: section
+  level: 3
+  lineno: 10
+  section_uuid: uuid_2
+  start_char: 0
+  title: title 3
+  type: Block
+  uuid: uuid_4
+- element: reference
+  lineno: 13
+  ref_type: substitution
+  section_uuid: uuid_4
+  start_char: 0
+  type: Inline
+  uuid: uuid_5
+- element: section
+  level: 1
+  lineno: 15
+  section_uuid: null
+  start_char: 0
+  title: title 4
+  type: Block
+  uuid: uuid_6
+- element: reference
+  lineno: 18
+  ref_type: substitution
+  section_uuid: uuid_6
+  start_char: 0
+  type: Inline
+  uuid: uuid_7
+- element: section
+  level: 2
+  lineno: 20
+  section_uuid: uuid_6
+  start_char: 0
+  title: title 5
+  type: Block
+  uuid: uuid_8
+- element: reference
+  lineno: 23
+  ref_type: substitution
+  section_uuid: uuid_8
+  start_char: 0
+  type: Inline
+  uuid: uuid_9
+- element: section
+  level: 2
+  lineno: 25
+  section_uuid: uuid_6
+  start_char: 0
+  title: title 7
+  type: Block
+  uuid: uuid_10
+- element: reference
+  lineno: 28
+  ref_type: substitution
+  section_uuid: uuid_10
+  start_char: 0
+  type: Inline
+  uuid: uuid_11
+- element: section
+  level: 3
+  lineno: 30
+  section_uuid: uuid_10
+  start_char: 0
+  title: title 8
+  type: Block
+  uuid: uuid_12
+- element: reference
+  lineno: 33
+  ref_type: substitution
+  section_uuid: uuid_12
+  start_char: 0
+  type: Inline
+  uuid: uuid_13
+- element: section
+  level: 1
+  lineno: 35
+  section_uuid: null
+  start_char: 0
+  title: title 9
+  type: Block
+  uuid: uuid_14
+- element: reference
+  lineno: 38
+  ref_type: substitution
+  section_uuid: uuid_14
+  start_char: 0
+  type: Inline
+  uuid: uuid_15
+- element: section
+  level: 1
+  lineno: 40
+  section_uuid: null
+  start_char: 0
+  title: title 10
+  type: Block
+  uuid: uuid_16
+- element: reference
+  lineno: 43
+  ref_type: substitution
+  section_uuid: uuid_16
+  start_char: 0
+  type: Inline
+  uuid: uuid_17
+linting:
+- description: 'Title underline too short.
+
+
+    title 10
+
+    ======='
+  level: 2
+  line: 41
+  source: docutils
+  type: WARNING
+- description: 'Title underline too short.
+
+
+    title 10
+
+    ======='
+  level: 2
+  line: 41
+  source: docutils
+  type: WARNING
