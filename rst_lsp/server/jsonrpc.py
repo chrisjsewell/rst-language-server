@@ -27,7 +27,7 @@ from .plugins import PluginTypes
 
 logger = logging.getLogger(__name__)
 
-PARSING_DEBOUNCE = 0.5  # 500 ms
+LINT_DEBOUNCE = 0.5  # 500 ms
 PARENT_PROCESS_WATCH_INTERVAL = 10  # 10 s
 MAX_WORKERS = 64
 # SOURCE_FILE_EXTENSIONS = (".rst",)
@@ -236,7 +236,7 @@ class RstLanguageServer(MethodDispatcher):
             "workspace/configuration", params={"items": items},
         )
 
-    def notify_lint(self, doc_uri: str, diagnostics: List[dict]):
+    def publish_diagnostics(self, doc_uri: str, diagnostics: List[dict]):
         """Request configuration settings from the client."""
         self._endpoint.notify(
             "textDocument/publishDiagnostics",
@@ -296,25 +296,16 @@ class RstLanguageServer(MethodDispatcher):
             config=self.config, workspace=workspace, document=doc, **kwargs
         )
 
-    @debounce(PARSING_DEBOUNCE, keyed_by="doc_uri")
+    @debounce(LINT_DEBOUNCE, keyed_by="doc_uri")
     def lint(self, doc_uri, is_saved):
         workspace = self.match_uri_to_workspace(doc_uri)
         if doc_uri in workspace.documents:
-            # workspace.publish_diagnostics(
-            diagnostics = [
-                {
-                    "source": "flake8",
-                    "code": "asdgasdg",
-                    "range": {
-                        "start": {"line": 1, "character": 7},
-                        "end": {"line": 1, "character": 9},
-                    },
-                    "message": "hallo",
-                    "severity": constants.DiagnosticSeverity.Warning,
-                }
-            ]
-            # flatten(self.call_plugins('rst_lint', doc_uri, is_saved=is_saved))
-            self.notify_lint(doc_uri, diagnostics)
+            self.publish_diagnostics(
+                doc_uri,
+                utils.flatten(
+                    self.call_plugins("rst_lint", doc_uri, is_saved=is_saved)
+                ),
+            )
 
     def m_initialize(
         self,
@@ -376,6 +367,8 @@ class RstLanguageServer(MethodDispatcher):
         for workspace_uri in self.workspaces:
             workspace = self.workspaces[workspace_uri]
             workspace.update_config(self.config)
+            for doc_uri in workspace.documents:
+                self.lint(doc_uri, is_saved=False)
 
     def m_workspace__did_change_workspace_folders(
         self, added=None, removed=None, **_kwargs
@@ -410,7 +403,7 @@ class RstLanguageServer(MethodDispatcher):
         workspace.rm_document(textDocument["uri"])
 
     def m_text_document__did_save(self, textDocument: TextDocument, **_kwargs):
-        pass  # Already taken care of by change
+        self.lint(textDocument["uri"], is_saved=False)
 
     def m_text_document__did_change(
         self, contentChanges: List[TextEdit], textDocument: TextDocument, **_kwargs
@@ -420,6 +413,7 @@ class RstLanguageServer(MethodDispatcher):
             workspace.update_document(
                 textDocument["uri"], change, version=textDocument.get("version")
             )
+        self.lint(textDocument["uri"], is_saved=False)
 
     # FEATURES
     # --------

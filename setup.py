@@ -28,6 +28,7 @@ setup(
             "rst-lsp-serve=rst_lsp.server.cli_entry:main",
         ],
         "rst_lsp": [
+            "lint_docutils = rst_lsp.server.plugins.lint_docutils",
             "folding = rst_lsp.server.plugins.folding",
             "completions = rst_lsp.server.plugins.completions",
             "document_symbols = rst_lsp.server.plugins.doc_symbols",

@@ -28,6 +28,28 @@ class TextEdit(TypedDict):
     newText: str
 
 
+class FoldingRange(TypedDict):
+
+    # The zero-based line number from where the folded range starts.
+    startLine: int
+
+    # The zero-based character offset from where the folded range starts.
+    # If not defined, defaults to the length of the start line.
+    startCharacter: Optional[str]
+
+    # The zero-based line number where the folded range ends.
+    endLine: int
+
+    # The zero-based character offset before the folded range ends.
+    # If not defined, defaults to the length of the end line.
+    endCharacter: Optional[int]
+
+    # Describes the kind of the folding range such as `comment' or 'region'. The kind
+    # is used to categorize folding ranges and used by commands like 'Fold all comments'.
+    # See FoldingRangeKind for an enumeration of standardized kinds.
+    kind: Optional[str]
+
+
 class CompletionItem(TypedDict):
     label: str
     kind: Optional[int]
@@ -64,11 +86,16 @@ class Diagnostic(TypedDict):
     Diagnostic objects are only valid in the scope of a resource.
     """
 
+    # The range at which the message applies.
     range: Range
+    # The diagnostic's severity.
     severity: Optional[int]
+    # The diagnostic's code, which might appear in the user interface.
     code: Optional[Union[int, str]]
     # A human-readable string describing the source of this
+    # diagnostic, e.g. 'typescript' or 'super lint'.
     source: Optional[str]
+    # The diagnostic's message.
     message: str
     # An array of related diagnostic information.
     relatedInformation: Optional[list]

@@ -1,10 +1,13 @@
-from rst_lsp.server.workspace import Document
+from typing import List
+
 from rst_lsp.docutils_ext.visitor import ElementType
+from rst_lsp.server.datatypes import FoldingRange
+from rst_lsp.server.workspace import Document
 from . import hookimpl
 
 
 @hookimpl
-def rst_folding_range(document: Document):
+def rst_folding_range(document: Document) -> List[FoldingRange]:
 
     database = document.database
     uri = document.uri

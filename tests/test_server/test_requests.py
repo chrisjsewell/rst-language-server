@@ -21,6 +21,9 @@ def test_initialize(client_server, data_regression):
     data_regression.check(response)
 
 
+# TODO how to test notifications, like publish diagnostics?
+
+
 def test_folding_provider(client_server, data_regression):
     response = client_server._endpoint.request(
         "initialize",

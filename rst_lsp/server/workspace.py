@@ -105,12 +105,19 @@ class Workspace(object):
         self._db.close()
 
     @property
-    def documents(self):
+    def documents(self) -> dict:
         return self._docs
 
     @property
     def database(self) -> Database:
-        # TODO ensure updated
+        """Return the workspace database.
+
+        If any documents source hasn't been parsed/assessed, since its last change
+        (or config update), then that will be done, and the database updated,
+        before returning.
+        """
+        for doc in self._docs.values():
+            doc.update_database()
         return self._db
 
     @property
@@ -139,8 +146,8 @@ class Workspace(object):
 
         See https://github.com/Microsoft/language-server-protocol/issues/177
         """
-        doc = self._docs.get(doc_uri)
-        if not doc:
+        doc = self._docs.get(doc_uri, None)
+        if doc is None:
             doc = self._create_document({"uri": doc_uri})
         return doc
 
@@ -177,7 +184,14 @@ class Workspace(object):
 
 
 class Document:
-    """Store an in-memory representation of a source file."""
+    """Store an in-memory representation of a source file.
+
+    The documents source text is kept in-sync with the clients,
+    by applying ``TextEdit`` changes, on notification by the client.
+
+    Parsing of the source text is done lazily, whenever ``doc.database`` is called,
+    and the source text/configuration has changed
+    """
 
     def __init__(
         self, uri, source=None, version=None, local=True, config=None, workspace=None,
@@ -213,23 +227,33 @@ class Document:
 
     @property
     def database(self) -> Database:
+        """Return the workspace database.
+
+        If the documents source hasn't been parsed/assessed, since its last change
+        (or config update), then that will be done, and the database updated,
+        before returning.
+        """
         if self._has_changed:
-            # TODO partial reassessment of source
-            result = assess_source(
-                self.source, self.workspace.app_env, filename=self.uri
-            )
-            self._workspace.database.update_doc(
-                self.uri,
-                endline=len(self.lines) - 1,
-                endchar=len(self.lines[-1]) - 1,
-                elements=result.elements,
-                lints=result.linting,
-            )
+            self.update_database()
+        return self._workspace._db
+
+    def update_database(self):
+        # TODO partial reassessment of source
+        result = assess_source(
+            self.source, self.workspace.app_env, filename=self.uri
+        )
+        self._workspace._db.update_doc(
+            self.uri,
+            endline=len(self.lines) - 1,
+            endchar=len(self.lines[-1]) - 1,
+            elements=result.elements,
+            lints=result.linting,
+        )
         self._has_changed = False
-        return self._workspace.database
 
     def update_config(self, config: Config):
         self._config = config
+        self._has_changed = True
 
     def apply_change(self, change: TextEdit):
         """Apply a change to the document."""
