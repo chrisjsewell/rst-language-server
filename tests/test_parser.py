@@ -32,6 +32,16 @@ def test_1_elements(get_test_file_content, data_regression):
     data_regression.check(results.elements)
 
 
+def test_lint_severe(get_test_file_content, data_regression):
+    content = get_test_file_content("test_lint_severe.rst")
+    app_env = create_sphinx_app()
+    results = assess_source(content, app_env)
+    data_regression.check({
+        "elements": results.elements,
+        "linting": results.linting
+    })
+
+
 def test_section_levels(get_test_file_content, data_regression):
     content = get_test_file_content("test_sections.rst")
     app_env = create_sphinx_app()

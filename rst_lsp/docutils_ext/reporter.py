@@ -3,19 +3,21 @@ from typing import Any, Tuple
 
 from docutils import nodes
 from docutils.frontend import OptionParser
-from docutils.utils import decode_path, Reporter
+from docutils.utils import decode_path, Reporter, SystemMessage
 
 __all__ = ("JSONReporter", "new_document")
 
 
 class JSONReporter(Reporter):
-    """Reporter that captures reports as JSON objects
+    """Reporter that captures reports as JSON objects.
 
     The captured report is stored in ``JSONReporter.log_capture``.
     """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.halt_level_original = self.halt_level
+        self.halt_level = 6  # i.e. don't raise SystemMessage for any level
         self.log_capture = []
 
     def system_message(self, level, message, *children, **kwargs):
@@ -32,6 +34,8 @@ class JSONReporter(Reporter):
                     "description": nodes.Element.astext(sys_message),
                 }
             )
+        if level >= self.halt_level_original:
+            raise SystemMessage(sys_message, level)
         return sys_message
 
 

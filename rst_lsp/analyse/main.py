@@ -23,6 +23,7 @@ import attr
 from docutils.nodes import document
 from docutils.frontend import OptionParser
 from docutils.parsers.rst import Parser as RSTParser
+from docutils.utils import SystemMessage
 
 from sphinx import package_dir
 import sphinx.locale
@@ -210,10 +211,16 @@ def assess_source(
         doc_warning_stream = StringIO()
         settings.warning_stream = doc_warning_stream
         settings.report_level = 2  # warning
+        settings.halt_level = 4 # severe
+        # The level at or above which `SystemMessage` exceptions
+        # will be raised, halting execution.
 
         document, reporter = new_document(content, settings=settings)
 
-        parse_source(content, document)
+        try:
+            parse_source(content, document)
+        except SystemMessage:
+            pass
 
         visitor = DocInfoVisitor(document, content)
         document.walk(visitor)

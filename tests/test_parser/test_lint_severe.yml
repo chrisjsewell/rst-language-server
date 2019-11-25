@@ -1,0 +1,62 @@
+elements:
+- element: section
+  level: 1
+  lineno: 0
+  section_uuid: null
+  start_char: 0
+  title: title 1
+  type: Block
+  uuid: uuid_0
+- element: reference
+  lineno: 3
+  ref_type: substitution
+  section_uuid: uuid_0
+  start_char: 0
+  type: Inline
+  uuid: uuid_1
+- element: section
+  level: 2
+  lineno: 5
+  section_uuid: uuid_0
+  start_char: 0
+  title: title 2
+  type: Block
+  uuid: uuid_2
+- element: reference
+  lineno: 8
+  ref_type: substitution
+  section_uuid: uuid_2
+  start_char: 0
+  type: Inline
+  uuid: uuid_3
+- element: section
+  level: 3
+  lineno: 10
+  section_uuid: uuid_2
+  start_char: 0
+  title: title 3
+  type: Block
+  uuid: uuid_4
+- element: reference
+  lineno: 13
+  ref_type: substitution
+  section_uuid: uuid_4
+  start_char: 0
+  type: Inline
+  uuid: uuid_5
+- element: section
+  level: 1
+  lineno: 16
+  section_uuid: null
+  start_char: 0
+  title: title 4
+  type: Block
+  uuid: uuid_6
+- element: reference
+  lineno: 19
+  ref_type: substitution
+  section_uuid: uuid_6
+  start_char: 0
+  type: Inline
+  uuid: uuid_7
+linting: []
