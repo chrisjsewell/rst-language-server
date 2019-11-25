@@ -1,0 +1,15 @@
+capabilities:
+  completionProvider:
+    resolveProvider: false
+    triggerCharacters: []
+  documentSymbolProvider: true
+  foldingRangeProvider: true
+  textDocumentSync:
+    change: 2
+    openClose: true
+    save:
+      includeText: true
+  workspace:
+    workspaceFolders:
+      changeNotifications: true
+      supported: true

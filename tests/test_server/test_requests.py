@@ -1,4 +1,5 @@
 import os
+from textwrap import dedent
 
 import pytest
 from pyls_jsonrpc.exceptions import JsonRpcMethodNotFound
@@ -11,31 +12,82 @@ def test_missing_message(client_server):  # pylint: disable=redefined-outer-name
         client_server._endpoint.request("unknown_method").result(timeout=CALL_TIMEOUT)
 
 
-def test_initialize(client_server):
+def test_initialize(client_server, data_regression):
     future = client_server._endpoint.request(
         "initialize",
         {"rootPath": os.path.dirname(__file__), "initializationOptions": {}},
     )
     response = future.result(timeout=CALL_TIMEOUT)
-    assert "capabilities" in response
-    assert "textDocumentSync" in response["capabilities"]
+    data_regression.check(response)
 
 
-def test_folding_provider(client_server):
+def test_folding_provider(client_server, data_regression):
     response = client_server._endpoint.request(
         "initialize",
         {"rootPath": os.path.dirname(__file__), "initializationOptions": {}},
     ).result(timeout=CALL_TIMEOUT)
     assert "capabilities" in response
-    response2 = client_server._endpoint.request(
-        "text_document/folding_range",
+    client_server._endpoint.request(
+        "text_document/did_open",
         {
             "textDocument": {
-                "uri": "the uri",
+                "uri": "uri123",
                 "languageId": "str",
                 "version": 1,
-                "text": "the text",
+                "text": dedent(
+                    """\
+                    title
+                    -----
+
+                    abc
+
+                    title2
+                    ======
+
+                    def
+                    """
+                ),
             }
         },
+    )
+    response3 = client_server._endpoint.request(
+        "text_document/folding_range",
+        {"textDocument": {"uri": "uri123", "languageId": "str", "version": 1}},
     ).result(timeout=CALL_TIMEOUT)
-    assert response2 == []
+    data_regression.check(response3)
+
+
+def test_document_symbols(client_server, data_regression):
+    response = client_server._endpoint.request(
+        "initialize",
+        {"rootPath": os.path.dirname(__file__), "initializationOptions": {}},
+    ).result(timeout=CALL_TIMEOUT)
+    assert "capabilities" in response
+    client_server._endpoint.request(
+        "text_document/did_open",
+        {
+            "textDocument": {
+                "uri": "uri123",
+                "languageId": "str",
+                "version": 1,
+                "text": dedent(
+                    """\
+                    title
+                    -----
+
+                    abc
+
+                    title2
+                    ======
+
+                    def
+                    """
+                ),
+            }
+        },
+    )
+    response3 = client_server._endpoint.request(
+        "text_document/document_symbol",
+        {"textDocument": {"uri": "uri123", "languageId": "str", "version": 1}},
+    ).result(timeout=CALL_TIMEOUT)
+    data_regression.check(response3)

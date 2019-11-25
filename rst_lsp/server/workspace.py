@@ -11,7 +11,6 @@ from rst_lsp.analyse.main import (
     create_sphinx_app,
     retrieve_namespace,
     SphinxAppEnv,
-    SourceAssessResult,
 )
 from . import uri_utils as uris
 from .utils import find_parents
