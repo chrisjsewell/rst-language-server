@@ -163,7 +163,7 @@ class RstLanguageServer(MethodDispatcher):
             # "executeCommandProvider": {
             #     "commands": flatten(self._hook("pyls_commands"))
             # },
-            # "hoverProvider": True,
+            "hoverProvider": True,
             # "referencesProvider": True,
             # "renameProvider": True,
             "foldingRangeProvider": True,
@@ -439,3 +439,10 @@ class RstLanguageServer(MethodDispatcher):
                 PluginTypes.rst_document_symbols.value, textDocument["uri"]
             )
         )
+
+    def m_text_document__hover(
+        self, textDocument: TextDocument, position: Position, **_kwargs
+    ):
+        return self.call_plugins(
+            PluginTypes.rst_hover.value, textDocument["uri"], position=position
+        ) or {"contents": ""}

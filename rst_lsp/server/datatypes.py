@@ -135,3 +135,39 @@ class DocumentSymbol(TypedDict):
 
     # Children of this symbol, e.g. properties of a class.
     children: Optional[list]  # List[DocumentSymbol]
+
+
+class MarkupContent(TypedDict):
+    """Represents a string value which content can be represented in different formats.
+
+    Note that clients might sanitize the return markdown.
+    A client could decide to remove HTML from the markdown to avoid script execution.
+    """
+
+    # The type of the Markup.
+    kind: str  # 'plaintext' | 'markdown'
+    # The content itself
+    value: str
+
+
+class MarkedString(TypedDict):
+    """Render human readable text
+
+    The language identifier is semantically equal to the optional language identifier,
+    in Markdown fenced code blocks
+    """
+
+    language: str  # e.g. 'python'
+    # The content itself
+    value: str
+
+
+class Hover(TypedDict):
+    """The result of a hover request."""
+
+    # The hover's content
+    contents: Union[str, MarkupContent, MarkedString, List[MarkedString]]
+
+    # An optional range is a range inside a text document
+    # that is used to visualize a hover, e.g. by changing the background color.
+    range: Optional[Range]

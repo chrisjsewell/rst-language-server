@@ -39,6 +39,7 @@ def get_directive_json(name, direct) -> DirectiveInfo:
     data = {
         "element": "directive",
         "name": name,
+        # TODO this can also return docutils base class docstring, which is too verbose
         "description": getdoc(direct) or "",
         "klass": f"{direct.__module__}.{direct.__name__}",
         "required_arguments": direct.required_arguments,

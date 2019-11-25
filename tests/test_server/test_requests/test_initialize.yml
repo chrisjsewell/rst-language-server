@@ -4,6 +4,7 @@ capabilities:
     triggerCharacters: []
   documentSymbolProvider: true
   foldingRangeProvider: true
+  hoverProvider: true
   textDocumentSync:
     change: 2
     openClose: true

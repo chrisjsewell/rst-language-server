@@ -32,6 +32,7 @@ setup(
             "folding = rst_lsp.server.plugins.folding",
             "completions = rst_lsp.server.plugins.completions",
             "document_symbols = rst_lsp.server.plugins.doc_symbols",
+            "hover = rst_lsp.server.plugins.hover",
         ],
     },
 )

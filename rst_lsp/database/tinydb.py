@@ -1,6 +1,6 @@
 """TinyDB implementation of a backend database."""
 from datetime import datetime
-from typing import List, Optional,Union
+from typing import List, Optional, Union
 
 from tinydb import TinyDB, where
 from tinydb.database import Table
@@ -14,6 +14,7 @@ from rst_lsp.database.base import (
     get_role_json,
     get_directive_json,
 )
+
 
 class NotSet:
     pass
