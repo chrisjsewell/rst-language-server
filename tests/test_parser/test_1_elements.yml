@@ -99,6 +99,7 @@
   uuid: uuid_9
 - content: asdasx
   element: role
+  end_char: 17
   lineno: 27
   raw: :sdf:`asdasx`
   role: sdf
@@ -116,6 +117,7 @@
   uuid: uuid_11
 - content: sadasd
   element: role
+  end_char: 14
   lineno: 36
   raw: :cite:`sadasd`
   role: cite
@@ -125,6 +127,7 @@
   uuid: uuid_12
 - content: asd
   element: role
+  end_char: 11
   lineno: 37
   raw: :cite:`asd`
   role: cite
@@ -134,6 +137,7 @@
   uuid: uuid_13
 - content: saasf
   element: role
+  end_char: 12
   lineno: 43
   raw: :sdf:`saasf`
   role: sdf
@@ -143,6 +147,7 @@
   uuid: uuid_14
 - content: saasf
   element: role
+  end_char: 27
   lineno: 43
   raw: :abcf:`saasf`
   role: abcf

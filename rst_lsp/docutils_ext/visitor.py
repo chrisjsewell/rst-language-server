@@ -139,6 +139,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                     {
                         "lineno": node.doc_lineno - 1,
                         "start_char": node.doc_char,
+                        "end_char": node.doc_char + len(node.other_data["raw"]),
                         "role": node.other_data["role"],
                         "content": node.other_data["content"],
                         "raw": node.other_data["raw"],

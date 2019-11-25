@@ -189,6 +189,7 @@ class Database:
         lineno: Optional[Union[int, list]] = NotSet(),
         section_uuid: Optional[Union[str, list]] = NotSet(),
         uuid: Optional[Union[str, list]] = NotSet(),
+        # TODO it would be ideal if uuid and database.table.doc_id were the same thing
         # TODO dict of other keys
     ):
         query = None

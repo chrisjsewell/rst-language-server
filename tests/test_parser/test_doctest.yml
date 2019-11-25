@@ -17,6 +17,7 @@ elements:
   uuid: uuid_1
 - content: title
   element: role
+  end_char: 12
   lineno: 5
   raw: :ref:`title`
   role: ref
@@ -26,6 +27,7 @@ elements:
   uuid: uuid_2
 - content: citation
   element: role
+  end_char: 16
   lineno: 6
   raw: :cite:`citation`
   role: cite
@@ -35,6 +37,7 @@ elements:
   uuid: uuid_3
 - content: abc
   element: role
+  end_char: 14
   lineno: 7
   raw: :unknown:`abc`
   role: unknown
