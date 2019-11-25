@@ -15,7 +15,7 @@ SEVERITY_MAP = {
 
 @hookimpl
 def rst_lint(config: Config, document: Document, is_saved: bool) -> List[Diagnostic]:
-    database = document.database
+    database = document.workspace.database
     uri = document.uri
     results = []
     for lint in database.query_lint(uri):

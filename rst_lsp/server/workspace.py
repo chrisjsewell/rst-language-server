@@ -10,6 +10,7 @@ from rst_lsp.analyse.main import (
     assess_source,
     create_sphinx_app,
     retrieve_namespace,
+    SourceAssessResult,
     SphinxAppEnv,
 )
 from . import uri_utils as uris
@@ -112,12 +113,19 @@ class Workspace(object):
     def database(self) -> Database:
         """Return the workspace database.
 
-        If any documents source hasn't been parsed/assessed, since its last change
+        If any document's source text hasn't been parsed/assessed, since its last change
         (or config update), then that will be done, and the database updated,
         before returning.
         """
         for doc in self._docs.values():
-            doc.update_database()
+            result = doc.get_assessment()  # type: SourceAssessResult
+            self._db.update_doc(
+                doc.uri,
+                endline=len(doc.lines) - 1,
+                endchar=len(doc.lines[-1]) - 1,
+                elements=result.elements,
+                lints=result.linting,
+            )
         return self._db
 
     @property
@@ -189,8 +197,9 @@ class Document:
     The documents source text is kept in-sync with the clients,
     by applying ``TextEdit`` changes, on notification by the client.
 
-    Parsing of the source text is done lazily, whenever ``doc.database`` is called,
-    and the source text/configuration has changed
+    docutils/sphinx parsing of the source text is done lazily,
+    whenever ``doc.get_assessment()`` is called,
+    and the source text/configuration has changed.
     """
 
     def __init__(
@@ -205,7 +214,7 @@ class Document:
         self._workspace = workspace
         self._local = local
         self._source = source
-        self._has_changed = True
+        self._assessment = None
 
     @property
     def workspace(self) -> Workspace:
@@ -225,35 +234,17 @@ class Document:
                 return f.read()
         return self._source
 
-    @property
-    def database(self) -> Database:
-        """Return the workspace database.
-
-        If the documents source hasn't been parsed/assessed, since its last change
-        (or config update), then that will be done, and the database updated,
-        before returning.
-        """
-        if self._has_changed:
-            self.update_database()
-        return self._workspace._db
-
-    def update_database(self):
-        # TODO partial reassessment of source
-        result = assess_source(
-            self.source, self.workspace.app_env, filename=self.uri
-        )
-        self._workspace._db.update_doc(
-            self.uri,
-            endline=len(self.lines) - 1,
-            endchar=len(self.lines[-1]) - 1,
-            elements=result.elements,
-            lints=result.linting,
-        )
-        self._has_changed = False
+    def get_assessment(self) -> SourceAssessResult:
+        if self._assessment is None:
+            # TODO partial reassessment of source, given applied changes
+            self._assessment = assess_source(
+                self.source, self.workspace.app_env, filename=self.uri
+            )
+        return self._assessment
 
     def update_config(self, config: Config):
         self._config = config
-        self._has_changed = True
+        self._assessment = None
 
     def apply_change(self, change: TextEdit):
         """Apply a change to the document."""
@@ -297,7 +288,7 @@ class Document:
                 new.write(line[end_col:])
 
         self._source = new.getvalue()
-        self._has_changed = True
+        self._assessment = None
 
     def get_line(self, position: Position) -> str:
         """Return the position's line."""

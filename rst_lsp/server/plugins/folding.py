@@ -9,7 +9,7 @@ from . import hookimpl
 @hookimpl
 def rst_folding_range(document: Document) -> List[FoldingRange]:
 
-    database = document.database
+    database = document.workspace.database
     uri = document.uri
     results = []
     # TODO probably want startCharacter to be at the end of the startLine?

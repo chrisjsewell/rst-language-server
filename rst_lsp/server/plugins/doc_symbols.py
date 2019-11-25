@@ -12,7 +12,7 @@ def rst_document_symbols(
     config: Config, workspace: Workspace, document: Document
 ) -> List[DocumentSymbol]:
 
-    database = document.database
+    database = workspace.database
     uri = document.uri
     results = []
 
