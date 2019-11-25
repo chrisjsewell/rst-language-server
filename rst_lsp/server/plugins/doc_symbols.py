@@ -17,7 +17,7 @@ def rst_document_symbols(
     results = []
 
     for section in database.query_elements(
-        [ElementType.section.value], uri=uri, section_uuid=None
+        name=ElementType.section.value, uri=uri, section_uuid=None
     ):
         title = section["title"]
         results.append(
@@ -42,7 +42,7 @@ def rst_document_symbols(
 def _create_children(section, uri, database):
     children = []
     for sub_section in database.query_elements(
-        [ElementType.section.value], uri=uri, section_uuid=section["uuid"]
+        name=ElementType.section.value, uri=uri, section_uuid=section["uuid"]
     ):
         title = sub_section["title"]
         children.append(

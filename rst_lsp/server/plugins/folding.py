@@ -17,7 +17,7 @@ def rst_folding_range(document: Document) -> List[FoldingRange]:
 
     # Get section folding
     doc_data = database.query_doc(uri)
-    sections = database.query_elements([ElementType.section.value], uri)
+    sections = database.query_elements(name=ElementType.section.value, uri=uri)
     start_stack = {}
     for section in sorted(sections or [], key=lambda d: d["lineno"]):
         for level, start in list(start_stack.items()):
@@ -49,7 +49,7 @@ def rst_folding_range(document: Document) -> List[FoldingRange]:
 
     # Get directive folding
     # TODO unknown directives are not included in database
-    directives = database.query_elements([ElementType.directive.value], uri)
+    directives = database.query_elements(name=ElementType.directive.value, uri=uri)
     for directive in directives or []:
         # don't bother folding single line directives
         if directive["lineno"] != directive["endline"]:

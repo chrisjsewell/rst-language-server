@@ -1,6 +1,6 @@
 """TinyDB implementation of a backend database."""
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional,Union
 
 from tinydb import TinyDB, where
 from tinydb.database import Table
@@ -14,6 +14,9 @@ from rst_lsp.database.base import (
     get_role_json,
     get_directive_json,
 )
+
+class NotSet:
+    pass
 
 
 # TODO make abstract base class
@@ -177,41 +180,40 @@ class Database:
             (where("dtype") == "rst") & (where("uri").one_of(uris))
         )
 
-    def query_element(self, name: str):
-        return self._tbl_elements.search(where("element") == name)
-
     def query_elements(
         self,
-        names: Optional[list] = None,
-        uri: Optional[str] = None,
-        section_uuid: Optional[str] = False,  # TODO use separate None identifier
+        *,
+        name: Optional[Union[str, list]] = NotSet(),
+        etype: Optional[Union[str, list]] = NotSet(),
+        uri: Optional[Union[str, list]] = NotSet(),
+        lineno: Optional[Union[int, list]] = NotSet(),
+        section_uuid: Optional[Union[str, list]] = NotSet(),
+        uuid: Optional[Union[str, list]] = NotSet(),
+        # TODO dict of other keys
     ):
-        if names is None and uri is None and section_uuid is False:
+        query = None
+        for value, key in [
+            (uri, "uri"),
+            (etype, "type"),
+            (name, "element"),
+            (lineno, "lineno"),
+            (section_uuid, "section_uuid"),
+            (uuid, "uuid"),
+        ]:
+            if isinstance(value, NotSet):
+                continue
+            if isinstance(value, (list, tuple)):
+                key_query = where(key).one_of(value)
+            else:
+                key_query = where(key) == value
+            if query is None:
+                query = key_query
+            else:
+                query = (query) & (key_query)
+
+        if query is None:
             return self._tbl_elements.all()
-        if names is None and section_uuid is False:
-            return self._tbl_elements.search(where("uri") == uri)
-        if names is None and uri is None:
-            return self._tbl_elements.search(where("section_uuid") == section_uuid)
-        if names is not None and uri is None and section_uuid is False:
-            return self._tbl_elements.search(where("element").one_of(names))
-        if names is not None and section_uuid is not False and uri is None:
-            return self._tbl_elements.search(
-                (where("element").one_of(names))
-                & (where("section_uuid") == section_uuid)
-            )
-        if names is not None and uri is not None and section_uuid is False:
-            return self._tbl_elements.search(
-                (where("element").one_of(names)) & (where("uri") == uri)
-            )
-        if names is not None and uri is not None and section_uuid is False:
-            return self._tbl_elements.search(
-                (where("element").one_of(names)) & (where("uri") == uri)
-            )
-        return self._tbl_elements.search(
-            (where("element").one_of(names))
-            & (where("uri") == uri)
-            & (where("section_uuid") == section_uuid)
-        )
+        return self._tbl_elements.search(query)
 
     def query_lint(self, uri: str):
         return self._tbl_linting.search(where("uri") == uri)

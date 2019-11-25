@@ -219,7 +219,7 @@ def group_query_doc():
 def cmnd_element(database: Database, name: str, raw: bool):
     """List instances of the element found in the documents."""
     echo_db(database, raw)
-    elements = database.query_element(name)
+    elements = database.query_elements(name=name)
     if elements is None:
         elements = []
     echo_dictionary([dict(e) for e in elements])
