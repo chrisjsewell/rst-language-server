@@ -1,6 +1,5 @@
 contents:
-  kind: markdown
-  value: 'module: sphinx.roles
-
-
-    '
+- language: yaml
+  value: 'module: sphinx.roles'
+- language: rst
+  value: ''

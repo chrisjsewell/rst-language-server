@@ -72,10 +72,16 @@ def test_document_symbols(client_server, data_regression):
         title
         -----
 
-        abc
+        |abc|
+
+        :ref`abc`
 
         title2
         ======
+
+        .. code:: python
+
+            print("hi")
 
         def
         """

@@ -1,21 +1,53 @@
 - children:
-  - children: []
+  - kind: 8
+    name: ref:substitution
+    range:
+      end:
+        character: 1
+        line: 3
+      start:
+        character: 0
+        line: 3
+    selectionRange:
+      end:
+        character: 1
+        line: 3
+      start:
+        character: 0
+        line: 3
+  - children:
+    - kind: 5
+      name: code
+      range:
+        end:
+          character: 14
+          line: 12
+        start:
+          character: 0
+          line: 10
+      selectionRange:
+        end:
+          character: 14
+          line: 12
+        start:
+          character: 0
+          line: 10
     kind: 2
     name: title2
     range:
       end:
         character: 5
-        line: 5
+        line: 7
       start:
         character: 0
-        line: 5
+        line: 7
     selectionRange:
       end:
         character: 5
-        line: 5
+        line: 7
       start:
         character: 0
-        line: 5
+        line: 7
   kind: 2
   name: title
   range:

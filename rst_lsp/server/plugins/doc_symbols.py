@@ -15,9 +15,15 @@ def rst_document_symbols(
     database = workspace.database
     uri = document.uri
     results = []
+    results.extend(find_directives(None, uri, database))
+    results.extend(find_roles(None, uri, database))
+    results.extend(find_references(None, uri, database))
 
-    for section in database.query_elements(
-        name=ElementType.section.value, uri=uri, section_uuid=None
+    for section in (
+        database.query_elements(
+            name=ElementType.section.value, uri=uri, section_uuid=None
+        )
+        or []
     ):
         title = section["title"]
         results.append(
@@ -41,8 +47,14 @@ def rst_document_symbols(
 
 def _create_children(section, uri, database):
     children = []
-    for sub_section in database.query_elements(
-        name=ElementType.section.value, uri=uri, section_uuid=section["uuid"]
+    children.extend(find_directives(section["uuid"], uri, database))
+    children.extend(find_roles(section["uuid"], uri, database))
+    children.extend(find_references(section["uuid"], uri, database))
+    for sub_section in (
+        database.query_elements(
+            name=ElementType.section.value, uri=uri, section_uuid=section["uuid"]
+        )
+        or []
     ):
         title = sub_section["title"]
         children.append(
@@ -59,6 +71,118 @@ def _create_children(section, uri, database):
                     "end": {"line": sub_section["lineno"], "character": len(title) - 1},
                 },
                 "children": _create_children(sub_section, uri, database),
+            }
+        )
+    return children
+
+
+def find_directives(section_uuid, uri, database):
+    children = []
+    for element in (
+        database.query_elements(
+            name=ElementType.directive.value, uri=uri, section_uuid=section_uuid,
+        )
+        or []
+    ):
+        children.append(
+            {
+                "name": element["type_name"],
+                "kind": SymbolKind.Class,
+                "range": {
+                    "start": {
+                        "line": element["lineno"],
+                        "character": element["start_char"],
+                    },
+                    "end": {
+                        "line": element["endline"],
+                        "character": element["end_char"],
+                    },
+                },
+                "selectionRange": {
+                    "start": {
+                        "line": element["lineno"],
+                        "character": element["start_char"],
+                    },
+                    "end": {
+                        "line": element["endline"],
+                        "character": element["end_char"],
+                    },
+                },
+            }
+        )
+    return children
+
+
+def find_roles(section_uuid, uri, database):
+    children = []
+    for element in (
+        database.query_elements(
+            name=ElementType.role.value, uri=uri, section_uuid=section_uuid,
+        )
+        or []
+    ):
+        children.append(
+            {
+                "name": element["role"],
+                "kind": SymbolKind.Function,
+                "range": {
+                    "start": {
+                        "line": element["lineno"],
+                        "character": element["start_char"],
+                    },
+                    "end": {
+                        "line": element["lineno"],
+                        "character": element["end_char"],
+                    },
+                },
+                "selectionRange": {
+                    "start": {
+                        "line": element["lineno"],
+                        "character": element["start_char"],
+                    },
+                    "end": {
+                        "line": element["lineno"],
+                        "character": element["end_char"],
+                    },
+                },
+            }
+        )
+    return children
+
+
+def find_references(section_uuid, uri, database):
+    children = []
+    for element in (
+        database.query_elements(
+            name=ElementType.reference.value, uri=uri, section_uuid=section_uuid,
+        )
+        or []
+    ):
+        children.append(
+            {
+                "name": f"ref:{element['ref_type']}",
+                "kind": SymbolKind.Field,
+                "range": {
+                    "start": {
+                        "line": element["lineno"],
+                        "character": element["start_char"],
+                    },
+                    "end": {
+                        "line": element["lineno"],
+                        # TODO get proper end character
+                        "character": element["start_char"] + 1,
+                    },
+                },
+                "selectionRange": {
+                    "start": {
+                        "line": element["lineno"],
+                        "character": element["start_char"],
+                    },
+                    "end": {
+                        "line": element["lineno"],
+                        "character": element["start_char"] + 1,
+                    },
+                },
             }
         )
     return children

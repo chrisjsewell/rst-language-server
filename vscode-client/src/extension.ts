@@ -16,6 +16,9 @@ function startLangServer(command: string, args: string[], documentSelector: Docu
 	};
 	const clientOptions: LanguageClientOptions = {
 		documentSelector: documentSelector,
+		synchronize: {
+			configurationSection: ["rst_lsp", "python"]
+		}
 	}
 	return new LanguageClient("RST Language Server", serverOptions, clientOptions).start();
 }

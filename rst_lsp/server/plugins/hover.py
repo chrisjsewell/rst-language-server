@@ -28,20 +28,20 @@ def rst_hover(document: Document, position: Position) -> Hover:
             if result["element"] == ElementType.role.value:
                 role_data = database.query_role(result["role"])
                 if role_data is None:
-                    return {"contents": "unknown role"}
+                    return {"contents": "Unknown role"}
                 return {
-                    "contents": {
-                        "kind": "markdown",
-                        "value": (
-                            f"module: {role_data['module']}\n\n"
-                            f"{role_data['description']}"
-                        ),
-                    }
+                    "contents": [
+                        {
+                            "language": "yaml",
+                            "value": (f"module: {role_data['module']}"),
+                        },
+                        {"language": "rst", "value": (f"{role_data['description']}")},
+                    ]
                 }
             else:
                 dir_data = database.query_directive(result["type_name"])
                 if dir_data is None:
-                    return {"contents": "unknown directive"}
+                    return {"contents": "Unknown directive"}
                 options = yaml.safe_dump({"options": dir_data["options"]})
                 return {
                     "contents": [
@@ -55,7 +55,7 @@ def rst_hover(document: Document, position: Position) -> Hover:
                                 f"{options}"
                             ),
                         },
-                        {"language": "markdown", "value": f"{dir_data['description']}"},
+                        {"language": "rst", "value": f"{dir_data['description']}"},
                     ]
                 }
     return {"contents": ""}

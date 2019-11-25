@@ -100,6 +100,7 @@ class Workspace(object):
         """Update the sphinx application."""
         # TODO how to watch conf.py for changes? (or at least have command to update)
         conf_path = self._config.settings.get("conf_path", None)
+        logger.debug(f"Settings: {self._config.settings}")
         if conf_path and not os.path.exists(conf_path):
             self.server.show_message(
                 f"The path set in `rst_lsp.conf_path` does not exist: {conf_path}",
@@ -108,7 +109,7 @@ class Workspace(object):
             conf_path = None
         elif conf_path:
             conf_path = os.path.realpath(os.path.dirname(conf_path))
-        self.server.log_message(f"Using conf dir: {conf_path}")
+        logger.debug(f"Using conf dir: {conf_path}")
         try:
             self._app_env = create_sphinx_app(conf_path)
         except Exception as err:
