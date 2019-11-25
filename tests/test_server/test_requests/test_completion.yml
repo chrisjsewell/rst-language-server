@@ -1,0 +1,797 @@
+isIncomplete: false
+items:
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: 'Generic interpreted text role, where the interpreted text is simply
+
+    wrapped with the provided node class.'
+  insertText: abbreviation:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: abbreviation
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: 'Generic interpreted text role, where the interpreted text is simply
+
+    wrapped with the provided node class.'
+  insertText: acronym:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: acronym
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: 'Generic interpreted text role, where the interpreted text is simply
+
+    wrapped with the provided node class.'
+  insertText: emphasis:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: emphasis
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: 'Generic interpreted text role, where the interpreted text is simply
+
+    wrapped with the provided node class.'
+  insertText: literal:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: literal
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: 'Generic interpreted text role, where the interpreted text is simply
+
+    wrapped with the provided node class.'
+  insertText: strong:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: strong
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: 'Generic interpreted text role, where the interpreted text is simply
+
+    wrapped with the provided node class.'
+  insertText: subscript:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: subscript
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: 'Generic interpreted text role, where the interpreted text is simply
+
+    wrapped with the provided node class.'
+  insertText: superscript:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: superscript
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: 'Generic interpreted text role, where the interpreted text is simply
+
+    wrapped with the provided node class.'
+  insertText: title-reference:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: title-reference
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: ''
+  insertText: pep-reference:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: pep-reference
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: ''
+  insertText: rfc-reference:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: rfc-reference
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: ''
+  insertText: raw:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: raw
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: ''
+  insertText: code:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: code
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: ''
+  insertText: math:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: math
+- detail: 'Module: sphinx.roles'
+  documentation: ''
+  insertText: index:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: index
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: ''
+  insertText: named-reference:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: named-reference
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: ''
+  insertText: anonymous-reference:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: anonymous-reference
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: ''
+  insertText: uri-reference:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: uri-reference
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: ''
+  insertText: footnote-reference:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: footnote-reference
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: ''
+  insertText: citation-reference:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: citation-reference
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: ''
+  insertText: substitution-reference:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: substitution-reference
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: ''
+  insertText: target:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: target
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: ''
+  insertText: restructuredtext-unimplemented-role:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: restructuredtext-unimplemented-role
+- detail: 'Module: sphinx.domains.math'
+  documentation: ''
+  insertText: eq:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: eq
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: Wrapper for custom interpreted text roles.
+  insertText: command:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: command
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: Wrapper for custom interpreted text roles.
+  insertText: dfn:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: dfn
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: Wrapper for custom interpreted text roles.
+  insertText: kbd:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: kbd
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: Wrapper for custom interpreted text roles.
+  insertText: mailheader:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: mailheader
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: Wrapper for custom interpreted text roles.
+  insertText: makevar:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: makevar
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: Wrapper for custom interpreted text roles.
+  insertText: manpage:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: manpage
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: Wrapper for custom interpreted text roles.
+  insertText: mimetype:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: mimetype
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: Wrapper for custom interpreted text roles.
+  insertText: newsgroup:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: newsgroup
+- detail: 'Module: sphinx.domains.std'
+  documentation: Directive to name the program for which options are documented.
+  insertText: program:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: program
+- detail: 'Module: docutils.parsers.rst.roles'
+  documentation: Wrapper for custom interpreted text roles.
+  insertText: regexp:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: regexp
+- detail: 'Module: sphinx.roles'
+  documentation: "A generic cross-referencing role.  To create a callable that can\
+    \ be used as\na role function, create an instance of this class.\n\nThe general\
+    \ features of this role are:\n\n* Automatic creation of a reference and a content\
+    \ node.\n* Optional separation of title and target with `title <target>`.\n* The\
+    \ implementation is a class rather than a function to make\n  customization easier.\n\
+    \nCustomization can be done in two ways:\n\n* Supplying constructor parameters:\n\
+    \  * `fix_parens` to normalize parentheses (strip from target, and add to\n  \
+    \  title if configured)\n  * `lowercase` to lowercase the target\n  * `nodeclass`\
+    \ and `innernodeclass` select the node classes for\n    the reference and the\
+    \ content node\n\n* Subclassing and overwriting `process_link()` and/or `result_nodes()`."
+  insertText: download:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: download
+- detail: 'Module: sphinx.roles'
+  documentation: ''
+  insertText: any:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: any
+- detail: 'Module: sphinx.roles'
+  documentation: ''
+  insertText: pep:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: pep
+- detail: 'Module: sphinx.roles'
+  documentation: ''
+  insertText: rfc:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: rfc
+- detail: 'Module: sphinx.roles'
+  documentation: ''
+  insertText: guilabel:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: guilabel
+- detail: 'Module: sphinx.roles'
+  documentation: ''
+  insertText: menuselection:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: menuselection
+- detail: 'Module: sphinx.roles'
+  documentation: ''
+  insertText: file:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: file
+- detail: 'Module: sphinx.roles'
+  documentation: ''
+  insertText: samp:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: samp
+- detail: 'Module: sphinx.roles'
+  documentation: ''
+  insertText: abbr:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: abbr
+- detail: 'Module: sphinx.domains.c'
+  documentation: ''
+  insertText: c:func:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: c:func
+- detail: 'Module: sphinx.domains.c'
+  documentation: Description of a C language object.
+  insertText: c:member:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: c:member
+- detail: 'Module: sphinx.domains.c'
+  documentation: Description of a C language object.
+  insertText: c:macro:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: c:macro
+- detail: 'Module: sphinx.domains.c'
+  documentation: ''
+  insertText: c:data:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: c:data
+- detail: 'Module: sphinx.domains.c'
+  documentation: Description of a C language object.
+  insertText: c:type:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: c:type
+- detail: 'Module: sphinx.domains.c'
+  documentation: Description of a C language object.
+  insertText: c:function:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: c:function
+- detail: 'Module: sphinx.domains.c'
+  documentation: Description of a C language object.
+  insertText: c:var:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: c:var
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: ''
+  insertText: cpp:any:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:any
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: Description of a C++ language object.
+  insertText: cpp:class:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:class
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: Description of a C++ language object.
+  insertText: cpp:struct:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:struct
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: Description of a C++ language object.
+  insertText: cpp:union:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:union
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: ''
+  insertText: cpp:func:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:func
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: Description of a C++ language object.
+  insertText: cpp:member:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:member
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: Description of a C++ language object.
+  insertText: cpp:var:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:var
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: Description of a C++ language object.
+  insertText: cpp:type:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:type
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: Description of a C++ language object.
+  insertText: cpp:concept:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:concept
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: Description of a C++ language object.
+  insertText: cpp:enum:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:enum
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: Description of a C++ language object.
+  insertText: cpp:enumerator:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:enumerator
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: ''
+  insertText: cpp:expr:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:expr
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: ''
+  insertText: cpp:texpr:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:texpr
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: Description of a C++ language object.
+  insertText: cpp:function:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:function
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: Description of a C++ language object.
+  insertText: cpp:enum-struct:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:enum-struct
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: Description of a C++ language object.
+  insertText: cpp:enum-class:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:enum-class
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: 'This directive is just to tell Sphinx that we''re documenting stuff
+    in
+
+    namespace foo.'
+  insertText: cpp:namespace:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:namespace
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: "A base class for Sphinx directives.\n\nThis class provides helper\
+    \ methods for Sphinx directives.\n\n.. note:: The subclasses of this class might\
+    \ not work with docutils.\n          This class is strongly coupled with Sphinx."
+  insertText: cpp:namespace-push:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:namespace-push
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: "A base class for Sphinx directives.\n\nThis class provides helper\
+    \ methods for Sphinx directives.\n\n.. note:: The subclasses of this class might\
+    \ not work with docutils.\n          This class is strongly coupled with Sphinx."
+  insertText: cpp:namespace-pop:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:namespace-pop
+- detail: 'Module: sphinx.domains.cpp'
+  documentation: 'Directive to describe a class, function or similar object.  Not
+    used
+
+    directly, but subclassed (in domain-specific directives) to add custom
+
+    behavior.'
+  insertText: cpp:alias:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cpp:alias
+- detail: 'Module: sphinx.domains.javascript'
+  documentation: ''
+  insertText: js:func:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: js:func
+- detail: 'Module: sphinx.domains.javascript'
+  documentation: ''
+  insertText: js:meth:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: js:meth
+- detail: 'Module: sphinx.domains.javascript'
+  documentation: Like a callable but with a different prefix.
+  insertText: js:class:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: js:class
+- detail: 'Module: sphinx.domains.javascript'
+  documentation: Description of a JavaScript object.
+  insertText: js:data:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: js:data
+- detail: 'Module: sphinx.domains.javascript'
+  documentation: ''
+  insertText: js:attr:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: js:attr
+- detail: 'Module: sphinx.domains.javascript'
+  documentation: ''
+  insertText: js:mod:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: js:mod
+- detail: 'Module: sphinx.domains.javascript'
+  documentation: Description of a JavaScript function, method or constructor.
+  insertText: js:function:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: js:function
+- detail: 'Module: sphinx.domains.javascript'
+  documentation: Description of a JavaScript function, method or constructor.
+  insertText: js:method:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: js:method
+- detail: 'Module: sphinx.domains.javascript'
+  documentation: Description of a JavaScript object.
+  insertText: js:attribute:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: js:attribute
+- detail: 'Module: sphinx.domains.javascript'
+  documentation: "Directive to mark description of a new JavaScript module.\n\nThis\
+    \ directive specifies the module name that will be used by objects that\nfollow\
+    \ this directive.\n\nOptions\n-------\n\nnoindex\n    If the ``noindex`` option\
+    \ is specified, no linkable elements will be\n    created, and the module won't\
+    \ be added to the global module index. This\n    is useful for splitting up the\
+    \ module definition across multiple\n    sections or files.\n\n:param mod_name:\
+    \ Module name"
+  insertText: js:module:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: js:module
+- detail: 'Module: sphinx.domains.math'
+  documentation: ''
+  insertText: math:numref:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: math:numref
+- detail: 'Module: sphinx.domains.python'
+  documentation: Description of a variable.
+  insertText: py:data:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:data
+- detail: 'Module: sphinx.domains.python'
+  documentation: ''
+  insertText: py:exc:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:exc
+- detail: 'Module: sphinx.domains.python'
+  documentation: ''
+  insertText: py:func:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:func
+- detail: 'Module: sphinx.domains.python'
+  documentation: Description of a class-like object (classes, interfaces, exceptions).
+  insertText: py:class:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:class
+- detail: 'Module: sphinx.domains.python'
+  documentation: ''
+  insertText: py:const:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:const
+- detail: 'Module: sphinx.domains.python'
+  documentation: ''
+  insertText: py:attr:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:attr
+- detail: 'Module: sphinx.domains.python'
+  documentation: ''
+  insertText: py:meth:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:meth
+- detail: 'Module: sphinx.domains.python'
+  documentation: ''
+  insertText: py:mod:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:mod
+- detail: 'Module: sphinx.domains.python'
+  documentation: ''
+  insertText: py:obj:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:obj
+- detail: 'Module: sphinx.domains.python'
+  documentation: Description of a function.
+  insertText: py:function:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:function
+- detail: 'Module: sphinx.domains.python'
+  documentation: Description of a class-like object (classes, interfaces, exceptions).
+  insertText: py:exception:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:exception
+- detail: 'Module: sphinx.domains.python'
+  documentation: Description of a method.
+  insertText: py:method:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:method
+- detail: 'Module: sphinx.domains.python'
+  documentation: Description of a classmethod.
+  insertText: py:classmethod:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:classmethod
+- detail: 'Module: sphinx.domains.python'
+  documentation: Description of a staticmethod.
+  insertText: py:staticmethod:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:staticmethod
+- detail: 'Module: sphinx.domains.python'
+  documentation: Description of an attribute.
+  insertText: py:attribute:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:attribute
+- detail: 'Module: sphinx.domains.python'
+  documentation: Directive to mark description of a new module.
+  insertText: py:module:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:module
+- detail: 'Module: sphinx.domains.python'
+  documentation: 'This directive is just to tell Sphinx that we''re documenting
+
+    stuff in module foo, but links to module foo won''t lead here.'
+  insertText: py:currentmodule:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:currentmodule
+- detail: 'Module: sphinx.domains.python'
+  documentation: Directive to mark functions meant to be used as decorators.
+  insertText: py:decorator:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:decorator
+- detail: 'Module: sphinx.domains.python'
+  documentation: Directive to mark methods meant to be used as decorators.
+  insertText: py:decoratormethod:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: py:decoratormethod
+- detail: 'Module: sphinx.roles'
+  documentation: "A generic cross-referencing role.  To create a callable that can\
+    \ be used as\na role function, create an instance of this class.\n\nThe general\
+    \ features of this role are:\n\n* Automatic creation of a reference and a content\
+    \ node.\n* Optional separation of title and target with `title <target>`.\n* The\
+    \ implementation is a class rather than a function to make\n  customization easier.\n\
+    \nCustomization can be done in two ways:\n\n* Supplying constructor parameters:\n\
+    \  * `fix_parens` to normalize parentheses (strip from target, and add to\n  \
+    \  title if configured)\n  * `lowercase` to lowercase the target\n  * `nodeclass`\
+    \ and `innernodeclass` select the node classes for\n    the reference and the\
+    \ content node\n\n* Subclassing and overwriting `process_link()` and/or `result_nodes()`."
+  insertText: rst:dir:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: rst:dir
+- detail: 'Module: sphinx.domains.rst'
+  documentation: Description of a reST role.
+  insertText: rst:role:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: rst:role
+- detail: 'Module: sphinx.domains.rst'
+  documentation: Description of a reST directive.
+  insertText: rst:directive:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: rst:directive
+- detail: 'Module: sphinx.domains.rst'
+  documentation: Description of an option for reST directive.
+  insertText: rst:directive:option:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: rst:directive:option
+- detail: 'Module: sphinx.domains.std'
+  documentation: Description of a command-line option (.. option).
+  insertText: option:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: option
+- detail: 'Module: sphinx.domains.std'
+  documentation: A generic x-ref directive registered with Sphinx.add_object_type().
+  insertText: envvar:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: envvar
+- detail: 'Module: sphinx.roles'
+  documentation: "A generic cross-referencing role.  To create a callable that can\
+    \ be used as\na role function, create an instance of this class.\n\nThe general\
+    \ features of this role are:\n\n* Automatic creation of a reference and a content\
+    \ node.\n* Optional separation of title and target with `title <target>`.\n* The\
+    \ implementation is a class rather than a function to make\n  customization easier.\n\
+    \nCustomization can be done in two ways:\n\n* Supplying constructor parameters:\n\
+    \  * `fix_parens` to normalize parentheses (strip from target, and add to\n  \
+    \  title if configured)\n  * `lowercase` to lowercase the target\n  * `nodeclass`\
+    \ and `innernodeclass` select the node classes for\n    the reference and the\
+    \ content node\n\n* Subclassing and overwriting `process_link()` and/or `result_nodes()`."
+  insertText: token:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: token
+- detail: 'Module: sphinx.roles'
+  documentation: "A generic cross-referencing role.  To create a callable that can\
+    \ be used as\na role function, create an instance of this class.\n\nThe general\
+    \ features of this role are:\n\n* Automatic creation of a reference and a content\
+    \ node.\n* Optional separation of title and target with `title <target>`.\n* The\
+    \ implementation is a class rather than a function to make\n  customization easier.\n\
+    \nCustomization can be done in two ways:\n\n* Supplying constructor parameters:\n\
+    \  * `fix_parens` to normalize parentheses (strip from target, and add to\n  \
+    \  title if configured)\n  * `lowercase` to lowercase the target\n  * `nodeclass`\
+    \ and `innernodeclass` select the node classes for\n    the reference and the\
+    \ content node\n\n* Subclassing and overwriting `process_link()` and/or `result_nodes()`."
+  insertText: term:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: term
+- detail: 'Module: sphinx.roles'
+  documentation: "A generic cross-referencing role.  To create a callable that can\
+    \ be used as\na role function, create an instance of this class.\n\nThe general\
+    \ features of this role are:\n\n* Automatic creation of a reference and a content\
+    \ node.\n* Optional separation of title and target with `title <target>`.\n* The\
+    \ implementation is a class rather than a function to make\n  customization easier.\n\
+    \nCustomization can be done in two ways:\n\n* Supplying constructor parameters:\n\
+    \  * `fix_parens` to normalize parentheses (strip from target, and add to\n  \
+    \  title if configured)\n  * `lowercase` to lowercase the target\n  * `nodeclass`\
+    \ and `innernodeclass` select the node classes for\n    the reference and the\
+    \ content node\n\n* Subclassing and overwriting `process_link()` and/or `result_nodes()`."
+  insertText: ref:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: ref
+- detail: 'Module: sphinx.roles'
+  documentation: "A generic cross-referencing role.  To create a callable that can\
+    \ be used as\na role function, create an instance of this class.\n\nThe general\
+    \ features of this role are:\n\n* Automatic creation of a reference and a content\
+    \ node.\n* Optional separation of title and target with `title <target>`.\n* The\
+    \ implementation is a class rather than a function to make\n  customization easier.\n\
+    \nCustomization can be done in two ways:\n\n* Supplying constructor parameters:\n\
+    \  * `fix_parens` to normalize parentheses (strip from target, and add to\n  \
+    \  title if configured)\n  * `lowercase` to lowercase the target\n  * `nodeclass`\
+    \ and `innernodeclass` select the node classes for\n    the reference and the\
+    \ content node\n\n* Subclassing and overwriting `process_link()` and/or `result_nodes()`."
+  insertText: numref:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: numref
+- detail: 'Module: sphinx.roles'
+  documentation: "A generic cross-referencing role.  To create a callable that can\
+    \ be used as\na role function, create an instance of this class.\n\nThe general\
+    \ features of this role are:\n\n* Automatic creation of a reference and a content\
+    \ node.\n* Optional separation of title and target with `title <target>`.\n* The\
+    \ implementation is a class rather than a function to make\n  customization easier.\n\
+    \nCustomization can be done in two ways:\n\n* Supplying constructor parameters:\n\
+    \  * `fix_parens` to normalize parentheses (strip from target, and add to\n  \
+    \  title if configured)\n  * `lowercase` to lowercase the target\n  * `nodeclass`\
+    \ and `innernodeclass` select the node classes for\n    the reference and the\
+    \ content node\n\n* Subclassing and overwriting `process_link()` and/or `result_nodes()`."
+  insertText: keyword:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: keyword
+- detail: 'Module: sphinx.roles'
+  documentation: "A generic cross-referencing role.  To create a callable that can\
+    \ be used as\na role function, create an instance of this class.\n\nThe general\
+    \ features of this role are:\n\n* Automatic creation of a reference and a content\
+    \ node.\n* Optional separation of title and target with `title <target>`.\n* The\
+    \ implementation is a class rather than a function to make\n  customization easier.\n\
+    \nCustomization can be done in two ways:\n\n* Supplying constructor parameters:\n\
+    \  * `fix_parens` to normalize parentheses (strip from target, and add to\n  \
+    \  title if configured)\n  * `lowercase` to lowercase the target\n  * `nodeclass`\
+    \ and `innernodeclass` select the node classes for\n    the reference and the\
+    \ content node\n\n* Subclassing and overwriting `process_link()` and/or `result_nodes()`."
+  insertText: doc:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: doc
+- detail: 'Module: sphinx.domains.std'
+  documentation: Description of a command-line option (.. option).
+  insertText: cmdoption:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: cmdoption
+- detail: 'Module: sphinx.domains.std'
+  documentation: 'Directive to create a glossary with cross-reference targets for
+    :term:
+
+    roles.'
+  insertText: glossary:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: glossary
+- detail: 'Module: sphinx.domains.std'
+  documentation: Directive to list grammar productions.
+  insertText: productionlist:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: productionlist

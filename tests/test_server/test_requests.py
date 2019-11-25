@@ -91,3 +91,34 @@ def test_document_symbols(client_server, data_regression):
         {"textDocument": {"uri": "uri123", "languageId": "str", "version": 1}},
     ).result(timeout=CALL_TIMEOUT)
     data_regression.check(response3)
+
+
+def test_completion(client_server, data_regression):
+    response = client_server._endpoint.request(
+        "initialize",
+        {"rootPath": os.path.dirname(__file__), "initializationOptions": {}},
+    ).result(timeout=CALL_TIMEOUT)
+    assert "capabilities" in response
+    client_server._endpoint.request(
+        "text_document/did_open",
+        {
+            "textDocument": {
+                "uri": "uri123",
+                "languageId": "str",
+                "version": 1,
+                "text": dedent(
+                    """\
+                    :
+                    """
+                ),
+            }
+        },
+    )
+    response3 = client_server._endpoint.request(
+        "text_document/completion",
+        {
+            "textDocument": {"uri": "uri123", "languageId": "str", "version": 1},
+            "position": {"line": 0, "character": 1},
+        },
+    ).result(timeout=CALL_TIMEOUT)
+    data_regression.check(response3)
