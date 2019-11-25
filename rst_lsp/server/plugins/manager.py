@@ -1,5 +1,5 @@
 # TODO annotate hooks
-# see https://stackoverflow.com/questions/54674679/how-can-i-annotate-types-for-a-pluggy-hook-specification
+# https://stackoverflow.com/questions/54674679/how-can-i-annotate-types-for-a-pluggy-hook-specification
 from enum import Enum
 import pkg_resources
 

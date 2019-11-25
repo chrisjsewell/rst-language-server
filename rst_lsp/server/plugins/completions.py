@@ -9,7 +9,9 @@ REGEX_ROLE_START = "role"
 
 
 @hookimpl
-def rst_completions(config: Config, workspace: Workspace, document: Document, position: Position):
+def rst_completions(
+    config: Config, workspace: Workspace, document: Document, position: Position
+):
 
     before = document.get_line_before(position)[::-1]  # reverse
     workspace.server.log_message(before)

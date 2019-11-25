@@ -54,6 +54,7 @@ class CompletionList(TypedDict):
     """Represents a collection of [completion items](#CompletionItem) to be presented
     in the editor.
     """
+
     items: List[CompletionItem]
     isIncomplete: bool
 
@@ -62,6 +63,7 @@ class Diagnostic(TypedDict):
     """Represents a diagnostic, such as a compiler error or warning.
     Diagnostic objects are only valid in the scope of a resource.
     """
+
     range: Range
     severity: Optional[int]
     code: Optional[Union[int, str]]
@@ -79,6 +81,7 @@ class DocumentSymbol(TypedDict):
     one that encloses its definition and one that points to its most interesting range,
     e.g. the range of an identifier.
     """
+
     # The name of this symbol. Will be displayed in the user interface
     # and therefore must not be
     # an empty string or a string only consisting of white spaces.

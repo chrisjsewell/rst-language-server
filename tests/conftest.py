@@ -6,13 +6,14 @@ import pytest
 
 
 PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), "raw_files"))
-TEST_UUIDS = ['uuid_{}'.format(i) for i in range(10000)]
+TEST_UUIDS = ["uuid_{}".format(i) for i in range(10000)]
 
 
 @pytest.fixture(autouse=True)
 def mock_uuid():
-    with mock.patch.object(uuid, 'uuid4', side_effect=TEST_UUIDS):
+    with mock.patch.object(uuid, "uuid4", side_effect=TEST_UUIDS):
         yield
+
 
 @pytest.fixture()
 def get_test_file_path():

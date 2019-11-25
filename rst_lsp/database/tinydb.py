@@ -35,9 +35,7 @@ class Database:
 
         """
         if in_memory:
-            self._db = TinyDB(
-                storage=MemoryStorage,
-            )
+            self._db = TinyDB(storage=MemoryStorage,)
         else:
             self._db = TinyDB(
                 path,

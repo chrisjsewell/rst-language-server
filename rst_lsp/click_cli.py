@@ -145,15 +145,9 @@ def cmnd_source_file(database: Database, path: str):
     with click.open_file(path) as handle:
         content = handle.read()
     app_env = create_sphinx_app(
-        confdir=os.path.dirname(conf_file["uri"])
-        if conf_file is not None
-        else None,
+        confdir=os.path.dirname(conf_file["uri"]) if conf_file is not None else None,
     )
-    result = assess_source(
-        content,
-        app_env,
-        path,
-    )
+    result = assess_source(content, app_env, path,)
     database.update_doc(
         path,
         endline=len(content.splitlines()) - 1,

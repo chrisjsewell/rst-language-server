@@ -8,7 +8,6 @@ outside of the command-line.
 # TODO improve efficiency for multiple calls, e.g. by caching (using lru_cache?)
 # TODO subclass Sphinx, so we can only initialise the parts we require.
 from contextlib import contextmanager
-from collections import namedtuple
 import copy
 from io import StringIO
 from importlib import import_module
@@ -16,7 +15,7 @@ import locale
 import os
 import shutil
 import tempfile
-from typing import IO, List, Optional, Tuple
+from typing import IO, List, Tuple
 
 import attr
 
@@ -28,7 +27,6 @@ from docutils.utils import SystemMessage
 from sphinx import package_dir
 import sphinx.locale
 from sphinx.application import Sphinx
-from sphinx.environment import BuildEnvironment
 from sphinx.util.console import nocolor, color_terminal, terminal_safe  # noqa
 from sphinx.util.docutils import docutils_namespace, patch_docutils
 from sphinx.util.docutils import sphinx_domains
@@ -45,7 +43,6 @@ class SphinxAppEnv:
     directives: dict = attr.ib()
     stream_status: IO = attr.ib()
     stream_error: IO = attr.ib()
-
 
 
 def create_sphinx_app(
@@ -119,9 +116,7 @@ def create_sphinx_app(
 
 
 @contextmanager
-def sphinx_env(
-    app_env: SphinxAppEnv
-):
+def sphinx_env(app_env: SphinxAppEnv):
     with patch_docutils(app_env.app.confdir), docutils_namespace():
         from docutils.parsers.rst.directives import _directives
         from docutils.parsers.rst.roles import _roles
@@ -183,9 +178,7 @@ class SourceAssessResult:
 
 
 def assess_source(
-    content: str,
-    app_env: SphinxAppEnv,
-    filename: str = "input.rst",
+    content: str, app_env: SphinxAppEnv, filename: str = "input.rst",
 ) -> SourceAssessResult:
     """Assess the content of an file.
 
@@ -211,7 +204,7 @@ def assess_source(
         doc_warning_stream = StringIO()
         settings.warning_stream = doc_warning_stream
         settings.report_level = 2  # warning
-        settings.halt_level = 4 # severe
+        settings.halt_level = 4  # severe
         # The level at or above which `SystemMessage` exceptions
         # will be raised, halting execution.
 
@@ -226,11 +219,7 @@ def assess_source(
         document.walk(visitor)
         elements = visitor.info_datas[:]
 
-    return SourceAssessResult(
-        document,
-        elements,
-        reporter.log_capture,
-    )
+    return SourceAssessResult(document, elements, reporter.log_capture,)
 
     # from docutils.parsers.rst import states
     # for state in states.state_classes:

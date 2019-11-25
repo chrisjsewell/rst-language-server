@@ -147,7 +147,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
             elif node.dtype == "inline_internal_target":
                 self._add_inline_info(
                     ElementType.internal_target.value,
-                    {"lineno": node.doc_lineno - 1, "start_char": node.doc_char,},
+                    {"lineno": node.doc_lineno - 1, "start_char": node.doc_char},
                 )
             elif node.dtype == "substitution_reference":
                 self._add_inline_info(
