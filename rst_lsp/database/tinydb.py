@@ -180,12 +180,38 @@ class Database:
     def query_element(self, name: str):
         return self._tbl_elements.search(where("element") == name)
 
-    def query_elements(self, names: Optional[list] = None, uri: Optional[str] = None):
-        if names is None and uri is None:
+    def query_elements(
+        self,
+        names: Optional[list] = None,
+        uri: Optional[str] = None,
+        section_uuid: Optional[str] = False,  # TODO use separate None identifier
+    ):
+        if names is None and uri is None and section_uuid is False:
             return self._tbl_elements.all()
-        if names is None:
+        if names is None and section_uuid is False:
             return self._tbl_elements.search(where("uri") == uri)
-        return self._tbl_elements.search(where("element").one_of(names))
+        if names is None and uri is None:
+            return self._tbl_elements.search(where("section_uuid") == section_uuid)
+        if names is not None and uri is None and section_uuid is False:
+            return self._tbl_elements.search(where("element").one_of(names))
+        if names is not None and section_uuid is not False and uri is None:
+            return self._tbl_elements.search(
+                (where("element").one_of(names))
+                & (where("section_uuid") == section_uuid)
+            )
+        if names is not None and uri is not None and section_uuid is False:
+            return self._tbl_elements.search(
+                (where("element").one_of(names)) & (where("uri") == uri)
+            )
+        if names is not None and uri is not None and section_uuid is False:
+            return self._tbl_elements.search(
+                (where("element").one_of(names)) & (where("uri") == uri)
+            )
+        return self._tbl_elements.search(
+            (where("element").one_of(names))
+            & (where("uri") == uri)
+            & (where("section_uuid") == section_uuid)
+        )
 
     def query_lint(self, uri: str):
         return self._tbl_linting.search(where("uri") == uri)

@@ -213,7 +213,7 @@ class Document:
         return self._source
 
     @property
-    def database(self) -> SourceAssessResult:
+    def database(self) -> Database:
         if self._has_changed:
             # TODO partial reassessment of source
             result = assess_source(

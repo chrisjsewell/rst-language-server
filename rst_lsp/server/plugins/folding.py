@@ -10,6 +10,7 @@ def rst_folding_range(document: Document):
     uri = document.uri
     results = []
     # TODO probably want startCharacter to be at the end of the startLine?
+    # TODO can now utilise section_uuid
 
     # Get section folding
     doc_data = database.query_doc(uri)

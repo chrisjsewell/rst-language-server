@@ -16,20 +16,49 @@ def rst_document_symbols(
     uri = document.uri
     results = []
 
-    results.append(
-        {
-            "name": "test",
-            "detail": "Some detail",
-            "kind": SymbolKind.Namespace,
-            "range": {
-                "start": {"line": 0, "character": 0},
-                "end": {"line": 9, "character": 0},
-            },
-            "selectionRange": {
-                "start": {"line": 0, "character": 0},
-                "end": {"line": 9, "character": 0},
-            },
-            # children
-        }
-    )
+    for section in database.query_elements(
+        [ElementType.section.value], uri=uri, section_uuid=None
+    ):
+        title = section["title"]
+        results.append(
+            {
+                "name": title,
+                # "detail": "Some detail",
+                "kind": SymbolKind.Module,
+                "range": {
+                    "start": {"line": section["lineno"], "character": 0},
+                    "end": {"line": section["lineno"], "character": len(title) - 1},
+                },
+                "selectionRange": {
+                    "start": {"line": section["lineno"], "character": 0},
+                    "end": {"line": section["lineno"], "character": len(title) - 1},
+                },
+                "children": _create_children(section, uri, database),
+            }
+        )
     return results
+
+
+def _create_children(section, uri, database):
+    children = []
+    for sub_section in database.query_elements(
+        [ElementType.section.value], uri=uri, section_uuid=section["uuid"]
+    ):
+        title = sub_section["title"]
+        children.append(
+            {
+                "name": title,
+                # "detail": "Some detail",
+                "kind": SymbolKind.Module,
+                "range": {
+                    "start": {"line": sub_section["lineno"], "character": 0},
+                    "end": {"line": sub_section["lineno"], "character": len(title) - 1},
+                },
+                "selectionRange": {
+                    "start": {"line": sub_section["lineno"], "character": 0},
+                    "end": {"line": sub_section["lineno"], "character": len(title) - 1},
+                },
+                "children": _create_children(sub_section, uri, database),
+            }
+        )
+    return children
