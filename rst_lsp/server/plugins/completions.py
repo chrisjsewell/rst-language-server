@@ -1,6 +1,6 @@
 import re
 
-from rst_lsp.server.plugins import hookimpl
+from rst_lsp.server.plugin_manager import hookimpl
 from rst_lsp.server.workspace import Config, Document, Workspace
 from rst_lsp.server.datatypes import Position
 from rst_lsp.server.constants import CompletionItemKind

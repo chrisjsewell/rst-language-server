@@ -23,7 +23,7 @@ from . import uri_utils as uris
 from .workspace import Config, Document, Workspace
 from .workspace import match_uri_to_workspace as uri2workspace
 from .datatypes import CompletionList, DocumentSymbol, Position, TextDocument, TextEdit
-from .plugins import PluginTypes
+from .plugin_manager import PluginTypes
 
 logger = logging.getLogger(__name__)
 

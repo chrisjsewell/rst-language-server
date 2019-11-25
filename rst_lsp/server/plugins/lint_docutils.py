@@ -1,10 +1,9 @@
 from typing import List
 
-from rst_lsp.server.workspace import Config, Document
-from rst_lsp.server.datatypes import Diagnostic
 from rst_lsp.server.constants import DiagnosticSeverity
-
-from . import hookimpl
+from rst_lsp.server.datatypes import Diagnostic
+from rst_lsp.server.plugin_manager import hookimpl
+from rst_lsp.server.workspace import Config, Document
 
 SEVERITY_MAP = {
     2: DiagnosticSeverity.Warning,

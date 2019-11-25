@@ -1,10 +1,10 @@
 from typing import List
 
 from rst_lsp.docutils_ext.visitor import ElementType
-from rst_lsp.server.workspace import Config, Document, Workspace
-from rst_lsp.server.datatypes import DocumentSymbol
 from rst_lsp.server.constants import SymbolKind
-from . import hookimpl
+from rst_lsp.server.datatypes import DocumentSymbol
+from rst_lsp.server.workspace import Config, Document, Workspace
+from rst_lsp.server.plugin_manager import hookimpl
 
 
 @hookimpl

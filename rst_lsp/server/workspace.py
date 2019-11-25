@@ -16,7 +16,7 @@ from rst_lsp.analyse.main import (
 from . import uri_utils as uris
 from .utils import find_parents
 from .datatypes import Position, TextDocument, TextEdit
-from .plugins import create_manager
+from .plugin_manager import create_manager
 
 logger = logging.getLogger(__name__)
 
