@@ -55,6 +55,7 @@
   uuid: uuid_4
 - alias: sdf
   element: link
+  end_char: 9
   lineno: 17
   raw: '`<sdf>`__'
   section_uuid: uuid_1
@@ -71,6 +72,7 @@
   uuid: uuid_6
 - alias: http://www.python.org/
   element: link
+  end_char: 27
   lineno: 22
   raw: '`<http://www.python.org/>`_'
   section_uuid: uuid_6
@@ -91,6 +93,7 @@
   uuid: uuid_8
 - alias: www.python.org
   element: link
+  end_char: 48
   lineno: 26
   raw: '`a link to python <www.python.org>`_'
   section_uuid: uuid_6
@@ -156,27 +159,34 @@
   type: Inline
   uuid: uuid_15
 - element: reference
+  end_char: 6
   lineno: 45
+  raw: '|REF1|'
   ref_type: substitution
   section_uuid: uuid_11
   start_char: 0
   type: Inline
   uuid: uuid_16
 - element: reference
+  end_char: 20
   lineno: 45
+  raw: '|REF2|'
   ref_type: substitution
   section_uuid: uuid_11
   start_char: 14
   type: Inline
   uuid: uuid_17
 - element: reference
+  end_char: 31
   lineno: 45
+  raw: '|REF3|'
   ref_type: substitution
   section_uuid: uuid_11
   start_char: 25
   type: Inline
   uuid: uuid_18
 - element: reference
+  end_char: 13
   lineno: 47
   raw: headerlink_
   ref_type: anonymous

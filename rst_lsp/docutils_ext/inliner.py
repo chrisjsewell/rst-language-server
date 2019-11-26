@@ -9,6 +9,8 @@ This subclass adds:
 
 
 """
+from typing import Optional
+
 from docutils import ApplicationError, nodes, utils
 from docutils.nodes import fully_normalize_name as normalize_name
 from docutils.nodes import whitespace_normalize_name
@@ -28,13 +30,21 @@ __all__ = ("InfoNodeInline", "LSPInliner")
 class InfoNodeInline(nodes.Node):
     """A node for highlighting an inline element position in the document."""
 
-    def __init__(self, inliner, match, dtype, doc_lineno, doc_char, data={}):
+    def __init__(
+        self,
+        inliner: nodes.Node,
+        dtype: str,
+        doc_lineno: int,
+        doc_char: int,
+        raw: str,
+        data: Optional[dict] = None,
+    ):
         self.parent = inliner.parent
         self.document = inliner.document
-        self.match = match
         self.dtype = dtype
         self.doc_lineno = doc_lineno
         self.doc_char = doc_char
+        self.raw = raw
         self.other_data = data or {}
         self.children = []
 
@@ -369,12 +379,11 @@ class LSPInliner(Inliner):
         node_list = [
             InfoNodeInline(
                 self,
-                match=match,
                 dtype="phrase_ref",
                 doc_lineno=doc_lineno,
                 doc_char=doc_char,
+                raw=rawsource,
                 data=dict(
-                    raw=rawsource,
                     alias=alias,
                     # link_type=ref_type, alt_text=alt_text,
                 ),
@@ -420,11 +429,11 @@ class LSPInliner(Inliner):
         doc_lineno, doc_char = self.char2docplace[start_char]
         info = InfoNodeInline(
             self,
-            match,
             dtype="role",
             doc_lineno=doc_lineno,
             doc_char=doc_char,
-            data=dict(raw=rawsource, role=role, content=text),
+            raw=rawsource,
+            data=dict(role=role, content=text),
         )
         if role_fn:
             nodes, messages2 = role_fn(role, rawsource, text, lineno, self)
@@ -465,10 +474,10 @@ class LSPInliner(Inliner):
         doc_lineno, doc_char = self.char2docplace[start_char + len(before)]
         info = InfoNodeInline(
             self,
-            match=match,
             dtype="inline_internal_target",
             doc_lineno=doc_lineno,
             doc_char=doc_char,
+            raw=match.string[len(before) : len(match.string) - len(remaining)],
         )
         return before, [info] + inlines, remaining, sysmessages
 
@@ -495,10 +504,10 @@ class LSPInliner(Inliner):
         doc_lineno, doc_char = self.char2docplace[start_char + len(before)]
         info = InfoNodeInline(
             self,
-            match=match,
             dtype="substitution_reference",
             doc_lineno=doc_lineno,
             doc_char=doc_char,
+            raw=match.string[len(before) : len(match.string) - len(remaining)],
         )
         return before, [info] + inlines, remaining, sysmessages
 
@@ -536,10 +545,10 @@ class LSPInliner(Inliner):
         doc_lineno, doc_char = self.char2docplace[start_char + len(before)]
         info = InfoNodeInline(
             self,
-            match=match,
             dtype="footnote_reference",
             doc_lineno=doc_lineno,
             doc_char=doc_char,
+            raw=match.string[len(before) : len(match.string) - len(remaining)],
         )
         return (before, [info, refnode], remaining, [])
 
@@ -563,11 +572,11 @@ class LSPInliner(Inliner):
         doc_lineno, doc_char = self.char2docplace[start_char + matchstart]
         info = InfoNodeInline(
             self,
-            match=match,
             dtype="anonymous_reference" if anonymous else "std_reference",
             doc_lineno=doc_lineno,
             doc_char=doc_char,
-            data={"refname": refname, "raw": string[matchstart:matchend]},
+            raw=string[matchstart:matchend],
+            data={"refname": refname},
         )
         return (string[:matchstart], [info, referencenode], string[matchend:], [])
 

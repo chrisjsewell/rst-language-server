@@ -3,14 +3,14 @@
     name: ref:substitution
     range:
       end:
-        character: 1
+        character: 5
         line: 3
       start:
         character: 0
         line: 3
     selectionRange:
       end:
-        character: 1
+        character: 5
         line: 3
       start:
         character: 0

@@ -169,8 +169,7 @@ def find_references(section_uuid, uri, database):
                     },
                     "end": {
                         "line": element["lineno"],
-                        # TODO get proper end character
-                        "character": element["start_char"] + 1,
+                        "character": element["end_char"],
                     },
                 },
                 "selectionRange": {
@@ -180,7 +179,7 @@ def find_references(section_uuid, uri, database):
                     },
                     "end": {
                         "line": element["lineno"],
-                        "character": element["start_char"] + 1,
+                        "character": element["end_char"],
                     },
                 },
             }

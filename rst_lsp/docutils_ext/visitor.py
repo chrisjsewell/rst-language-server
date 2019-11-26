@@ -62,14 +62,22 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
             )
         self.info_datas.append(dct)
 
-    def _add_inline_info(self, element_type, dct):
-        dct["element"] = element_type
-        dct["type"] = "Inline"
-        dct["uuid"] = str(uuid.uuid4())
-        dct["section_uuid"] = (
-            None if self.current_section is None else self.current_section["uuid"]
-        )
-        self.info_datas.append(dct)
+    def _add_inline_info(self, node, element_type, **kwargs):
+        data = {
+            "type": "Inline",
+            "uuid": str(uuid.uuid4()),
+            "element": element_type,
+            "raw": node.raw,
+            "lineno": node.doc_lineno - 1,
+            "start_char": node.doc_char,
+            "end_char": node.doc_char + len(node.raw),  # TODO adjust for multi-line?
+            "section_uuid": None
+            if self.current_section is None
+            else self.current_section["uuid"],
+        }
+        assert not set(kwargs.keys()).intersection(data.keys())
+        data.update(kwargs)
+        self.info_datas.append(data)
 
     def unknown_visit(self, node):
         """Override for generic, uniform traversals."""
@@ -123,61 +131,35 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
             if node.dtype == "phrase_ref":
                 # followed by reference, then optionally by target
                 self._add_inline_info(
-                    ElementType.link.value,
-                    {
-                        "lineno": node.doc_lineno - 1,
-                        "start_char": node.doc_char,
-                        "alias": node.other_data["alias"],
-                        "raw": node.other_data["raw"],
-                    },
+                    node, ElementType.link.value, alias=node.other_data["alias"],
                 )
             elif node.dtype == "role":
                 # followed by nodes created by role function
                 # (or problematic, if the role does not exist)
                 self._add_inline_info(
+                    node,
                     ElementType.role.value,
-                    {
-                        "lineno": node.doc_lineno - 1,
-                        "start_char": node.doc_char,
-                        "end_char": node.doc_char + len(node.other_data["raw"]),
-                        "role": node.other_data["role"],
-                        "content": node.other_data["content"],
-                        "raw": node.other_data["raw"],
-                    },
+                    role=node.other_data["role"],
+                    content=node.other_data["content"],
                 )
             elif node.dtype == "inline_internal_target":
                 self._add_inline_info(
-                    ElementType.internal_target.value,
-                    {"lineno": node.doc_lineno - 1, "start_char": node.doc_char},
+                    node, ElementType.internal_target.value,
                 )
             elif node.dtype == "substitution_reference":
                 self._add_inline_info(
-                    ElementType.reference.value,
-                    {
-                        "ref_type": "substitution",
-                        "lineno": node.doc_lineno - 1,
-                        "start_char": node.doc_char,
-                    },
+                    node, ElementType.reference.value, ref_type="substitution",
                 )
             elif node.dtype == "footnote_reference":
                 self._add_inline_info(
-                    ElementType.reference.value,
-                    {
-                        "ref_type": "footnote",
-                        "lineno": node.doc_lineno - 1,
-                        "start_char": node.doc_char,
-                    },
+                    node, ElementType.reference.value, ref_type="footnote",
                 )
             elif node.dtype in ["anonymous_reference", "std_reference"]:
                 self._add_inline_info(
+                    node,
                     ElementType.reference.value,
-                    {
-                        "ref_type": "anonymous",
-                        "lineno": node.doc_lineno - 1,
-                        "start_char": node.doc_char,
-                        "refname": node.other_data["refname"],
-                        "raw": node.other_data["raw"],
-                    },
+                    ref_type="anonymous",
+                    refname=node.other_data["refname"],
                 )
             else:
                 raise TypeError(f"unknown InfoNodeInline.dtype = {node.dtype}")

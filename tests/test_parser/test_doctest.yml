@@ -59,7 +59,9 @@ elements:
   type_name: versionadded
   uuid: uuid_5
 - element: reference
+  end_char: 22
   lineno: 11
+  raw: '|RST|'
   ref_type: substitution
   section_uuid: uuid_1
   start_char: 17

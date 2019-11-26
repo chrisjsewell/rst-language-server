@@ -8,7 +8,9 @@ elements:
   type: Block
   uuid: uuid_0
 - element: reference
+  end_char: 6
   lineno: 3
+  raw: '|REF1|'
   ref_type: substitution
   section_uuid: uuid_0
   start_char: 0
@@ -23,7 +25,9 @@ elements:
   type: Block
   uuid: uuid_2
 - element: reference
+  end_char: 6
   lineno: 8
+  raw: '|REF2|'
   ref_type: substitution
   section_uuid: uuid_2
   start_char: 0
@@ -38,7 +42,9 @@ elements:
   type: Block
   uuid: uuid_4
 - element: reference
+  end_char: 6
   lineno: 13
+  raw: '|REF3|'
   ref_type: substitution
   section_uuid: uuid_4
   start_char: 0
@@ -53,7 +59,9 @@ elements:
   type: Block
   uuid: uuid_6
 - element: reference
+  end_char: 6
   lineno: 19
+  raw: '|REF4|'
   ref_type: substitution
   section_uuid: uuid_6
   start_char: 0
