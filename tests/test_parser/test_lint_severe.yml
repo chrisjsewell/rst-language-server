@@ -14,7 +14,7 @@ elements:
   ref_type: substitution
   section_uuid: uuid_0
   start_char: 0
-  target: REF1
+  target: ref1
   type: Inline
   uuid: uuid_1
 - element: section
@@ -32,7 +32,7 @@ elements:
   ref_type: substitution
   section_uuid: uuid_2
   start_char: 0
-  target: REF2
+  target: ref2
   type: Inline
   uuid: uuid_3
 - element: section
@@ -50,7 +50,7 @@ elements:
   ref_type: substitution
   section_uuid: uuid_4
   start_char: 0
-  target: REF3
+  target: ref3
   type: Inline
   uuid: uuid_5
 - element: section
@@ -68,7 +68,7 @@ elements:
   ref_type: substitution
   section_uuid: uuid_6
   start_char: 0
-  target: REF4
+  target: ref4
   type: Inline
   uuid: uuid_7
 linting:

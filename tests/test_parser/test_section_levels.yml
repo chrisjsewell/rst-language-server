@@ -14,7 +14,7 @@ elements:
   ref_type: substitution
   section_uuid: uuid_0
   start_char: 0
-  target: REF1
+  target: ref1
   type: Inline
   uuid: uuid_1
 - element: section
@@ -32,7 +32,7 @@ elements:
   ref_type: substitution
   section_uuid: uuid_2
   start_char: 0
-  target: REF2
+  target: ref2
   type: Inline
   uuid: uuid_3
 - element: section
@@ -50,7 +50,7 @@ elements:
   ref_type: substitution
   section_uuid: uuid_4
   start_char: 0
-  target: REF3
+  target: ref3
   type: Inline
   uuid: uuid_5
 - element: section
@@ -68,7 +68,7 @@ elements:
   ref_type: substitution
   section_uuid: uuid_6
   start_char: 0
-  target: REF4
+  target: ref4
   type: Inline
   uuid: uuid_7
 - element: section
@@ -86,7 +86,7 @@ elements:
   ref_type: substitution
   section_uuid: uuid_8
   start_char: 0
-  target: REF5
+  target: ref5
   type: Inline
   uuid: uuid_9
 - element: section
@@ -104,7 +104,7 @@ elements:
   ref_type: substitution
   section_uuid: uuid_10
   start_char: 0
-  target: REF7
+  target: ref7
   type: Inline
   uuid: uuid_11
 - element: section
@@ -122,7 +122,7 @@ elements:
   ref_type: substitution
   section_uuid: uuid_12
   start_char: 0
-  target: REF8
+  target: ref8
   type: Inline
   uuid: uuid_13
 - element: section
@@ -140,7 +140,7 @@ elements:
   ref_type: substitution
   section_uuid: uuid_14
   start_char: 0
-  target: REF9
+  target: ref9
   type: Inline
   uuid: uuid_15
 - element: section
@@ -158,7 +158,7 @@ elements:
   ref_type: substitution
   section_uuid: uuid_16
   start_char: 0
-  target: REF10
+  target: ref10
   type: Inline
   uuid: uuid_17
 linting:

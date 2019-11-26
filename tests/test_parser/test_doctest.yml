@@ -65,7 +65,7 @@ elements:
   ref_type: substitution
   section_uuid: uuid_1
   start_char: 17
-  target: RST
+  target: rst
   type: Inline
   uuid: uuid_6
 - arguments: []
@@ -81,7 +81,7 @@ elements:
   type_name: replace
   uuid: uuid_7
 - element: substitution_def
-  label: RST
+  label: rst
   lineno: 13
   raw: '.. |RST| replace:: ReStructuredText'
   section_uuid: uuid_1

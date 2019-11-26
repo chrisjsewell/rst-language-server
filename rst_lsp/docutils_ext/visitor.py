@@ -7,6 +7,7 @@ from enum import Enum
 import uuid
 
 from docutils import nodes
+from docutils.nodes import fully_normalize_name as normalize_name
 
 from rst_lsp.docutils_ext.inliner import InfoNodeInline
 from rst_lsp.docutils_ext.parser import InfoNodeBlock
@@ -123,7 +124,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                 }
                 try:
                     # TODO move this to parser
-                    info["label"] = next_node.attributes["ids"][0]
+                    info["label"] = normalize_name(next_node.attributes["ids"][0])
                 except IndexError:
                     pass
                 self._add_block_info(node.dtype, info)
@@ -136,7 +137,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                 }
                 try:
                     # TODO move this to parser
-                    info["label"] = next_node.attributes["names"][0]
+                    info["label"] = normalize_name(next_node.attributes["names"][0])
                 except IndexError:
                     pass
                 self._add_block_info(node.dtype, info)
@@ -145,7 +146,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                     "start_char": 0,  # TODO get proper start character (using raw?)
                     "lineno": node.doc_lineno - 1,
                     "raw": node.raw,
-                    "label": node.other_data["label"],
+                    "label": normalize_name(node.other_data["label"]),
                 }
                 self._add_block_info(node.dtype, info)
             else:
@@ -164,34 +165,34 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
             elif node.dtype == "phrase_ref":
                 # followed by reference, then optionally by target
                 self._add_inline_info(
-                    node, ElementType.link.value, alias=node.other_data["alias"],
+                    node, ElementType.link.value, target=node.other_data["alias"],
                 )
             elif node.dtype == "inline_internal_target":
                 self._add_inline_info(
                     node,
                     ElementType.internal_target.value,
-                    target=node.other_data["target"],
+                    target=normalize_name(node.other_data["target"]),
                 )
             elif node.dtype == "substitution_reference":
                 self._add_inline_info(
                     node,
                     ElementType.reference.value,
                     ref_type="substitution",
-                    target=node.other_data["target"],
+                    target=normalize_name(node.other_data["target"]),
                 )
             elif node.dtype == "footnote_reference":
                 self._add_inline_info(
                     node,
                     ElementType.reference.value,
                     ref_type="footnote",
-                    target=node.other_data["target"],
+                    target=normalize_name(node.other_data["target"]),
                 )
             elif node.dtype in ["anonymous_reference", "std_reference"]:
                 self._add_inline_info(
                     node,
                     ElementType.reference.value,
                     ref_type="anonymous",
-                    target=node.other_data["target"],
+                    target=normalize_name(node.other_data["target"]),
                 )
             else:
                 raise TypeError(f"unknown InfoNodeInline.dtype = {node.dtype}")
