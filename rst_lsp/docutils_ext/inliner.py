@@ -471,14 +471,15 @@ class LSPInliner(Inliner):
             name = normalize_name(target.astext())
             target["names"].append(name)
             self.document.note_explicit_target(target, self.parent)
-        doc_lineno, doc_char = self.char2docplace[start_char + len(before)]
-        info = InfoNodeInline(
-            self,
-            dtype="inline_internal_target",
-            doc_lineno=doc_lineno,
-            doc_char=doc_char,
-            raw=match.string[len(before) : len(match.string) - len(remaining)],
-        )
+            doc_lineno, doc_char = self.char2docplace[start_char + len(before)]
+            info = InfoNodeInline(
+                self,
+                dtype="inline_internal_target",
+                doc_lineno=doc_lineno,
+                doc_char=doc_char,
+                raw=match.string[len(before) : len(match.string) - len(remaining)],
+                data={"target": target.astext()}
+            )
         return before, [info] + inlines, remaining, sysmessages
 
     def substitution_reference(self, match, lineno, start_char):
@@ -501,14 +502,15 @@ class LSPInliner(Inliner):
                         self.document.note_refname(reference_node)
                     reference_node += subref_node
                     inlines = [reference_node]
-        doc_lineno, doc_char = self.char2docplace[start_char + len(before)]
-        info = InfoNodeInline(
-            self,
-            dtype="substitution_reference",
-            doc_lineno=doc_lineno,
-            doc_char=doc_char,
-            raw=match.string[len(before) : len(match.string) - len(remaining)],
-        )
+                doc_lineno, doc_char = self.char2docplace[start_char + len(before)]
+                info = InfoNodeInline(
+                    self,
+                    dtype="substitution_reference",
+                    doc_lineno=doc_lineno,
+                    doc_char=doc_char,
+                    raw=match.string[len(before) : len(match.string) - len(remaining)],
+                    data={"target": subref_text}
+                )
         return before, [info] + inlines, remaining, sysmessages
 
     def footnote_reference(self, match, lineno, start_char=None):
@@ -549,6 +551,7 @@ class LSPInliner(Inliner):
             doc_lineno=doc_lineno,
             doc_char=doc_char,
             raw=match.string[len(before) : len(match.string) - len(remaining)],
+            data={"target": label}
         )
         return (before, [info, refnode], remaining, [])
 
@@ -576,7 +579,7 @@ class LSPInliner(Inliner):
             doc_lineno=doc_lineno,
             doc_char=doc_char,
             raw=string[matchstart:matchend],
-            data={"refname": refname},
+            data={"target": referencename},
         )
         return (string[:matchstart], [info, referencenode], string[matchend:], [])
 

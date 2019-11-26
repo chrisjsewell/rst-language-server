@@ -1,10 +1,10 @@
 elements:
 - element: hyperlink_target
+  label: title
   lineno: 0
   raw: '.. _title:'
   section_uuid: null
   start_char: 0
-  target: title
   type: Block
   uuid: uuid_0
 - element: section
@@ -65,6 +65,7 @@ elements:
   ref_type: substitution
   section_uuid: uuid_1
   start_char: 17
+  target: RST
   type: Inline
   uuid: uuid_6
 - arguments: []
@@ -80,11 +81,11 @@ elements:
   type_name: replace
   uuid: uuid_7
 - element: substitution_def
+  label: RST
   lineno: 13
   raw: '.. |RST| replace:: ReStructuredText'
   section_uuid: uuid_1
   start_char: 0
-  sub: RST
   type: Block
   uuid: uuid_8
 lints:

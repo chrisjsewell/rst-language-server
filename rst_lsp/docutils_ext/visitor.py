@@ -19,6 +19,10 @@ class ElementType(Enum):
     link = "link"
     reference = "reference"
     internal_target = "internal_target"
+    footnote = "footnote"
+    citation = "citation"
+    hyperlink_target = "hyperlink_target"
+    substitution_def = "substitution_def"
 
 
 class DocInfoVisitor(nodes.GenericNodeVisitor):
@@ -95,7 +99,7 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                 )
             elif node.dtype == "directive":
                 line = self.lines[node.doc_lineno - 1]
-                dlines = node.other_data["block_text"].rstrip().splitlines()
+                dlines = node.raw.rstrip().splitlines()
                 endline = node.doc_lineno - 2 + len(dlines)
                 self._add_block_info(
                     ElementType.directive.value,
@@ -110,30 +114,45 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                         "options": node.other_data["options"],
                     },
                 )
-            elif node.dtype == "explicit_construct":
-                # one of "footnote", "citation",  "hyperlink_target", "substitution_def"
+            elif node.dtype == "hyperlink_target":
                 next_node = node.next_node(siblings=True)
                 info = {
                     "start_char": 0,  # TODO get proper start character (using raw?)
                     "lineno": node.doc_lineno - 1,
-                    "raw": node.other_data["raw"],
+                    "raw": node.raw,
                 }
                 try:
-                    if node.other_data["ctype"] == "hyperlink_target":
-                        info["target"] = next_node.attributes["ids"][0]
-                    elif node.other_data["ctype"] == "substitution_def":
-                        info["sub"] = next_node.attributes["names"][0]
+                    # TODO move this to parser
+                    info["label"] = next_node.attributes["ids"][0]
                 except IndexError:
                     pass
-                self._add_block_info(node.other_data["ctype"], info)
+                self._add_block_info(node.dtype, info)
+            elif node.dtype == "substitution_def":
+                next_node = node.next_node(siblings=True)
+                info = {
+                    "start_char": 0,  # TODO get proper start character (using raw?)
+                    "lineno": node.doc_lineno - 1,
+                    "raw": node.raw,
+                }
+                try:
+                    # TODO move this to parser
+                    info["label"] = next_node.attributes["names"][0]
+                except IndexError:
+                    pass
+                self._add_block_info(node.dtype, info)
+            elif node.dtype in ["footnote", "citation"]:
+                info = {
+                    "start_char": 0,  # TODO get proper start character (using raw?)
+                    "lineno": node.doc_lineno - 1,
+                    "raw": node.raw,
+                    "label": node.other_data["label"],
+                }
+                self._add_block_info(node.dtype, info)
+            else:
+                raise TypeError(f"unknown InfoNodeBlock.dtype = {node.dtype}")
 
         elif isinstance(node, InfoNodeInline):
-            if node.dtype == "phrase_ref":
-                # followed by reference, then optionally by target
-                self._add_inline_info(
-                    node, ElementType.link.value, alias=node.other_data["alias"],
-                )
-            elif node.dtype == "role":
+            if node.dtype == "role":
                 # followed by nodes created by role function
                 # (or problematic, if the role does not exist)
                 self._add_inline_info(
@@ -142,24 +161,37 @@ class DocInfoVisitor(nodes.GenericNodeVisitor):
                     role=node.other_data["role"],
                     content=node.other_data["content"],
                 )
+            elif node.dtype == "phrase_ref":
+                # followed by reference, then optionally by target
+                self._add_inline_info(
+                    node, ElementType.link.value, alias=node.other_data["alias"],
+                )
             elif node.dtype == "inline_internal_target":
                 self._add_inline_info(
-                    node, ElementType.internal_target.value,
+                    node,
+                    ElementType.internal_target.value,
+                    target=node.other_data["target"],
                 )
             elif node.dtype == "substitution_reference":
                 self._add_inline_info(
-                    node, ElementType.reference.value, ref_type="substitution",
+                    node,
+                    ElementType.reference.value,
+                    ref_type="substitution",
+                    target=node.other_data["target"],
                 )
             elif node.dtype == "footnote_reference":
                 self._add_inline_info(
-                    node, ElementType.reference.value, ref_type="footnote",
+                    node,
+                    ElementType.reference.value,
+                    ref_type="footnote",
+                    target=node.other_data["target"],
                 )
             elif node.dtype in ["anonymous_reference", "std_reference"]:
                 self._add_inline_info(
                     node,
                     ElementType.reference.value,
                     ref_type="anonymous",
-                    refname=node.other_data["refname"],
+                    target=node.other_data["target"],
                 )
             else:
                 raise TypeError(f"unknown InfoNodeInline.dtype = {node.dtype}")

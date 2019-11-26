@@ -47,7 +47,11 @@ header 2
 
 a headerlink_
 
+a [#fn1]_.
+
 .. |REF1| image:: file.png
 .. |REF2| replace:: MyText
 .. _REF3: http://sdfsdf/dsf
 .. |REF4| replace: bad syntax
+
+.. [#fn1] A footnote.

@@ -29,8 +29,8 @@ __all__ = ("InfoNodeBlock", "parse_source")
 class InfoNodeBlock(nodes.Node):
     """A node for highlighting a position in the document."""
 
-    def __init__(self, dtype, doc_lineno, match=None, data={}):
-        self.match = match
+    def __init__(self, dtype, doc_lineno, raw=None, data=None):
+        self.raw = raw
         self.dtype = dtype
         self.doc_lineno = doc_lineno
         self.other_data = data or {}
@@ -128,13 +128,12 @@ def run_directive(self, directive, match, type_name, option_presets):
     info = InfoNodeBlock(
         dtype="directive",
         doc_lineno=line_offset + 1,
-        match=match,
+        raw=block_text,  # TODO this is de-dentended
         data=dict(
             type_name=type_name,
             arguments=arguments,
             options=options,
             klass=f"{directive.__module__}.{directive.__name__}",
-            block_text=block_text,
         ),
     )
     return ([info] + result, blank_finish or self.state_machine.is_next_line_blank())
@@ -181,11 +180,14 @@ def explicit_construct(self, match):
                         ctype = name
                         break
                 if ctype:
+                    data = {}
+                    if ctype in ["footnote", "citation"]:
+                        label = expmatch.group(1)
+                        # label = normalize_name(label)
+                        data["label"] = label
                     info = [
                         InfoNodeBlock(
-                            dtype="explicit_construct",
-                            doc_lineno=lineno,
-                            data={"ctype": ctype, "raw": match.string},
+                            dtype=ctype, doc_lineno=lineno, raw=match.string, data=data
                         )
                     ]
                 return info + nodelist, finish

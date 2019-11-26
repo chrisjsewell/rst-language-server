@@ -21,8 +21,10 @@
 - description: 'Substitution definition "REF4" empty or invalid.
 
 
-    .. |REF4| replace: bad syntax'
+    .. |REF4| replace: bad syntax
+
+    '
   level: 2
-  line: 52
+  line: 54
   source: docutils
   type: WARNING

@@ -1,9 +1,9 @@
 - element: hyperlink_target
+  label: headerlink
   lineno: 1
   raw: '.. _headerlink:'
   section_uuid: null
   start_char: 0
-  target: headerlink
   type: Block
   uuid: uuid_0
 - element: section
@@ -165,6 +165,7 @@
   ref_type: substitution
   section_uuid: uuid_11
   start_char: 0
+  target: REF1
   type: Inline
   uuid: uuid_16
 - element: reference
@@ -174,6 +175,7 @@
   ref_type: substitution
   section_uuid: uuid_11
   start_char: 14
+  target: REF2
   type: Inline
   uuid: uuid_17
 - element: reference
@@ -183,6 +185,7 @@
   ref_type: substitution
   section_uuid: uuid_11
   start_char: 25
+  target: REF3
   type: Inline
   uuid: uuid_18
 - element: reference
@@ -190,18 +193,28 @@
   lineno: 47
   raw: headerlink_
   ref_type: anonymous
-  refname: headerlink
   section_uuid: uuid_11
   start_char: 2
+  target: headerlink
   type: Inline
   uuid: uuid_19
+- element: reference
+  end_char: 9
+  lineno: 49
+  raw: '[#fn1]_'
+  ref_type: footnote
+  section_uuid: uuid_11
+  start_char: 2
+  target: '#fn1'
+  type: Inline
+  uuid: uuid_20
 - arguments:
   - file.png
   element: directive
   end_char: 25
-  endline: 49
+  endline: 51
   klass: docutils.parsers.rst.directives.images.Image
-  lineno: 49
+  lineno: 51
   options:
     alt: REF1
     uri: file.png
@@ -209,47 +222,55 @@
   start_char: 10
   type: Block
   type_name: image
-  uuid: uuid_20
+  uuid: uuid_21
 - element: substitution_def
-  lineno: 49
+  label: REF1
+  lineno: 51
   raw: '.. |REF1| image:: file.png'
   section_uuid: uuid_11
   start_char: 0
-  sub: REF1
   type: Block
-  uuid: uuid_21
+  uuid: uuid_22
 - arguments: []
   element: directive
   end_char: 25
-  endline: 50
+  endline: 52
   klass: docutils.parsers.rst.directives.misc.Replace
-  lineno: 50
+  lineno: 52
   options: {}
   section_uuid: uuid_11
   start_char: 10
   type: Block
   type_name: replace
-  uuid: uuid_22
+  uuid: uuid_23
 - element: substitution_def
-  lineno: 50
+  label: REF2
+  lineno: 52
   raw: '.. |REF2| replace:: MyText'
   section_uuid: uuid_11
   start_char: 0
-  sub: REF2
-  type: Block
-  uuid: uuid_23
-- element: hyperlink_target
-  lineno: 51
-  raw: '.. _REF3: http://sdfsdf/dsf'
-  section_uuid: uuid_11
-  start_char: 0
-  target: ref3
   type: Block
   uuid: uuid_24
-- element: substitution_def
-  lineno: 52
-  raw: '.. |REF4| replace: bad syntax'
+- element: hyperlink_target
+  label: ref3
+  lineno: 53
+  raw: '.. _REF3: http://sdfsdf/dsf'
   section_uuid: uuid_11
   start_char: 0
   type: Block
   uuid: uuid_25
+- element: substitution_def
+  lineno: 54
+  raw: '.. |REF4| replace: bad syntax'
+  section_uuid: uuid_11
+  start_char: 0
+  type: Block
+  uuid: uuid_26
+- element: footnote
+  label: '#fn1'
+  lineno: 56
+  raw: .. [#fn1] A footnote.
+  section_uuid: uuid_11
+  start_char: 0
+  type: Block
+  uuid: uuid_27
