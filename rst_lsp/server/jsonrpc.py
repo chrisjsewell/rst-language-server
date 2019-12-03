@@ -22,7 +22,14 @@ from . import constants, utils
 from . import uri_utils as uris
 from .workspace import Config, Document, Workspace
 from .workspace import match_uri_to_workspace as uri2workspace
-from .datatypes import CompletionList, DocumentSymbol, Position, TextDocument, TextEdit
+from .datatypes import (
+    CompletionList,
+    DocumentSymbol,
+    Position,
+    TextDocument,
+    TextEdit,
+    WorkspaceEdit,
+)
 from .plugin_manager import PluginTypes
 
 logger = logging.getLogger(__name__)
@@ -146,9 +153,10 @@ class RstLanguageServer(MethodDispatcher):
             },
             # features provided
             # "codeActionProvider": True,
-            # "codeLensProvider": {
-            #     "resolveProvider": False,
-            # },
+            "codeLensProvider": {
+                # Code lens has a resolve provider as well
+                "resolveProvider": False,
+            },
             "completionProvider": {
                 "resolveProvider": False,
                 "triggerCharacters": [],  # [":"],
@@ -158,9 +166,11 @@ class RstLanguageServer(MethodDispatcher):
             # "documentRangeFormattingProvider": True,
             "documentSymbolProvider": True,
             # "definitionProvider": True,
-            # "executeCommandProvider": {
-            #     "commands": flatten(self.call_plugins("rst_commands"))
-            # },
+            "executeCommandProvider": {
+                "commands": utils.flatten(
+                    self.call_plugins(PluginTypes.rst_commands.value)
+                )
+            },
             "hoverProvider": True,
             # "referencesProvider": True,
             # "renameProvider": True,
@@ -241,8 +251,9 @@ class RstLanguageServer(MethodDispatcher):
             params={"uri": doc_uri, "diagnostics": diagnostics},
         )
 
-    # also available
-    # 'workspace/applyEdit' request
+    def apply_workspace_edit(self, edit: WorkspaceEdit):
+        """Request to modify resource on the client side."""
+        return self._endpoint.request("workspace/applyEdit", params={"edit": edit},)
 
     def __getitem__(self, item):
         """Override getitem to fallback through multiple dispatchers."""
@@ -444,3 +455,22 @@ class RstLanguageServer(MethodDispatcher):
         return self.call_plugins(
             PluginTypes.rst_hover.value, textDocument["uri"], position=position
         ) or {"contents": ""}
+
+    def m_text_document__code_lens(self, textDocument: TextDocument, **_kwargs):
+        return utils.flatten(
+            self.call_plugins(PluginTypes.rst_code_lens.value, textDocument["uri"])
+        )
+
+    def m_workspace__execute_command(
+        self, command: str, arguments: Optional[List[Any]] = None
+    ):
+        """The workspace/executeCommand request is sent from the client to the server,
+        to trigger command execution on the server.
+        In most cases the server creates a WorkspaceEdit structure
+        and applies the changes to the workspace using the request workspace/applyEdit,
+        which is sent from the server to the client.
+        """
+        edit = self.call_plugins(
+            PluginTypes.rst_execute_command.value, command=command, arguments=arguments
+        )
+        self.apply_workspace_edit(edit)

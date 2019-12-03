@@ -190,8 +190,8 @@ class Database:
         lineno: Optional[Union[int, list]] = NotSet(),
         section_uuid: Optional[Union[str, list]] = NotSet(),
         uuid: Optional[Union[str, list]] = NotSet(),
+        **kwargs
         # TODO it would be ideal if uuid and database.table.doc_id were the same thing
-        # TODO dict of other keys
     ):
         query = None
         for value, key in [
@@ -201,7 +201,7 @@ class Database:
             (lineno, "lineno"),
             (section_uuid, "section_uuid"),
             (uuid, "uuid"),
-        ]:
+        ] + [(v, k) for k, v in kwargs.items()]:
             if isinstance(value, NotSet):
                 continue
             if isinstance(value, (list, tuple)):

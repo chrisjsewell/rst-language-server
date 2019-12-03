@@ -3,7 +3,7 @@ try:
 except ImportError:
     from typing_extensions import TypedDict
 
-from typing import Any, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 
 class TextDocument(TypedDict):
@@ -11,6 +11,16 @@ class TextDocument(TypedDict):
     languageId: Optional[str]
     version: Optional[int]
     text: Optional[str]
+
+
+class TextDocumentIdentifier(TypedDict):
+    uri: str
+
+
+class VersionedTextDocumentIdentifier(TypedDict):
+    uri: str
+    # The version number of a document will increase after each change
+    version: Optional[int]
 
 
 class Position(TypedDict):
@@ -171,3 +181,86 @@ class Hover(TypedDict):
     # An optional range is a range inside a text document
     # that is used to visualize a hover, e.g. by changing the background color.
     range: Optional[Range]
+
+
+class Command(TypedDict):
+    """Represents a reference to a command.
+
+    Provides a title which will be used to represent a command in the UI.
+    Commands are identified by a string identifier.
+
+    The recommended way to handle commands is to implement their execution
+    on the server side if the client and server provides the corresponding capabilities.
+    Alternatively the tool extension code could handle the command.
+
+    The protocol currently doesn’t specify a set of well-known commands.
+    """
+
+    # Title of the command, like `save`.
+    title: str
+    # The identifier of the actual command handler.
+    command: str
+    # Arguments that the command handler should be invoked with.
+    arguments: Optional[List[Any]]
+
+
+class CodeLens(TypedDict):
+    """
+    A code lens represents a command that should be shown along with
+    source text, like the number of references, a way to run tests, etc.
+
+    A code lens is _unresolved_ when no command is associated to it. For performance
+    reasons the creation of a code lens and resolving should be done in two stages.
+    """
+
+    # The range in which this code lens is valid. Should only span a single line.
+    range: Range
+    # The command this code lens represents.
+    command: Optional[Command]
+    # A data entry field that is preserved on a code lens item between
+    # a code lens and a code lens resolve request.
+    data: Optional[Any]
+
+
+class TextDocumentEdit(TypedDict):
+    """Describes textual changes on a single text document.
+
+    The text document is referred to as a VersionedTextDocumentIdentifier,
+    to allow clients to check the text document version before an edit is applied.
+    A TextDocumentEdit describes all changes on a version Si and after they are applied,
+    move the document to version Si+1.
+    So the creator of a TextDocumentEdit doesn’t need to sort the array
+    or do any kind of ordering. However the edits must be non overlapping.
+    """
+
+    # The text document to change.
+    textDocument: VersionedTextDocumentIdentifier
+    # The edits to be applied.
+    edits: List[TextEdit]
+
+
+class WorkspaceEdit(TypedDict):
+    """A workspace edit represents changes to many resources managed in the workspace.
+
+    The edit should either provide changes or documentChanges.
+    If the client can handle versioned document edits and if documentChanges are present,
+    the latter are preferred over changes.
+
+    Depending on the client capability ``workspace.workspaceEdit.resourceOperations``,
+    document changes are either an array of ``TextDocumentEdit``s to express changes to
+    *n* different text documents, where each text document edit addresses a
+    specific version of a text document.
+    Or it can contain above ``TextDocumentEdit``s mixed with
+    create, rename and delete file / folder operations.
+    Whether a client supports versioned document edits is expressed *via*
+    ``workspace.workspaceEdit.documentChanges`` client capability.
+    If a client neither supports ``documentChanges`` nor
+    ``workspace.workspaceEdit.resourceOperations``, then
+    only plain `TextEdit`s using the `changes` property are supported.
+    """
+
+    # Holds changes to existing resources. {uri: [text edits]}
+    changes: Optional[Dict[str, List[TextEdit]]]
+
+    documentChanges: Optional[List[TextDocumentEdit]]
+    # (TextDocumentEdit[] | (TextDocumentEdit | CreateFile | RenameFile | DeleteFile)[])
