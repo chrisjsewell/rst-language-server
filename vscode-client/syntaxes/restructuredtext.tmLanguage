@@ -828,7 +828,7 @@
 						<key>2</key>
 						<dict>
 							<key>name</key>
-							<string>entity.name.tag.role.restructuredtext</string>
+							<string>entity.name.type.role.restructuredtext</string>
 						</dict>
 						<key>3</key>
 						<dict>

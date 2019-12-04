@@ -30,16 +30,6 @@ repository:
       - include: "#headings"
       - include: "#comments"
       - include: "#substitution"
-  interpreted:
-    patterns:
-      - captures:
-          "1":
-            name: punctuation.definition.intepreted.restructuredtext
-          "2":
-            name: punctuation.definition.intepreted.restructuredtext
-        comment: intepreted text - single line
-        match: (`)[^`]+(`)(?!_)
-        name: markup.other.command.restructuredtext
   citations:
     patterns:
       - captures:
@@ -191,6 +181,16 @@ repository:
             name: punctuation.definition.heading.restructuredtext
         match: (^\s*(=|-|~|`|#|"|\^|\+|\*|:|\.|'|_|\+){3,}$){1,1}?
         name: markup.heading.restructuredtext
+  interpreted:
+    patterns:
+      - captures:
+          "1":
+            name: punctuation.definition.intepreted.restructuredtext
+          "2":
+            name: punctuation.definition.intepreted.restructuredtext
+        comment: intepreted text - single line
+        match: (`)[^`]+(`)(?!_)
+        name: markup.other.command.restructuredtext
   link-annonymous:
     patterns:
       - captures:
@@ -201,24 +201,6 @@ repository:
         comment: anonymous links __ url
         match: \s*(__)\s+(.+)
         name: meta.link.restructuredtext
-  link-reference-alt:
-    patterns:
-      - captures:
-          "1":
-            name: punctuation.definition.link.restructuredtext
-          "2":
-            name: string.other.link.title.restructuredtext
-          "3":
-            name: punctuation.definition.location.restructuredtext
-          "4":
-            name: markup.underline.link.restructuredtext
-          "5":
-            name: punctuation.definition.location.restructuredtext
-          "6":
-            name: punctuation.definition.link.restructuredtext
-        comment: "link reference with alternative text `...`_ "
-        match: (`)([^<`]+)\s+(<)(.*?)(>)(`_)
-        name: meta.link.inline.restructuredtext
   link-def:
     patterns:
       - captures:
@@ -270,6 +252,24 @@ repository:
         patterns:
           - match: "[^`]+"
             name: string.other.link.title.restructuredtext
+  link-reference-alt:
+    patterns:
+      - captures:
+          "1":
+            name: punctuation.definition.link.restructuredtext
+          "2":
+            name: string.other.link.title.restructuredtext
+          "3":
+            name: punctuation.definition.location.restructuredtext
+          "4":
+            name: markup.underline.link.restructuredtext
+          "5":
+            name: punctuation.definition.location.restructuredtext
+          "6":
+            name: punctuation.definition.link.restructuredtext
+        comment: "link reference with alternative text `...`_ "
+        match: (`)([^<`]+)\s+(<)(.*?)(>)(`_)
+        name: meta.link.inline.restructuredtext
   literal:
     patterns:
       - begin: "``"
@@ -301,7 +301,7 @@ repository:
           "1":
             name: punctuation.definition.intepreted.restructuredtext
           "2":
-            name: entity.name.tag.role.restructuredtext
+            name: entity.name.type.role.restructuredtext
           "3":
             name: punctuation.definition.intepreted.restructuredtext
           "4":
