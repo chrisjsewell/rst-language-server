@@ -13,6 +13,7 @@ patterns:
 repository:
   all:
     patterns:
+      - include: "#code-blocks"
       - include: "#directives"
       - include: "#roles"
       - include: "#raw-blocks"
@@ -68,6 +69,14 @@ repository:
             name: punctuation.definition.comment.restructuredtext
         end: ^[\s]*$\n?
         name: comment.line.double-dot.restructuredtext
+  code-blocks:
+      begin: ^[\s\t]*(#\scolor\spython\sbegin\s*)$
+      end: ^[\s\t]*(#\scolor\spython\send\s*)$
+      captures:
+        "1":
+          name: comment.line.code.restructuredtext
+      patterns:
+        - include: source.python
   directives:
     patterns:
       - match: (\.\.)\s([A-z][-A-z0-9_]+)(::)\s*$
@@ -92,18 +101,6 @@ repository:
           "4":
             name: entity.name.directive.restructuredtext
         name: meta.other.directive.restructuredtext
-      - begin: ^([ \t]*)((\.\.)\sraw(::)) html
-        comment: directives.html
-        captures:
-          "2":
-            name: meta.directive.restructuredtext
-          "3":
-            name: punctuation.definition.directive.restructuredtext
-          "4":
-            name: punctuation.separator.key-value.restructuredtext
-        end: ^(?!\1[ \t])
-        patterns:
-          - include: text.html.basic
   emphasis:
     patterns:
       - captures:

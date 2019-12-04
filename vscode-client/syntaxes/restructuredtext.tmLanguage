@@ -39,6 +39,10 @@
 			<array>
 				<dict>
 					<key>include</key>
+					<string>#code-blocks</string>
+				</dict>
+				<dict>
+					<key>include</key>
 					<string>#directives</string>
 				</dict>
 				<dict>
@@ -185,6 +189,28 @@
 				</dict>
 			</array>
 		</dict>
+		<key>code-blocks</key>
+		<dict>
+			<key>begin</key>
+			<string>^[\s\t]*(#\scolor\spython\sbegin\s*)$</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>comment.line.code.restructuredtext</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>^[\s\t]*(#\scolor\spython\send\s*)$</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>source.python</string>
+				</dict>
+			</array>
+		</dict>
 		<key>comments</key>
 		<dict>
 			<key>patterns</key>
@@ -267,39 +293,6 @@
 					<string>(\.\.)\s([A-z][-A-z0-9_]+)(::)\s+(.+?)\s*$</string>
 					<key>name</key>
 					<string>meta.other.directive.restructuredtext</string>
-				</dict>
-				<dict>
-					<key>begin</key>
-					<string>^([ \t]*)((\.\.)\sraw(::)) html</string>
-					<key>captures</key>
-					<dict>
-						<key>2</key>
-						<dict>
-							<key>name</key>
-							<string>meta.directive.restructuredtext</string>
-						</dict>
-						<key>3</key>
-						<dict>
-							<key>name</key>
-							<string>punctuation.definition.directive.restructuredtext</string>
-						</dict>
-						<key>4</key>
-						<dict>
-							<key>name</key>
-							<string>punctuation.separator.key-value.restructuredtext</string>
-						</dict>
-					</dict>
-					<key>comment</key>
-					<string>directives.html</string>
-					<key>end</key>
-					<string>^(?!\1[ \t])</string>
-					<key>patterns</key>
-					<array>
-						<dict>
-							<key>include</key>
-							<string>text.html.basic</string>
-						</dict>
-					</array>
 				</dict>
 			</array>
 		</dict>
