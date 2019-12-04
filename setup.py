@@ -34,6 +34,7 @@ setup(
             "document_symbols = rst_lsp.server.plugins.doc_symbols",
             "hover = rst_lsp.server.plugins.hover",
             "format_python = rst_lsp.server.plugins.clens_format_python",
+            "completions_python = rst_lsp.server.plugins.python_completions",
         ],
     },
 )

@@ -1,3 +1,4 @@
+import logging
 import re
 
 from rst_lsp.server.plugin_manager import hookimpl
@@ -5,14 +6,14 @@ from rst_lsp.server.workspace import Config, Document, Workspace
 from rst_lsp.server.datatypes import Position
 from rst_lsp.server.constants import CompletionItemKind
 
-REGEX_ROLE_START = "role"
+logger = logging.getLogger(__name__)
 
 
 @hookimpl
 def rst_completions(
     config: Config, workspace: Workspace, document: Document, position: Position
 ):
-
+    logger.debug("called completions")
     before_rev = document.get_line_before(position)[::-1]  # reverse
     # workspace.server.log_message(before_rev)
     items = []
@@ -47,4 +48,4 @@ def rst_completions(
             }
             for d in workspace.database.query_directives()
         ]
-    return items
+    return items or None
