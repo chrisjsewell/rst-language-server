@@ -478,7 +478,7 @@ class LSPInliner(Inliner):
                 doc_lineno=doc_lineno,
                 doc_char=doc_char,
                 raw=match.string[len(before) : len(match.string) - len(remaining)],
-                data={"target": target.astext()}
+                data={"target": target.astext()},
             )
         return before, [info] + inlines, remaining, sysmessages
 
@@ -509,7 +509,7 @@ class LSPInliner(Inliner):
                     doc_lineno=doc_lineno,
                     doc_char=doc_char,
                     raw=match.string[len(before) : len(match.string) - len(remaining)],
-                    data={"target": subref_text}
+                    data={"target": subref_text},
                 )
         return before, [info] + inlines, remaining, sysmessages
 
@@ -551,7 +551,7 @@ class LSPInliner(Inliner):
             doc_lineno=doc_lineno,
             doc_char=doc_char,
             raw=match.string[len(before) : len(match.string) - len(remaining)],
-            data={"target": label}
+            data={"target": label},
         )
         return (before, [info, refnode], remaining, [])
 

@@ -1,0 +1,35 @@
+- command:
+    arguments:
+    - uri123
+    - arguments:
+      - python
+      element: directive
+      end_char: 7
+      endline: 2
+      klass: sphinx.directives.code.CodeBlock
+      lineno: 0
+      options: {}
+      section_uuid: null
+      start_char: 0
+      type: Block
+      type_name: code-block
+      uri: uri123
+      uuid: uuid_0
+    - - '.. code-block:: python
+
+        '
+      - '
+
+        '
+      - '    pass
+
+        '
+    command: rst_format_python_cell
+    title: format
+  range:
+    end:
+      character: 0
+      line: 0
+    start:
+      character: 0
+      line: 0
