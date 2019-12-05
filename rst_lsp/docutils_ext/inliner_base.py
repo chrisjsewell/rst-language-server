@@ -59,32 +59,6 @@ from docutils.utils import (
 )
 
 
-# Inline object recognition
-# -------------------------
-non_whitespace_before = r"(?<!\s)"
-non_whitespace_escape_before = r"(?<![\s\x00])"
-non_unescaped_whitespace_escape_before = r"(?<!(?<!\x00)[\s\x00])"
-non_whitespace_after = r"(?!\s)"
-# Alphanumerics with isolated internal [-._+:] chars (i.e. not 2 together):
-simplename = r"(?:(?!_)\w)+(?:[-._+:](?:(?!_)\w)+)*"
-# Valid URI characters (see RFC 2396 & RFC 2732);
-# final \x00 allows backslash escapes in URIs:
-uric = r"""[-_.!~*'()[\];/:@&=+$,%a-zA-Z0-9\x00]"""
-# Delimiter indicating the end of a URI (not part of the URI):
-uri_end_delim = r"""[>]"""
-# Last URI character; same as uric but no punctuation:
-urilast = r"""[_~*/=+a-zA-Z0-9]"""
-# End of a URI (either 'urilast' or 'uric followed by a uri_end_delim'):
-uri_end = fr"""(?:{urilast}|{uric}(?={uri_end_delim}))"""
-emailc = r"""[-_!~*'{|}/#?^`&=+$%a-zA-Z0-9\x00]"""
-email_pattern = fr"""
-        {emailc}+(?:\.{emailc}+)*       # name
-        (?<!\x00)@                      # at
-        {emailc}+(?:\.{emailc}*)*       # host
-        {uri_end}                       # final URI char
-        """
-
-
 class MarkupMismatch(Exception):
     """A mismatch occurred in the Markup."""
 
@@ -116,6 +90,35 @@ class Regexes:
 
     def __init__(self, start_string_prefix: str, end_string_suffix: str):
 
+        # Define inline object recognitions
+        # ---------------------------------
+        non_whitespace_before = r"(?<!\s)"
+        non_whitespace_escape_before = r"(?<![\s\x00])"
+        non_unescaped_whitespace_escape_before = r"(?<!(?<!\x00)[\s\x00])"
+        non_whitespace_after = r"(?!\s)"
+        # Alphanumerics with isolated internal [-._+:] chars (i.e. not 2 together):
+        simplename = r"(?:(?!_)\w)+(?:[-._+:](?:(?!_)\w)+)*"
+        # Valid URI characters (see RFC 2396 & RFC 2732);
+        # final \x00 allows backslash escapes in URIs:
+        uric = r"""[-_.!~*'()[\];/:@&=+$,%a-zA-Z0-9\x00]"""
+        # Delimiter indicating the end of a URI (not part of the URI):
+        uri_end_delim = r"""[>]"""
+        # Last URI character; same as uric but no punctuation:
+        urilast = r"""[_~*/=+a-zA-Z0-9]"""
+        # End of a URI (either 'urilast' or 'uric followed by a uri_end_delim'):
+        uri_end = fr"""(?:{urilast}|{uric}(?={uri_end_delim}))"""
+        emailc = r"""[-_!~*'{|}/#?^`&=+$%a-zA-Z0-9\x00]"""
+        email_pattern = fr"""
+                {emailc}+(?:\.{emailc}+)*       # name
+                (?<!\x00)@                      # at
+                {emailc}+(?:\.{emailc}*)*       # host
+                {uri_end}                       # final URI char
+                """
+
+        # Create initial pattern, which matches start-strings
+        # (emphasis, strong, interpreted, phrase reference, literal,
+        # substitution reference, and inline target),
+        # and complete constructs (simple reference, footnote reference)
         parts = (
             "initial_inline",
             start_string_prefix,
@@ -164,11 +167,6 @@ class Regexes:
                 ),
             ],
         )
-
-        # initial is a pattern which matches start-strings
-        # (emphasis, strong, interpreted, phrase reference, literal,
-        # substitution reference, and inline target),
-        # and complete constructs (simple reference, footnote reference)
         self.initial = build_regexp(parts)
 
         self.emphasis = re.compile(
