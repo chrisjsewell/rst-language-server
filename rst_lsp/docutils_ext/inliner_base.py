@@ -287,13 +287,13 @@ ImplicitResult = List[nodes.Node]
 
 class Inliner:
     """Class for parsing inline markup.
-    
+
     To use::
 
         inliner = Inliner()
         inliner.init_customizations(document.settings)
         inliner.parse(text, lineno, memo, parent)
-    
+
     """
 
     def __init__(self, regex_class=None):
@@ -372,7 +372,8 @@ class Inliner:
         4. If not found or invalid, generate a warning and ignore the start-string.
         5. Implicit inline markup (e.g. standalone URIs) is found last.
         """
-        # TODO Needs to be refactored for nested inline markup (add nested_parse() method?)
+        # TODO Needs to be refactored for nested inline markup
+        # (add nested_parse() method?)
         self.reporter = memo.reporter  # type: Reporter
         self.document = memo.document  # type: nodes.document
         self.language = memo.language
@@ -424,22 +425,22 @@ class Inliner:
         return punctuation_chars.match_chars(prestart, poststart)
 
     def emphasis(self, match: Match, lineno: int) -> DispatchResult:
-        """Match *emphasis*"""
+        """Handle *emphasis*"""
         before, inlines, remaining, sysmessages, endstring = self.inline_obj(
             match, lineno, self.patterns.emphasis, nodes.emphasis
         )
         return before, inlines, remaining, sysmessages
 
     def strong(self, match: Match, lineno: int) -> DispatchResult:
-        """Match **strong**"""
+        """Handle **strong**"""
         before, inlines, remaining, sysmessages, endstring = self.inline_obj(
             match, lineno, self.patterns.strong, nodes.strong
         )
         return before, inlines, remaining, sysmessages
 
     def interpreted_or_phrase_ref(self, match: Match, lineno: int) -> DispatchResult:
-        """Match :role:`interpreted`, `interpreted`:role: or `phrase ref`_
-        
+        """Handle :role:`interpreted`, `interpreted`:role: or `phrase ref`_
+
         If interpreted, evoke ``self.interpreted``, or
         if phrase ref, evoke ``self.self.phrase_ref``
         """
@@ -586,10 +587,10 @@ class Inliner:
         self, rawsource: str, text: str, role: str, lineno: int
     ) -> Tuple[List[nodes.Node], List[nodes.system_message]]:
         """Handle an interpreted text role, e.g. :role:interpreted` or `interpreted`:role:
-        
+
         The role function is located and returned, then used to create the requisite
         nodes and messages.
-        
+
         """
         role_fn, messages = roles.role(role, self.language, lineno, self.reporter)
         if role_fn:

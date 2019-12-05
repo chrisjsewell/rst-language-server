@@ -1,0 +1,62 @@
+citation_reference:
+  - in:
+      - '[citation]_'
+    out:
+      - <document source="test data">
+      - '    <paragraph>'
+      - '        <PosInline position="0 0 0 10" type="ref_cite">'
+      - '            <citation_reference ids="id1" refname="citation">'
+      - '                citation'
+  - in:
+      - '[c1]_ [c2]_'
+      - '[c3]_ text [c4]_'
+    out:
+      - <document source="test data">
+      - '    <paragraph>'
+      - '        <PosInline position="0 0 0 4" type="ref_cite">'
+      - '            <citation_reference ids="id1" refname="c1">'
+      - '                c1'
+      - '         '
+      - '        <PosInline position="0 6 0 10" type="ref_cite">'
+      - '            <citation_reference ids="id2" refname="c2">'
+      - '                c2'
+      - '        '
+      - '        <PosInline position="1 0 1 4" type="ref_cite">'
+      - '            <citation_reference ids="id3" refname="c3">'
+      - '                c3'
+      - '         text '
+      - '        <PosInline position="1 11 1 15" type="ref_cite">'
+      - '            <citation_reference ids="id4" refname="c4">'
+      - '                c4'
+interpreted:
+  - in:
+      - ':title:`abc` `abc`:title:'
+      - ''
+      - '`abc`'
+    out: 
+      - <document source="test data">
+      - '    <paragraph>'
+      - '        <PosInline position="0 0 0 11" role="title" type="role">'
+      - '            <title_reference>'
+      - '                abc'
+      - '         '
+      - '        <PosInline position="0 13 0 24" role="title" type="role">'
+      - '            <title_reference>'
+      - '                abc'
+      - '    <paragraph>'
+      - '        <PosInline position="2 0 2 4" role="" type="role">'
+      - '            <title_reference>'
+      - '                abc'
+substitution_ref:
+  - in:
+      - '|abc| text |xyz|'
+    out: 
+      - <document source="test data">
+      - '    <paragraph>'
+      - '        <PosInline position="0 0 0 4" type="ref_sub">'
+      - '            <substitution_reference refname="abc">'
+      - '                abc'
+      - '         text '
+      - '        <PosInline position="0 11 0 15" type="ref_sub">'
+      - '            <substitution_reference refname="xyz">'
+      - '                xyz'

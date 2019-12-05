@@ -1,4 +1,5 @@
 import os
+import sys
 
 from docutils import frontend, utils
 from docutils.parsers import rst
@@ -6,6 +7,7 @@ import pytest
 import yaml
 
 from rst_lsp.docutils_ext.inliner_base import Inliner
+from rst_lsp.docutils_ext.inliner_doc import PositionInliner
 
 
 def load_yaml(path):
@@ -34,7 +36,11 @@ def run_parser(case, inliner=None):
     if output:
         output = "\n".join(output.rstrip().splitlines())
 
-    assert output == expected
+    try:
+        assert output == expected
+    except AssertionError:
+        yaml.dump(output.splitlines(), sys.stdout)
+        raise
 
 
 @pytest.mark.parametrize(
@@ -42,9 +48,7 @@ def run_parser(case, inliner=None):
     [
         (name, i, case)
         for name, cases in load_yaml(
-            os.path.join(
-                os.path.dirname(__file__), "inputs/test_inline_markup.yaml"
-            )
+            os.path.join(os.path.dirname(__file__), "inputs/test_inline_markup.yaml")
         ).items()
         for i, case in enumerate(cases)
     ],
@@ -58,12 +62,24 @@ def test_inline_markup(name, number, case):
     [
         (name, i, case)
         for name, cases in load_yaml(
-            os.path.join(
-                os.path.dirname(__file__), "inputs/test_interpreted.yaml"
-            )
+            os.path.join(os.path.dirname(__file__), "inputs/test_interpreted.yaml")
         ).items()
         for i, case in enumerate(cases)
     ],
 )
 def test_interpreted(name, number, case):
     run_parser(case, inliner=Inliner())
+
+
+@pytest.mark.parametrize(
+    "name,number,case",
+    [
+        (name, i, case)
+        for name, cases in load_yaml(
+            os.path.join(os.path.dirname(__file__), "inputs/test_inline_pos.yaml")
+        ).items()
+        for i, case in enumerate(cases)
+    ],
+)
+def test_doc_position(name, number, case):
+    run_parser(case, inliner=PositionInliner(doc_text="\n".join(case["in"])))

@@ -1,0 +1,54 @@
+inline_mixed:
+  - in:
+      - '[citation]_ |sub| ref_ `embed <ref_>`_ :title:`a`'
+      - '_`inline-target`'
+    out:
+    - block: false
+      column_end: 10
+      column_start: 0
+      ids: 
+        - id1
+      line_end: 0
+      line_start: 0
+      refnames:
+      - citation
+      type: ref_cite
+    - block: false
+      column_end: 16
+      column_start: 12
+      line_end: 0
+      line_start: 0
+      refnames:
+      - sub
+      type: ref_sub
+    - block: false
+      column_end: 21
+      column_start: 18
+      line_end: 0
+      line_start: 0
+      refnames:
+      - ref
+      type: ref_basic
+    - block: false
+      column_end: 37
+      column_start: 23
+      line_end: 0
+      line_start: 0
+      refnames:
+      - ref
+      type: ref_phrase
+    - block: false
+      column_end: 48
+      column_start: 39
+      line_end: 0
+      line_start: 0
+      role: title
+      type: role
+    - block: false
+      column_end: 15
+      column_start: 0
+      ids:
+      - inline-target
+      line_end: 1
+      line_start: 1
+      type: target_inline

@@ -17,4 +17,4 @@ def dump_tests(totest, path):
 
 # totest = {}
 
-# dump_tests(totest, "/Users/cjs14/GitHub/rst-language-server/tests/docutils_test_data/test_inline_markup.yaml")
+# dump_tests(totest, "tests/docutils_test_data/test_inline_markup.yaml")
