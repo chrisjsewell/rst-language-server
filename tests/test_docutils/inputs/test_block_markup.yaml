@@ -78,6 +78,23 @@ substitution_definitions:
       - <document source="test data">
       - '    <substitution_definition names="Eacute">'
       - '        u00C9'
+  - in:
+      - '.. |sub| image:: symbol.png'
+      - '           :height: 50'
+      - ''
+    out:
+      - <document source="test data">
+      - '    <substitution_definition names="sub">'
+      - '        <image alt="sub" height="50" uri="symbol.png">'
+  - in:
+      - '.. |alpha| raw:: latex'
+      - ''
+      - '  $\\\\alpha$'
+    out:
+      - <document source="test data">
+      - '    <substitution_definition names="alpha">'
+      - '        <raw format="latex" xml:space="preserve">'
+      - '            $\\\\alpha$'
 citations:
   - in:
       - '.. [citation] This is a citation.'

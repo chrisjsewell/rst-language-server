@@ -59,6 +59,9 @@ class PosExplicit(nodes.Element, nodes.Invisible):
 
     def __init__(self, *, etype, start_line, end_line, children):
         """Initialisation
+
+        etype can be one of:
+        'footnote', 'citation', 'hyperlink_target', 'substitution_def'
         """
         attributes = {"type": etype, "start_line": start_line, "end_line": end_line}
         super().__init__("", *children, **attributes)
@@ -67,10 +70,10 @@ class PosExplicit(nodes.Element, nodes.Invisible):
 class PosDirective(nodes.Element, nodes.Invisible):
     """A node which stores the source text position in the document, of its children."""
 
-    def __init__(self, *, rawsource, start_line, end_line, children, **attributes):
+    def __init__(self, *, rawsource, line_start, line_end, children, **attributes):
         """Initialisation
         """
-        attributes.update({"start_line": start_line, "end_line": end_line})
+        attributes.update({"line_start": line_start, "line_end": line_end})
         super().__init__(rawsource, *children, **attributes)
 
 
@@ -104,6 +107,7 @@ class SectionMixin:
             node=section_node,
             match_titles=True,
         )
+        # TODO this line can be one greater than the number of actual lines
         position["end_line"] = newabsoffset - 1
         self.goto_line(newabsoffset)
         if memo.section_level <= mylevel:  # can't handle next section?
@@ -128,7 +132,12 @@ class ExplicitMixin:
                     errors.append(self.reporter.warning(message, line=lineno))
                     break
                 else:
-                    if method.__name__ != "directive":
+                    if method.__name__ in [
+                        "footnote",
+                        "citation",
+                        "hyperlink_target",
+                        "substitution_def",
+                    ]:
                         return (
                             PosExplicit(
                                 etype=method.__name__,
@@ -216,17 +225,21 @@ class ExplicitMixin:
                 'Directive "%s" returned non-Node object (index %s): %r'
                 % (type_name, i, result[i])
             )
+
+        # NOTE it would be ideal to also record the start and end characters on lines?
+        # However, it appears that nested state machine are initalised with
+        # pre de-dented input lines, and do not record the initial indentation
         position = PosDirective(
             rawsource=block_text,
-            start_line=line_offset,
-            end_line=self.state_machine.abs_line_number() - 1,
-            children=result,
-            indent=indent,  # content indent, relative to directive
+            line_start=line_offset,
+            line_end=self.state_machine.abs_line_number() - 1,
+            line_content=content_offset,  # the line at which content starts
+            content_indent=indent,  # relative to initial indent of directive
             dtype=type_name,
             arguments=arguments,
             options=options,
             klass=f"{directive.__module__}.{directive.__name__}",
-            content=block_text
+            children=result,
         )
         return (
             position,
@@ -249,6 +262,7 @@ class Explicit(ExplicitMixin, states.Explicit):
 
 class SubstitutionDef(states.SubstitutionDef):
     # TODO substitutions can embed directives
+    # note, in this case, that the PosDirective should be inside the PosExplicit
     pass
 
 

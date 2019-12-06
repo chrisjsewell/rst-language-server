@@ -92,6 +92,26 @@ substitution_definitions:
       - '    <PosExplicit end_line="0" start_line="0" type="substitution_def">'
       - '        <substitution_definition names="Eacute">'
       - '            u00C9'
+  - in:
+      - '.. |sub| image:: symbol.png'
+      - '           :height: 50'
+      - '           :width: 50'
+      - ''
+    out:
+      - <document source="test data">
+      - '    <PosExplicit end_line="2" start_line="0" type="substitution_def">'
+      - '        <substitution_definition names="sub">'
+      - '            <image alt="sub" height="50" uri="symbol.png" width="50">'
+  - in:
+      - '.. |alpha| raw:: latex'
+      - ''
+      - '  $\\\\alpha$'
+    out:
+      - <document source="test data">
+      - '    <PosExplicit end_line="2" start_line="0" type="substitution_def">'
+      - '        <substitution_definition names="alpha">'
+      - '            <raw format="latex" xml:space="preserve">'
+      - '                $\\\\alpha$'
 citations:
   - in:
       - '.. [citation] This is a citation.'
@@ -110,7 +130,7 @@ directives:
       - '   A *note*'
     out:
       - <document source="test data">
-      - '    <PosDirective arguments="" dtype="note" end_line="2" indent="3" klass="docutils.parsers.rst.directives.admonitions.Note" options="{}" start_line="0">'
+      - '    <PosDirective arguments="" content_indent="3" dtype="note" klass="docutils.parsers.rst.directives.admonitions.Note" line_content="2" line_end="2" line_start="0" options="{}">'
       - '        <note>'
       - '            <paragraph>'
       - '                A '
@@ -125,12 +145,14 @@ directives:
       - '   A picture with image options and a caption.'
     out:
       - <document source="test data">
-      - '    <PosDirective arguments="picture.png" dtype="figure" end_line="5" indent="3" klass="docutils.parsers.rst.directives.images.Figure" options="{''height'': ''100'', ''width'': ''200'', ''scale'': 50, ''uri'': ''picture.png''}" start_line="0">'
+      - '    <PosDirective arguments="picture.png" content_indent="3" dtype="figure" klass="docutils.parsers.rst.directives.images.Figure" line_content="5" line_end="5" line_start="0" options="{''height'': ''100'', ''width'': ''200'', ''scale'': 50, ''uri'': ''picture.png''}">'
       - '        <figure>'
       - '            <image height="100" scale="50" uri="picture.png" width="200">'
       - '            <caption>'
       - '                A picture with image options and a caption.'
   - in:
+      - 'a'
+      - ''
       - '.. container:: one'
       - '    :name: my name'
       - ''
@@ -139,11 +161,41 @@ directives:
       - '       A *note*'
     out:
       - <document source="test data">
-      - '    <PosDirective arguments="one" dtype="container" end_line="5" indent="4" klass="docutils.parsers.rst.directives.body.Container" options="{}" start_line="0">'
+      - '    <paragraph>'
+      - '        a'
+      - '    <PosDirective arguments="one" content_indent="4" dtype="container" klass="docutils.parsers.rst.directives.body.Container" line_content="5" line_end="7" line_start="2" options="{}">'
       - '        <container classes="one" ids="my-name" names="my\ name">'
-      - '            <PosDirective arguments="" dtype="note" end_line="5" indent="3" klass="docutils.parsers.rst.directives.admonitions.Note" options="{}" start_line="3">'
+      - '            <PosDirective arguments="" content_indent="3" dtype="note" klass="docutils.parsers.rst.directives.admonitions.Note" line_content="7" line_end="7" line_start="5" options="{}">'
       - '                <note>'
       - '                    <paragraph>'
       - '                        A '
       - '                        <emphasis>'
       - '                            note'
+mixed:
+  - in:
+      - '.. note::'
+      - ''
+      - '   .. |alpha| raw:: latex'
+      - ''
+      - '      $\\\\alpha$'
+    out:
+      - <document source="test data">
+      - '    <PosDirective arguments="" content_indent="3" dtype="note" klass="docutils.parsers.rst.directives.admonitions.Note" line_content="2" line_end="4" line_start="0" options="{}">'
+      - '        <note>'
+      - '            <PosExplicit end_line="4" start_line="2" type="substitution_def">'
+      - '                <substitution_definition names="alpha">'
+      - '                    <raw format="latex" xml:space="preserve">'
+      - '                        $\\\\alpha$'
+  - in:
+      - '.. _target:'
+      - ''
+      - 'title'
+      - '-----'
+    out:
+      - <document source="test data">
+      - '    <PosExplicit end_line="0" start_line="0" type="hyperlink_target">'
+      - '        <target ids="target" names="target">'
+      - '    <PosSection end_line="3" level="1" start_line="2">'
+      - '        <section ids="title" names="title">'
+      - '            <title>'
+      - '                title'
