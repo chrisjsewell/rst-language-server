@@ -39,10 +39,10 @@ class DatabaseVisitor(nodes.GenericNodeVisitor):
     def unknown_departure(self, node):
         """Override for generic, uniform traversals."""
         if isinstance(node, PosInline):
-            if "refnames" in self.current_data:
-                self.current_data["refnames"] = list(self.current_data["refnames"])
-            if "ids" in self.current_data:
-                self.current_data["ids"] = list(self.current_data["ids"])
+            for key in ["ids", "names", "refnames"]:
+                if key in self.current_data:
+                    self.current_data[key] = list(self.current_data[key])
+
             self.db_entries.append(self.current_data)
             self.current_data = None
 
@@ -52,6 +52,9 @@ class DatabaseVisitor(nodes.GenericNodeVisitor):
             ids = node.attributes.get("ids", None)
             if ids:
                 self.current_data.setdefault("ids", set()).update(ids)
+            names = node.attributes.get("names", None)
+            if names:
+                self.current_data.setdefault("names", set()).update(names)
             refname = node.attributes.get("refname", None)
             if refname:
                 self.current_data.setdefault("refnames", set()).add(refname)

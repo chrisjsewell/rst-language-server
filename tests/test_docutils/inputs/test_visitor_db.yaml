@@ -8,8 +8,8 @@ inline_mixed:
     - block: false
       column_end: 10
       column_start: 0
-      ids: 
-        - id1
+      ids:
+      - id1
       line_end: 0
       line_start: 0
       refnames:
@@ -36,6 +36,8 @@ inline_mixed:
       column_start: 23
       line_end: 0
       line_start: 0
+      names:
+      - embed
       refnames:
       - ref
       type: ref_phrase
@@ -59,6 +61,8 @@ inline_mixed:
       - inline-target
       line_end: 2
       line_start: 2
+      names:
+      - inline-target
       type: target_inline
     - block: false
       column_end: 3
