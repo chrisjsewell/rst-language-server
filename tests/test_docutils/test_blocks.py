@@ -7,6 +7,7 @@ import pytest
 import yaml
 
 from rst_lsp.docutils_ext.inliner_base import Inliner
+from rst_lsp.docutils_ext.block_pos import RSTParserCustom
 
 
 def load_yaml(path):

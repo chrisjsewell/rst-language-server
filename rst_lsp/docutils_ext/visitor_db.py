@@ -9,7 +9,7 @@ should be used, so that the departure method is called.
 
 from docutils import nodes
 
-from rst_lsp.docutils_ext.inliner_doc import PosInline
+from rst_lsp.docutils_ext.inliner_pos import PosInline
 
 
 class DatabaseVisitor(nodes.GenericNodeVisitor):

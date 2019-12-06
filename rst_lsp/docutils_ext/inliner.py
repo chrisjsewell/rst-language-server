@@ -79,7 +79,7 @@ class LSPInliner(Inliner):
             self.content_lines = None
 
     def update_char2docplace(self, lineno, text):
-        """the text supplied tp parse is 'dedented', and can contain line-breaks,
+        """the text supplied to parse is 'dedented', and can contain line-breaks,
         so both the reported lineno and character position may be wrong.
         This function updates a mapping of a character to its actual place in the document
 

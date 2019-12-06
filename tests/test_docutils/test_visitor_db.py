@@ -6,7 +6,7 @@ from docutils.parsers import rst
 import pytest
 import yaml
 
-from rst_lsp.docutils_ext.inliner_doc import PositionInliner
+from rst_lsp.docutils_ext.inliner_pos import PositionInliner
 from rst_lsp.docutils_ext.visitor_db import DatabaseVisitor
 
 

@@ -50,7 +50,7 @@ class InfoNodeBlock(nodes.Node):
         return self.astext()
 
 
-# from docutils.parsers.rst.states.Block
+# from docutils.parsers.rst.states.Body
 def run_directive(self, directive, match, type_name, option_presets):
     """
     Parse a directive then run its directive function.
@@ -153,7 +153,7 @@ def section(self, title, source, style, lineno, messages):
         info.other_data["endline"] = self.state_machine.abs_line_offset()
 
 
-# from docutils.parsers.rst.states.Block
+# from docutils.parsers.rst.states.Body
 def explicit_construct(self, match):
     """Determine which explicit construct this is, parse & return it."""
     errors = []
