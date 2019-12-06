@@ -1,0 +1,149 @@
+sections:
+  - in:
+      - 'title'
+      - '====='
+      - ''
+      - 'sub-title'
+      - '---------'
+      - ''
+      - 'a'
+    out:
+      - <document source="test data">
+      - '    <PosSection end_line="7" level="1" start_line="0">'
+      - '        <section ids="title" names="title">'
+      - '            <title>'
+      - '                title'
+      - '            <PosSection end_line="6" level="2" start_line="3">'
+      - '                <section ids="sub-title" names="sub-title">'
+      - '                    <title>'
+      - '                        sub-title'
+      - '                    <paragraph>'
+      - '                        a'
+targets:
+  - in:
+      - '.. _target:'
+    out:
+      - <document source="test data">
+      - '    <PosExplicit end_line="0" start_line="0" type="hyperlink_target">'
+      - '        <target ids="target" names="target">'
+footnotes:
+  - in:
+      - '[1]_ [#]_ [#]_ [*]_ [*]_ [#first]_'
+      - ''
+      - '.. [1] This is a footnote.'
+      - '.. [#] auto nrumbe footnote.'
+      - '.. [#] second auto nrumbe footnote.'
+      - '.. [*] symbol footnote.'
+      - '.. [*] second symbol footnote.'
+      - '.. [#first] auto number label footnote.'
+    out:
+      - <document source="test data">
+      - '    <paragraph>'
+      - '        <footnote_reference ids="id1" refname="1">'
+      - '            1'
+      - '         '
+      - '        <footnote_reference auto="1" ids="id2">'
+      - '         '
+      - '        <footnote_reference auto="1" ids="id3">'
+      - '         '
+      - '        <footnote_reference auto="*" ids="id4">'
+      - '         '
+      - '        <footnote_reference auto="*" ids="id5">'
+      - '         '
+      - '        <footnote_reference auto="1" ids="id6" refname="first">'
+      - '    <PosExplicit end_line="2" start_line="2" type="footnote">'
+      - '        <footnote ids="id7" names="1">'
+      - '            <label>'
+      - '                1'
+      - '            <paragraph>'
+      - '                This is a footnote.'
+      - '    <PosExplicit end_line="3" start_line="3" type="footnote">'
+      - '        <footnote auto="1" ids="id8">'
+      - '            <paragraph>'
+      - '                auto nrumbe footnote.'
+      - '    <PosExplicit end_line="4" start_line="4" type="footnote">'
+      - '        <footnote auto="1" ids="id9">'
+      - '            <paragraph>'
+      - '                second auto nrumbe footnote.'
+      - '    <PosExplicit end_line="5" start_line="5" type="footnote">'
+      - '        <footnote auto="*" ids="id10">'
+      - '            <paragraph>'
+      - '                symbol footnote.'
+      - '    <PosExplicit end_line="6" start_line="6" type="footnote">'
+      - '        <footnote auto="*" ids="id11">'
+      - '            <paragraph>'
+      - '                second symbol footnote.'
+      - '    <PosExplicit end_line="7" start_line="7" type="footnote">'
+      - '        <footnote auto="1" ids="first" names="first">'
+      - '            <paragraph>'
+      - '                auto number label footnote.'
+substitution_definitions:
+  - in:
+      - '.. |symbol| image:: symbol.png'
+    out:
+    - <document source="test data">
+    - '    <PosExplicit end_line="0" start_line="0" type="substitution_def">'
+    - '        <substitution_definition names="symbol">'
+    - '            <image alt="symbol" uri="symbol.png">'
+  - in:
+      - '.. |Eacute| replace:: \u00C9'
+    out:
+      - <document source="test data">
+      - '    <PosExplicit end_line="0" start_line="0" type="substitution_def">'
+      - '        <substitution_definition names="Eacute">'
+      - '            u00C9'
+citations:
+  - in:
+      - '.. [citation] This is a citation.'
+    out:
+      - <document source="test data">
+      - '    <PosExplicit end_line="0" start_line="0" type="citation">'
+      - '        <citation ids="citation" names="citation">'
+      - '            <label>'
+      - '                citation'
+      - '            <paragraph>'
+      - '                This is a citation.'
+directives:
+  - in:
+      - '.. note::'
+      - ''
+      - '   A *note*'
+    out:
+      - <document source="test data">
+      - '    <PosDirective arguments="" dtype="note" end_line="2" indent="3" klass="docutils.parsers.rst.directives.admonitions.Note" options="{}" start_line="0">'
+      - '        <note>'
+      - '            <paragraph>'
+      - '                A '
+      - '                <emphasis>'
+      - '                    note'
+  - in:
+      - '.. figure:: picture.png'
+      - '   :height: 100'
+      - '   :width: 200'
+      - '   :scale: 50'
+      - ''
+      - '   A picture with image options and a caption.'
+    out:
+      - <document source="test data">
+      - '    <PosDirective arguments="picture.png" dtype="figure" end_line="5" indent="3" klass="docutils.parsers.rst.directives.images.Figure" options="{''height'': ''100'', ''width'': ''200'', ''scale'': 50, ''uri'': ''picture.png''}" start_line="0">'
+      - '        <figure>'
+      - '            <image height="100" scale="50" uri="picture.png" width="200">'
+      - '            <caption>'
+      - '                A picture with image options and a caption.'
+  - in:
+      - '.. container:: one'
+      - '    :name: my name'
+      - ''
+      - '    .. note::'
+      - ''
+      - '       A *note*'
+    out:
+      - <document source="test data">
+      - '    <PosDirective arguments="one" dtype="container" end_line="5" indent="4" klass="docutils.parsers.rst.directives.body.Container" options="{}" start_line="0">'
+      - '        <container classes="one" ids="my-name" names="my\ name">'
+      - '            <PosDirective arguments="" dtype="note" end_line="5" indent="3" klass="docutils.parsers.rst.directives.admonitions.Note" options="{}" start_line="3">'
+      - '                <note>'
+      - '                    <paragraph>'
+      - '                        A '
+      - '                        <emphasis>'
+      - '                            note'

@@ -16,12 +16,12 @@ def load_yaml(path):
     return data
 
 
-def run_parser(case, inliner=None):
+def run_parser(case, parser_class, inliner=None):
     source = "\n".join(case["in"])
     expected = "\n".join(case["out"])
 
-    parser = rst.Parser(inliner=inliner)
-    option_parser = frontend.OptionParser(components=(rst.Parser,))
+    parser = parser_class(inliner=inliner)
+    option_parser = frontend.OptionParser(components=(parser_class,))
     settings = option_parser.get_default_values()
     settings.report_level = 5
     settings.halt_level = 5
@@ -54,4 +54,18 @@ def run_parser(case, inliner=None):
     ],
 )
 def test_block_markup(name, number, case):
-    run_parser(case, inliner=Inliner())
+    run_parser(case, parser_class=rst.Parser, inliner=Inliner())
+
+
+@pytest.mark.parametrize(
+    "name,number,case",
+    [
+        (name, i, case)
+        for name, cases in load_yaml(
+            os.path.join(os.path.dirname(__file__), "inputs/test_block_pos.yaml")
+        ).items()
+        for i, case in enumerate(cases)
+    ],
+)
+def test_block_markup_pos(name, number, case):
+    run_parser(case, parser_class=RSTParserCustom, inliner=Inliner())

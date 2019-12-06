@@ -88,3 +88,21 @@ citations:
       - '            citation'
       - '        <paragraph>'
       - '            This is a citation.'
+directives:
+  - in:
+      - '.. figure:: picture.png'
+    out:
+      - <document source="test data">
+      - '    <figure>'
+      - '        <image uri="picture.png">'
+  - in:
+      - '.. note::'
+      - ''
+      - '   A *note*'
+    out:
+      - <document source="test data">
+      - '    <note>'
+      - '        <paragraph>'
+      - '            A '
+      - '            <emphasis>'
+      - '                note'
