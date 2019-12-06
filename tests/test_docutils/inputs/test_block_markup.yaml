@@ -1,0 +1,55 @@
+sections:
+  - in:
+      - 'title'
+      - '====='
+      - ''
+      - 'sub-title'
+      - '---------'
+      - ''
+    out:
+      - <document source="test data">
+      - '    <section ids="title" names="title">'
+      - '        <title>'
+      - '            title'
+      - '        <section ids="sub-title" names="sub-title">'
+      - '            <title>'
+      - '                sub-title'
+targets:
+  - in:
+      - '.. _target:'
+    out:
+      - <document source="test data">
+      - '    <target ids="target" names="target">'
+footnotes:
+  - in:
+      - '.. [1] This is a footnote.'
+    out:
+      - <document source="test data">
+      - '    <footnote ids="id1" names="1">'
+      - '        <label>'
+      - '            1'
+      - '        <paragraph>'
+      - '            This is a footnote.'
+substitution_definitions:
+  - in:
+      - '.. |symbol| image:: symbol.png'
+    out:
+      - <document source="test data">
+      - '    <substitution_definition names="symbol">'
+      - '        <image alt="symbol" uri="symbol.png">'
+  - in:
+      - '.. |Eacute| replace:: \u00C9'
+    out:
+      - <document source="test data">
+      - '    <substitution_definition names="Eacute">'
+      - '        u00C9'
+citations:
+  - in:
+      - '.. [citation] This is a citation.'
+    out:
+      - <document source="test data">
+      - '    <citation ids="citation" names="citation">'
+      - '        <label>'
+      - '            citation'
+      - '        <paragraph>'
+      - '            This is a citation.'

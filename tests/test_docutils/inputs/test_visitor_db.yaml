@@ -1,7 +1,9 @@
 inline_mixed:
   - in:
       - '[citation]_ |sub| ref_ `embed <ref_>`_ :title:`a`'
+      - 'anonymous__'
       - '_`inline-target`'
+      - '[1]_ [#]_ [*]_'
     out:
     - block: false
       column_end: 10
@@ -45,10 +47,42 @@ inline_mixed:
       role: title
       type: role
     - block: false
+      column_end: 10
+      column_start: 0
+      line_end: 1
+      line_start: 1
+      type: ref_anon
+    - block: false
       column_end: 15
       column_start: 0
       ids:
       - inline-target
-      line_end: 1
-      line_start: 1
+      line_end: 2
+      line_start: 2
       type: target_inline
+    - block: false
+      column_end: 3
+      column_start: 0
+      ids:
+      - id2
+      line_end: 3
+      line_start: 3
+      refnames:
+      - '1'
+      type: ref_foot
+    - block: false
+      column_end: 8
+      column_start: 5
+      ids:
+      - id3
+      line_end: 3
+      line_start: 3
+      type: ref_foot
+    - block: false
+      column_end: 13
+      column_start: 10
+      ids:
+      - id4
+      line_end: 3
+      line_start: 3
+      type: ref_foot
