@@ -71,7 +71,7 @@ def rst_completions(
             continue
 
         lines = document.lines[result["contentLine"] : result["endLine"] + 1]
-        text = "".join([l[result["contentIndent"] :] for l in lines])
+        text = "\n".join([l[result["contentIndent"] :].rstrip() for l in lines])
         # TODO add warning message, if jedi not installed
         import jedi
 
