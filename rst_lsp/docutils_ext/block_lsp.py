@@ -35,7 +35,7 @@ class RSTParserCustom(Parser):
         self.inliner = inliner
 
 
-class PosSection(nodes.Element, nodes.Invisible):
+class LSPSection(nodes.Element, nodes.Invisible):
     """A node which stores the source text position in the document, of its children."""
 
     def __init__(self, *, start_line, level, title, section):
@@ -66,7 +66,7 @@ class PosSection(nodes.Element, nodes.Invisible):
         return self.attributes["level"]
 
 
-class PosExplicit(nodes.Element, nodes.Invisible):
+class LSPExplicit(nodes.Element, nodes.Invisible):
     """A node which stores the source text position in the document, of its children."""
 
     def __init__(self, *, etype, start_line, end_line, children):
@@ -91,7 +91,7 @@ class PosExplicit(nodes.Element, nodes.Invisible):
         return self.attributes.get("type", None)
 
 
-class PosDirective(nodes.Element, nodes.Invisible):
+class LSPDirective(nodes.Element, nodes.Invisible):
     """A node which stores the source text position in the document, of its children."""
 
     def __init__(self, *, rawsource, line_start, line_end, children, **attributes):
@@ -140,7 +140,7 @@ class SectionMixin:
         mylevel = memo.section_level
         memo.section_level += 1
         section_node = nodes.section()
-        position = PosSection(
+        position = LSPSection(
             start_line=lineno - 1,
             level=memo.section_level,
             title=title,
@@ -195,7 +195,7 @@ class ExplicitMixin:
                         "substitution_def",
                     ]:
                         return (
-                            PosExplicit(
+                            LSPExplicit(
                                 etype=method.__name__,
                                 start_line=lineno - 1,
                                 end_line=self.state_machine.abs_line_number() - 1,
@@ -285,7 +285,7 @@ class ExplicitMixin:
         # NOTE it would be ideal to also record the start and end characters on lines?
         # However, it appears that nested state machine are initalised with
         # pre de-dented input lines, and do not record the initial indentation
-        position = PosDirective(
+        position = LSPDirective(
             rawsource=block_text,
             line_start=line_offset,
             line_end=self.state_machine.abs_line_number() - 1,
@@ -321,7 +321,7 @@ class Explicit(ExplicitMixin, states.Explicit):
 
 class SubstitutionDef(states.SubstitutionDef):
     # TODO substitutions can embed directives
-    # note, in this case, that the PosDirective should be inside the PosExplicit
+    # note, in this case, that the LSPDirective should be inside the LSPExplicit
     pass
 
 

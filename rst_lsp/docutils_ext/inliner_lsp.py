@@ -8,7 +8,7 @@ from docutils.utils import escape2null
 from rst_lsp.docutils_ext.inliner_base import Inliner
 
 
-class PosInline(nodes.Element, nodes.Inline, nodes.Invisible):
+class LSPInline(nodes.Element, nodes.Inline, nodes.Invisible):
     """A node which stores the source text position in the document, of its children."""
 
     def __init__(self, *, stype, position, rawsource, children, **attributes):
@@ -142,14 +142,14 @@ class PositionInliner(Inliner):
         doc_node = None
 
         if method_name == "reference":
-            doc_node = PosInline(
+            doc_node = LSPInline(
                 position=position,
                 rawsource=rawsource,
                 children=inlines,
                 stype="ref_basic",
             )
         elif method_name == "anonymous_reference":
-            doc_node = PosInline(
+            doc_node = LSPInline(
                 position=position,
                 rawsource=rawsource,
                 children=inlines,
@@ -157,28 +157,28 @@ class PositionInliner(Inliner):
             )
         elif method_name == "footnote_reference":
             if isinstance(inlines[0], nodes.citation_reference):
-                doc_node = PosInline(
+                doc_node = LSPInline(
                     position=position,
                     rawsource=rawsource,
                     children=inlines,
                     stype="ref_cite",
                 )
             elif isinstance(inlines[0], nodes.footnote_reference):
-                doc_node = PosInline(
+                doc_node = LSPInline(
                     position=position,
                     rawsource=rawsource,
                     children=inlines,
                     stype="ref_foot",
                 )
         elif method_name == "substitution_reference":
-            doc_node = PosInline(
+            doc_node = LSPInline(
                 position=position,
                 rawsource=rawsource,
                 children=inlines,
                 stype="ref_sub",
             )
         elif method_name == "inline_internal_target":
-            doc_node = PosInline(
+            doc_node = LSPInline(
                 position=position,
                 rawsource=rawsource,
                 children=inlines,
@@ -186,7 +186,7 @@ class PositionInliner(Inliner):
             )
         elif method_name == "interpreted_or_phrase_ref":
             if rawsource.endswith("_"):
-                doc_node = PosInline(
+                doc_node = LSPInline(
                     position=position,
                     rawsource=rawsource,
                     children=inlines,
@@ -197,7 +197,7 @@ class PositionInliner(Inliner):
                     rawsource
                 ) or self.regex_role_end.match(rawsource)
                 role = role_match.group(1) if role_match else ""
-                doc_node = PosInline(
+                doc_node = LSPInline(
                     position=position,
                     rawsource=rawsource,
                     children=inlines,

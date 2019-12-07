@@ -3,7 +3,7 @@ which generates JSONable, 'database friendly', information about the document
 (stored in `self.db_entries`).
 
 The vistor should be used on a document created using the PositionInliner
-(i.e. containing `PosInline` elements), and ``document.walkabout(visitor)``
+(i.e. containing `LSPInline` elements), and ``document.walkabout(visitor)``
 should be used, so that the departure method is called.
 """
 from typing import List, Optional
@@ -17,8 +17,8 @@ import uuid
 
 from docutils import nodes
 
-from rst_lsp.docutils_ext.inliner_pos import PosInline
-from rst_lsp.docutils_ext.block_pos import PosDirective, PosExplicit, PosSection
+from rst_lsp.docutils_ext.inliner_lsp import LSPInline
+from rst_lsp.docutils_ext.block_lsp import LSPDirective, LSPExplicit, LSPSection
 from rst_lsp.server.constants import SymbolKind
 from rst_lsp.server.datatypes import DocumentSymbol
 
@@ -97,6 +97,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
         self.db_entries = []
         self.nesting = NestedElements()
         self.current_inline = None
+        # TODO add option to remove LSP nodes
 
     def get_uuid(self):
         return str(uuid.uuid4())
@@ -115,7 +116,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
 
     def unknown_visit(self, node):
         """Override for generic, uniform traversals."""
-        if isinstance(node, PosSection) and node.line_end is not None:
+        if isinstance(node, LSPSection) and node.line_end is not None:
             start_indx, start_column, end_indx, end_column = self.get_block_range(
                 node.line_start, node.line_end
             )
@@ -133,7 +134,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             }
             self.db_entries.append(data)
             self.nesting.enter_block(node, data)
-        elif isinstance(node, PosDirective):
+        elif isinstance(node, LSPDirective):
             start_indx, start_column, end_indx, end_column = self.get_block_range(
                 node.line_start, node.line_end
             )
@@ -158,7 +159,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             }
             self.db_entries.append(data)
             self.nesting.enter_block(node, data)
-        elif isinstance(node, PosExplicit):
+        elif isinstance(node, LSPExplicit):
             start_indx, start_column, end_indx, end_column = self.get_block_range(
                 node.line_start, node.line_end
             )
@@ -178,7 +179,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             }
             self.db_entries.append(data)
             self.nesting.enter_block(node, data)
-        elif isinstance(node, PosInline):
+        elif isinstance(node, LSPInline):
             sline, scol, eline, ecol = node.attributes["position"]
             data = {
                 "uuid": self.get_uuid(),
@@ -197,9 +198,9 @@ class VisitorLSP(nodes.GenericNodeVisitor):
 
     def unknown_departure(self, node):
         """Override for generic, uniform traversals."""
-        if isinstance(node, (PosSection, PosDirective, PosExplicit)):
+        if isinstance(node, (LSPSection, LSPDirective, LSPExplicit)):
             self.nesting.exit_block(node)
-        elif isinstance(node, PosInline):
+        elif isinstance(node, LSPInline):
             for key in ["ids", "names", "refnames"]:
                 if key in self.current_inline:
                     self.current_inline[key] = list(self.current_inline[key])

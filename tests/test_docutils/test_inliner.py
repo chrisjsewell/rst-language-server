@@ -7,7 +7,7 @@ import pytest
 import yaml
 
 from rst_lsp.docutils_ext.inliner_base import Inliner
-from rst_lsp.docutils_ext.inliner_pos import PositionInliner
+from rst_lsp.docutils_ext.inliner_lsp import PositionInliner
 
 
 def load_yaml(path):

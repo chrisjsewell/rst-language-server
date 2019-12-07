@@ -3,8 +3,8 @@ from textwrap import dedent
 from docutils import frontend, utils
 from docutils.parsers import rst
 
-from rst_lsp.docutils_ext.inliner_pos import PositionInliner
-from rst_lsp.docutils_ext.block_pos import RSTParserCustom
+from rst_lsp.docutils_ext.inliner_lsp import PositionInliner
+from rst_lsp.docutils_ext.block_lsp import RSTParserCustom
 from rst_lsp.docutils_ext.visitor_lsp import VisitorLSP
 
 

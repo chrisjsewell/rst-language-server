@@ -9,11 +9,11 @@ sections:
       - 'a'
     out:
       - <document source="test data">
-      - '    <PosSection end_line="7" level="1" start_line="0">'
+      - '    <LSPSection end_line="7" level="1" start_line="0">'
       - '        <section ids="title" names="title">'
       - '            <title>'
       - '                title'
-      - '            <PosSection end_line="6" level="2" start_line="3">'
+      - '            <LSPSection end_line="6" level="2" start_line="3">'
       - '                <section ids="sub-title" names="sub-title">'
       - '                    <title>'
       - '                        sub-title'
@@ -24,7 +24,7 @@ targets:
       - '.. _target:'
     out:
       - <document source="test data">
-      - '    <PosExplicit end_line="0" start_line="0" type="hyperlink_target">'
+      - '    <LSPExplicit end_line="0" start_line="0" type="hyperlink_target">'
       - '        <target ids="target" names="target">'
 footnotes:
   - in:
@@ -51,29 +51,29 @@ footnotes:
       - '        <footnote_reference auto="*" ids="id5">'
       - '         '
       - '        <footnote_reference auto="1" ids="id6" refname="first">'
-      - '    <PosExplicit end_line="2" start_line="2" type="footnote">'
+      - '    <LSPExplicit end_line="2" start_line="2" type="footnote">'
       - '        <footnote ids="id7" names="1">'
       - '            <label>'
       - '                1'
       - '            <paragraph>'
       - '                This is a footnote.'
-      - '    <PosExplicit end_line="3" start_line="3" type="footnote">'
+      - '    <LSPExplicit end_line="3" start_line="3" type="footnote">'
       - '        <footnote auto="1" ids="id8">'
       - '            <paragraph>'
       - '                auto nrumbe footnote.'
-      - '    <PosExplicit end_line="4" start_line="4" type="footnote">'
+      - '    <LSPExplicit end_line="4" start_line="4" type="footnote">'
       - '        <footnote auto="1" ids="id9">'
       - '            <paragraph>'
       - '                second auto nrumbe footnote.'
-      - '    <PosExplicit end_line="5" start_line="5" type="footnote">'
+      - '    <LSPExplicit end_line="5" start_line="5" type="footnote">'
       - '        <footnote auto="*" ids="id10">'
       - '            <paragraph>'
       - '                symbol footnote.'
-      - '    <PosExplicit end_line="6" start_line="6" type="footnote">'
+      - '    <LSPExplicit end_line="6" start_line="6" type="footnote">'
       - '        <footnote auto="*" ids="id11">'
       - '            <paragraph>'
       - '                second symbol footnote.'
-      - '    <PosExplicit end_line="7" start_line="7" type="footnote">'
+      - '    <LSPExplicit end_line="7" start_line="7" type="footnote">'
       - '        <footnote auto="1" ids="first" names="first">'
       - '            <paragraph>'
       - '                auto number label footnote.'
@@ -82,14 +82,14 @@ substitution_definitions:
       - '.. |symbol| image:: symbol.png'
     out:
     - <document source="test data">
-    - '    <PosExplicit end_line="0" start_line="0" type="substitution_def">'
+    - '    <LSPExplicit end_line="0" start_line="0" type="substitution_def">'
     - '        <substitution_definition names="symbol">'
     - '            <image alt="symbol" uri="symbol.png">'
   - in:
       - '.. |Eacute| replace:: \u00C9'
     out:
       - <document source="test data">
-      - '    <PosExplicit end_line="0" start_line="0" type="substitution_def">'
+      - '    <LSPExplicit end_line="0" start_line="0" type="substitution_def">'
       - '        <substitution_definition names="Eacute">'
       - '            u00C9'
   - in:
@@ -99,7 +99,7 @@ substitution_definitions:
       - ''
     out:
       - <document source="test data">
-      - '    <PosExplicit end_line="2" start_line="0" type="substitution_def">'
+      - '    <LSPExplicit end_line="2" start_line="0" type="substitution_def">'
       - '        <substitution_definition names="sub">'
       - '            <image alt="sub" height="50" uri="symbol.png" width="50">'
   - in:
@@ -108,7 +108,7 @@ substitution_definitions:
       - '  $\\\\alpha$'
     out:
       - <document source="test data">
-      - '    <PosExplicit end_line="2" start_line="0" type="substitution_def">'
+      - '    <LSPExplicit end_line="2" start_line="0" type="substitution_def">'
       - '        <substitution_definition names="alpha">'
       - '            <raw format="latex" xml:space="preserve">'
       - '                $\\\\alpha$'
@@ -117,7 +117,7 @@ citations:
       - '.. [citation] This is a citation.'
     out:
       - <document source="test data">
-      - '    <PosExplicit end_line="0" start_line="0" type="citation">'
+      - '    <LSPExplicit end_line="0" start_line="0" type="citation">'
       - '        <citation ids="citation" names="citation">'
       - '            <label>'
       - '                citation'
@@ -130,7 +130,7 @@ directives:
       - '   A *note*'
     out:
       - <document source="test data">
-      - '    <PosDirective arguments="" content_indent="3" dtype="note" klass="docutils.parsers.rst.directives.admonitions.Note" line_content="2" line_end="2" line_start="0" options="{}">'
+      - '    <LSPDirective arguments="" content_indent="3" dtype="note" klass="docutils.parsers.rst.directives.admonitions.Note" line_content="2" line_end="2" line_start="0" options="{}">'
       - '        <note>'
       - '            <paragraph>'
       - '                A '
@@ -145,7 +145,7 @@ directives:
       - '   A picture with image options and a caption.'
     out:
       - <document source="test data">
-      - '    <PosDirective arguments="picture.png" content_indent="3" dtype="figure" klass="docutils.parsers.rst.directives.images.Figure" line_content="5" line_end="5" line_start="0" options="{''height'': ''100'', ''width'': ''200'', ''scale'': 50, ''uri'': ''picture.png''}">'
+      - '    <LSPDirective arguments="picture.png" content_indent="3" dtype="figure" klass="docutils.parsers.rst.directives.images.Figure" line_content="5" line_end="5" line_start="0" options="{''height'': ''100'', ''width'': ''200'', ''scale'': 50, ''uri'': ''picture.png''}">'
       - '        <figure>'
       - '            <image height="100" scale="50" uri="picture.png" width="200">'
       - '            <caption>'
@@ -163,9 +163,9 @@ directives:
       - <document source="test data">
       - '    <paragraph>'
       - '        a'
-      - '    <PosDirective arguments="one" content_indent="4" dtype="container" klass="docutils.parsers.rst.directives.body.Container" line_content="5" line_end="7" line_start="2" options="{}">'
+      - '    <LSPDirective arguments="one" content_indent="4" dtype="container" klass="docutils.parsers.rst.directives.body.Container" line_content="5" line_end="7" line_start="2" options="{}">'
       - '        <container classes="one" ids="my-name" names="my\ name">'
-      - '            <PosDirective arguments="" content_indent="3" dtype="note" klass="docutils.parsers.rst.directives.admonitions.Note" line_content="7" line_end="7" line_start="5" options="{}">'
+      - '            <LSPDirective arguments="" content_indent="3" dtype="note" klass="docutils.parsers.rst.directives.admonitions.Note" line_content="7" line_end="7" line_start="5" options="{}">'
       - '                <note>'
       - '                    <paragraph>'
       - '                        A '
@@ -180,9 +180,9 @@ mixed:
       - '      $\\\\alpha$'
     out:
       - <document source="test data">
-      - '    <PosDirective arguments="" content_indent="3" dtype="note" klass="docutils.parsers.rst.directives.admonitions.Note" line_content="2" line_end="4" line_start="0" options="{}">'
+      - '    <LSPDirective arguments="" content_indent="3" dtype="note" klass="docutils.parsers.rst.directives.admonitions.Note" line_content="2" line_end="4" line_start="0" options="{}">'
       - '        <note>'
-      - '            <PosExplicit end_line="4" start_line="2" type="substitution_def">'
+      - '            <LSPExplicit end_line="4" start_line="2" type="substitution_def">'
       - '                <substitution_definition names="alpha">'
       - '                    <raw format="latex" xml:space="preserve">'
       - '                        $\\\\alpha$'
@@ -193,9 +193,9 @@ mixed:
       - '-----'
     out:
       - <document source="test data">
-      - '    <PosExplicit end_line="0" start_line="0" type="hyperlink_target">'
+      - '    <LSPExplicit end_line="0" start_line="0" type="hyperlink_target">'
       - '        <target ids="target" names="target">'
-      - '    <PosSection end_line="3" level="1" start_line="2">'
+      - '    <LSPSection end_line="3" level="1" start_line="2">'
       - '        <section ids="title" names="title">'
       - '            <title>'
       - '                title'

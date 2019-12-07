@@ -4,7 +4,7 @@ citation_reference:
     out:
       - <document source="test data">
       - '    <paragraph>'
-      - '        <PosInline position="0 0 0 10" type="ref_cite">'
+      - '        <LSPInline position="0 0 0 10" type="ref_cite">'
       - '            <citation_reference ids="id1" refname="citation">'
       - '                citation'
   - in:
@@ -13,19 +13,19 @@ citation_reference:
     out:
       - <document source="test data">
       - '    <paragraph>'
-      - '        <PosInline position="0 0 0 4" type="ref_cite">'
+      - '        <LSPInline position="0 0 0 4" type="ref_cite">'
       - '            <citation_reference ids="id1" refname="c1">'
       - '                c1'
       - '         '
-      - '        <PosInline position="0 6 0 10" type="ref_cite">'
+      - '        <LSPInline position="0 6 0 10" type="ref_cite">'
       - '            <citation_reference ids="id2" refname="c2">'
       - '                c2'
       - '        '
-      - '        <PosInline position="1 0 1 4" type="ref_cite">'
+      - '        <LSPInline position="1 0 1 4" type="ref_cite">'
       - '            <citation_reference ids="id3" refname="c3">'
       - '                c3'
       - '         text '
-      - '        <PosInline position="1 11 1 15" type="ref_cite">'
+      - '        <LSPInline position="1 11 1 15" type="ref_cite">'
       - '            <citation_reference ids="id4" refname="c4">'
       - '                c4'
 interpreted:
@@ -36,15 +36,15 @@ interpreted:
     out: 
       - <document source="test data">
       - '    <paragraph>'
-      - '        <PosInline position="0 0 0 11" role="title" type="role">'
+      - '        <LSPInline position="0 0 0 11" role="title" type="role">'
       - '            <title_reference>'
       - '                abc'
       - '         '
-      - '        <PosInline position="0 13 0 24" role="title" type="role">'
+      - '        <LSPInline position="0 13 0 24" role="title" type="role">'
       - '            <title_reference>'
       - '                abc'
       - '    <paragraph>'
-      - '        <PosInline position="2 0 2 4" role="" type="role">'
+      - '        <LSPInline position="2 0 2 4" role="" type="role">'
       - '            <title_reference>'
       - '                abc'
 substitution_ref:
@@ -53,10 +53,10 @@ substitution_ref:
     out: 
       - <document source="test data">
       - '    <paragraph>'
-      - '        <PosInline position="0 0 0 4" type="ref_sub">'
+      - '        <LSPInline position="0 0 0 4" type="ref_sub">'
       - '            <substitution_reference refname="abc">'
       - '                abc'
       - '         text '
-      - '        <PosInline position="0 11 0 15" type="ref_sub">'
+      - '        <LSPInline position="0 11 0 15" type="ref_sub">'
       - '            <substitution_reference refname="xyz">'
       - '                xyz'
