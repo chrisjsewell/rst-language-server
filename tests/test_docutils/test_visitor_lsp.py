@@ -8,7 +8,7 @@ import yaml
 
 from rst_lsp.docutils_ext.inliner_pos import PositionInliner
 from rst_lsp.docutils_ext.block_pos import RSTParserCustom
-from rst_lsp.docutils_ext.visitor_db import DatabaseVisitor
+from rst_lsp.docutils_ext.visitor_lsp import VisitorLSP
 
 
 def load_yaml(path):
@@ -39,14 +39,14 @@ def run_parser(case, parser_class):
     [
         (name, i, case)
         for name, cases in load_yaml(
-            os.path.join(os.path.dirname(__file__), "inputs/test_visitor_db.yaml")
+            os.path.join(os.path.dirname(__file__), "inputs/test_visitor_lsp.yaml")
         ).items()
         for i, case in enumerate(cases)
     ],
 )
 def test_doc_position(name, number, case):
     document = run_parser(case, parser_class=RSTParserCustom)
-    visitor = DatabaseVisitor(document, "\n".join(case["in"]))
+    visitor = VisitorLSP(document, "\n".join(case["in"]))
     document.walkabout(visitor)
     try:
         assert case["out"] == visitor.db_entries

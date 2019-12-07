@@ -1,0 +1,469 @@
+inline_mixed:
+  - in:
+      - '[citation]_ |sub| ref_ `embed <ref_>`_ :title:`a`'
+      - 'anonymous__'
+      - '_`inline-target`'
+      - '[1]_ [#]_ [*]_'
+    out:
+      - block: false
+        endCharacter: 10
+        endLine: 0
+        parent_uuid: null
+        refnames:
+        - citation
+        startCharacter: 0
+        startLine: 0
+        type: ref_cite
+        uuid: uuid_0
+      - block: false
+        endCharacter: 16
+        endLine: 0
+        parent_uuid: null
+        refnames:
+        - sub
+        startCharacter: 12
+        startLine: 0
+        type: ref_sub
+        uuid: uuid_1
+      - block: false
+        endCharacter: 21
+        endLine: 0
+        parent_uuid: null
+        refnames:
+        - ref
+        startCharacter: 18
+        startLine: 0
+        type: ref_basic
+        uuid: uuid_2
+      - block: false
+        endCharacter: 37
+        endLine: 0
+        names:
+        - embed
+        parent_uuid: null
+        refnames:
+        - ref
+        startCharacter: 23
+        startLine: 0
+        type: ref_phrase
+        uuid: uuid_3
+      - block: false
+        endCharacter: 48
+        endLine: 0
+        parent_uuid: null
+        rname: title
+        startCharacter: 39
+        startLine: 0
+        type: role
+        uuid: uuid_4
+      - block: false
+        endCharacter: 10
+        endLine: 1
+        parent_uuid: null
+        startCharacter: 0
+        startLine: 1
+        type: ref_anon
+        uuid: uuid_5
+      - block: false
+        endCharacter: 15
+        endLine: 2
+        names:
+        - inline-target
+        parent_uuid: null
+        startCharacter: 0
+        startLine: 2
+        type: target_inline
+        uuid: uuid_6
+      - block: false
+        endCharacter: 3
+        endLine: 3
+        parent_uuid: null
+        refnames:
+        - '1'
+        startCharacter: 0
+        startLine: 3
+        type: ref_foot
+        uuid: uuid_7
+      - block: false
+        endCharacter: 8
+        endLine: 3
+        parent_uuid: null
+        startCharacter: 5
+        startLine: 3
+        type: ref_foot
+        uuid: uuid_8
+      - block: false
+        endCharacter: 13
+        endLine: 3
+        parent_uuid: null
+        startCharacter: 10
+        startLine: 3
+        type: ref_foot
+        uuid: uuid_9
+sections:
+  - in:
+      - 'title'
+      - '====='
+      - ''
+      - ':title:`a`'
+      - ''
+      - 'sub-title'
+      - '---------'
+      - ''
+      - ':title:`b`'
+      - ''
+      - 'sub-title2'
+      - '----------'
+      - ''
+      - ':title:`c`'
+      - ''
+      - 'sub-sub-title'
+      - '~~~~~~~~~~~~~'
+      - ''
+      - ':title:`d`'
+      - ''
+      - 'title2'
+      - '======'
+      - ''
+      - ':title:`e`'
+    out:
+      - block: true
+        endCharacter: 9
+        endLine: 18
+        level: 1
+        parent_uuid: null
+        startCharacter: 0
+        startLine: 0
+        type: section
+        uuid: uuid_0
+      - block: false
+        endCharacter: 9
+        endLine: 3
+        parent_uuid: uuid_0
+        rname: title
+        startCharacter: 0
+        startLine: 3
+        type: role
+        uuid: uuid_1
+      - block: true
+        endCharacter: 9
+        endLine: 8
+        level: 2
+        parent_uuid: uuid_0
+        startCharacter: 0
+        startLine: 5
+        type: section
+        uuid: uuid_2
+      - block: false
+        endCharacter: 9
+        endLine: 8
+        parent_uuid: uuid_2
+        rname: title
+        startCharacter: 0
+        startLine: 8
+        type: role
+        uuid: uuid_3
+      - block: true
+        endCharacter: 9
+        endLine: 18
+        level: 2
+        parent_uuid: uuid_0
+        startCharacter: 0
+        startLine: 10
+        type: section
+        uuid: uuid_4
+      - block: false
+        endCharacter: 9
+        endLine: 13
+        parent_uuid: uuid_4
+        rname: title
+        startCharacter: 0
+        startLine: 13
+        type: role
+        uuid: uuid_5
+      - block: true
+        endCharacter: 9
+        endLine: 18
+        level: 3
+        parent_uuid: uuid_4
+        startCharacter: 0
+        startLine: 15
+        type: section
+        uuid: uuid_6
+      - block: false
+        endCharacter: 9
+        endLine: 18
+        parent_uuid: uuid_6
+        rname: title
+        startCharacter: 0
+        startLine: 18
+        type: role
+        uuid: uuid_7
+      - block: true
+        endCharacter: 9
+        endLine: 23
+        level: 1
+        parent_uuid: null
+        startCharacter: 0
+        startLine: 20
+        type: section
+        uuid: uuid_8
+      - block: false
+        endCharacter: 9
+        endLine: 23
+        parent_uuid: uuid_8
+        rname: title
+        startCharacter: 0
+        startLine: 23
+        type: role
+        uuid: uuid_9
+explicits:
+  - in:
+      - '.. _target:'
+      - ''
+      - '[1]_ target_ |symbol| [cite]_'
+      - ''
+      - '.. [1] This is a footnote.'
+      - '.. |symbol| image:: symbol.png'
+      - '.. [cite] This is a citation.'
+      - ''
+    out:
+      - block: true
+        endCharacter: 10
+        endLine: 0
+        names:
+        - target
+        parent_uuid: null
+        startCharacter: 0
+        startLine: 0
+        type: hyperlink_target
+        uuid: uuid_0
+      - block: false
+        endCharacter: 3
+        endLine: 2
+        parent_uuid: null
+        refnames:
+        - '1'
+        startCharacter: 0
+        startLine: 2
+        type: ref_foot
+        uuid: uuid_1
+      - block: false
+        endCharacter: 11
+        endLine: 2
+        parent_uuid: null
+        refnames:
+        - target
+        startCharacter: 5
+        startLine: 2
+        type: ref_basic
+        uuid: uuid_2
+      - block: false
+        endCharacter: 20
+        endLine: 2
+        parent_uuid: null
+        refnames:
+        - symbol
+        startCharacter: 13
+        startLine: 2
+        type: ref_sub
+        uuid: uuid_3
+      - block: false
+        endCharacter: 28
+        endLine: 2
+        parent_uuid: null
+        refnames:
+        - cite
+        startCharacter: 22
+        startLine: 2
+        type: ref_cite
+        uuid: uuid_4
+      - block: true
+        endCharacter: 25
+        endLine: 4
+        names:
+        - '1'
+        parent_uuid: null
+        startCharacter: 0
+        startLine: 4
+        type: footnote
+        uuid: uuid_5
+      - block: true
+        endCharacter: 29
+        endLine: 5
+        names:
+        - symbol
+        parent_uuid: null
+        startCharacter: 0
+        startLine: 5
+        type: substitution_def
+        uuid: uuid_6
+      - block: true
+        endCharacter: 28
+        endLine: 6
+        names:
+        - cite
+        parent_uuid: null
+        startCharacter: 0
+        startLine: 6
+        type: citation
+        uuid: uuid_7
+directives:
+  - in:
+      - '.. code:: python'
+      - ''
+      - '   a=1'
+      - ''
+      - '.. image:: abc.png'
+      - ''
+    out:
+      - arguments:
+        - python
+        block: true
+        contentCharacter: 3
+        contentLine: 2
+        dname: code
+        endCharacter: 0
+        endLine: 3
+        klass: docutils.parsers.rst.directives.body.CodeBlock
+        options: {}
+        parent_uuid: null
+        startCharacter: 0
+        startLine: 0
+        type: directive
+        uuid: uuid_0
+      - arguments:
+        - abc.png
+        block: true
+        contentCharacter: null
+        contentLine: null
+        dname: image
+        endCharacter: 17
+        endLine: 4
+        klass: docutils.parsers.rst.directives.images.Image
+        options:
+          uri: abc.png
+        parent_uuid: null
+        startCharacter: 0
+        startLine: 4
+        type: directive
+        uuid: uuid_1
+mixed:
+  - in:
+      - '.. _target:'
+      - ''
+      - 'title'
+      - '-----'
+      - ''
+      - '.. note::'
+      - ''
+      - '   [1]_ target_ |symbol| [cite]_'
+      - ''
+      - '.. [1] This is a footnote.'
+      - '.. |symbol| image:: symbol.png'
+      - '.. [cite] This is a citation.'
+      - ''
+    out:
+      - block: true
+        endCharacter: 10
+        endLine: 0
+        names:
+        - target
+        parent_uuid: null
+        startCharacter: 0
+        startLine: 0
+        type: hyperlink_target
+        uuid: uuid_0
+      - block: true
+        endCharacter: 28
+        endLine: 11
+        level: 1
+        parent_uuid: null
+        startCharacter: 0
+        startLine: 2
+        type: section
+        uuid: uuid_1
+      - arguments: []
+        block: true
+        contentCharacter: 8
+        contentLine: 7
+        dname: note
+        endCharacter: 0
+        endLine: 8
+        klass: docutils.parsers.rst.directives.admonitions.Note
+        options: {}
+        parent_uuid: uuid_1
+        startCharacter: 0
+        startLine: 5
+        type: directive
+        uuid: uuid_2
+      - block: false
+        endCharacter: 6
+        endLine: 7
+        parent_uuid: uuid_2
+        refnames:
+        - '1'
+        startCharacter: 3
+        startLine: 7
+        type: ref_foot
+        uuid: uuid_3
+      - block: false
+        endCharacter: 14
+        endLine: 7
+        parent_uuid: uuid_2
+        refnames:
+        - target
+        startCharacter: 8
+        startLine: 7
+        type: ref_basic
+        uuid: uuid_4
+      - block: false
+        endCharacter: 23
+        endLine: 7
+        parent_uuid: uuid_2
+        refnames:
+        - symbol
+        startCharacter: 16
+        startLine: 7
+        type: ref_sub
+        uuid: uuid_5
+      - block: false
+        endCharacter: 31
+        endLine: 7
+        parent_uuid: uuid_2
+        refnames:
+        - cite
+        startCharacter: 25
+        startLine: 7
+        type: ref_cite
+        uuid: uuid_6
+      - block: true
+        endCharacter: 25
+        endLine: 9
+        names:
+        - '1'
+        parent_uuid: uuid_1
+        startCharacter: 0
+        startLine: 9
+        type: footnote
+        uuid: uuid_7
+      - block: true
+        endCharacter: 29
+        endLine: 10
+        names:
+        - symbol
+        parent_uuid: uuid_1
+        startCharacter: 0
+        startLine: 10
+        type: substitution_def
+        uuid: uuid_8
+      - block: true
+        endCharacter: 28
+        endLine: 11
+        names:
+        - cite
+        parent_uuid: uuid_1
+        startCharacter: 0
+        startLine: 11
+        type: citation
+        uuid: uuid_9
