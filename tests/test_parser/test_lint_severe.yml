@@ -1,76 +1,78 @@
 elements:
-- element: section
+- block: true
+  endCharacter: 0
+  endLine: 14
   level: 1
-  lineno: 0
-  section_uuid: null
-  start_char: 0
+  parent_uuid: null
+  startCharacter: 0
+  startLine: 0
   title: title 1
-  type: Block
+  type: section
   uuid: uuid_0
-- element: reference
-  end_char: 6
-  lineno: 3
-  raw: '|REF1|'
-  ref_type: substitution
-  section_uuid: uuid_0
-  start_char: 0
-  target: ref1
-  type: Inline
+- block: false
+  endCharacter: 5
+  endLine: 3
+  parent_uuid: uuid_0
+  refnames:
+  - REF1
+  startCharacter: 0
+  startLine: 3
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_1
-- element: section
+- block: true
+  endCharacter: 0
+  endLine: 14
   level: 2
-  lineno: 5
-  section_uuid: uuid_0
-  start_char: 0
+  parent_uuid: uuid_0
+  startCharacter: 0
+  startLine: 5
   title: title 2
-  type: Block
+  type: section
   uuid: uuid_2
-- element: reference
-  end_char: 6
-  lineno: 8
-  raw: '|REF2|'
-  ref_type: substitution
-  section_uuid: uuid_2
-  start_char: 0
-  target: ref2
-  type: Inline
+- block: false
+  endCharacter: 5
+  endLine: 8
+  parent_uuid: uuid_2
+  refnames:
+  - REF2
+  startCharacter: 0
+  startLine: 8
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_3
-- element: section
+- block: true
+  endCharacter: 0
+  endLine: 14
   level: 3
-  lineno: 10
-  section_uuid: uuid_2
-  start_char: 0
+  parent_uuid: uuid_2
+  startCharacter: 0
+  startLine: 10
   title: title 3
-  type: Block
+  type: section
   uuid: uuid_4
-- element: reference
-  end_char: 6
-  lineno: 13
-  raw: '|REF3|'
-  ref_type: substitution
-  section_uuid: uuid_4
-  start_char: 0
-  target: ref3
-  type: Inline
+- block: false
+  endCharacter: 5
+  endLine: 13
+  parent_uuid: uuid_4
+  refnames:
+  - REF3
+  startCharacter: 0
+  startLine: 13
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_5
-- element: section
-  level: 1
-  lineno: 16
-  section_uuid: null
-  start_char: 0
-  title: title 4
-  type: Block
+- block: false
+  endCharacter: 5
+  endLine: 19
+  parent_uuid: null
+  refnames:
+  - REF4
+  startCharacter: 0
+  startLine: 19
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_6
-- element: reference
-  end_char: 6
-  lineno: 19
-  raw: '|REF4|'
-  ref_type: substitution
-  section_uuid: uuid_6
-  start_char: 0
-  target: ref4
-  type: Inline
-  uuid: uuid_7
 linting:
 - description: 'Title level inconsistent:
 

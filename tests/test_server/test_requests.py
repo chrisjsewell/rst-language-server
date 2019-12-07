@@ -112,9 +112,19 @@ def test_hover(client_server, data_regression):
 
 
 def test_code_lens_black(client_server, data_regression):
-    doc = open_test_doc(client_server, ".. code-block:: python\n\n    pass\n")
+    doc = open_test_doc(client_server, ".. code-block:: python\n\n    a='b'\n")
     response3 = client_server._endpoint.request(
         "text_document/code_lens",
         {"textDocument": doc, "position": {"line": 0, "character": 1}},
     ).result(timeout=CALL_TIMEOUT)
     data_regression.check(response3)
+    # TODO test command
+
+
+def test_python_completion1(client_server, data_regression):
+    doc = open_test_doc(client_server, ".. code-block:: python\n\n    ab = 1\n    a\n")
+    response3 = client_server._endpoint.request(
+        "text_document/completion",
+        {"textDocument": doc, "position": {"line": 3, "character": 4}},
+    ).result(timeout=CALL_TIMEOUT)
+    data_regression.check(response3["items"][0])

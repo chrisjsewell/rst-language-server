@@ -3,13 +3,13 @@ from textwrap import dedent
 from docutils import frontend, utils
 from docutils.parsers import rst
 
-from rst_lsp.docutils_ext.inliner_lsp import PositionInliner
+from rst_lsp.docutils_ext.inliner_lsp import InlinerLSP
 from rst_lsp.docutils_ext.block_lsp import RSTParserCustom
 from rst_lsp.docutils_ext.visitor_lsp import VisitorLSP
 
 
 def run_parser(source, parser_class):
-    inliner = PositionInliner(doc_text=source)
+    inliner = InlinerLSP(doc_text=source)
     parser = parser_class(inliner=inliner)
     option_parser = frontend.OptionParser(components=(rst.Parser,))
     settings = option_parser.get_default_values()

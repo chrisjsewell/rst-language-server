@@ -6,14 +6,14 @@ The vistor should be used on a document created using the PositionInliner
 (i.e. containing `LSPInline` elements), and ``document.walkabout(visitor)``
 should be used, so that the departure method is called.
 """
+import logging
 from typing import List, Optional
+import uuid
 
 try:
     from typing import TypedDict
 except ImportError:
     from typing_extensions import TypedDict
-
-import uuid
 
 from docutils import nodes
 
@@ -21,6 +21,9 @@ from rst_lsp.docutils_ext.inliner_lsp import LSPInline
 from rst_lsp.docutils_ext.block_lsp import LSPDirective, LSPExplicit, LSPSection
 from rst_lsp.server.constants import SymbolKind
 from rst_lsp.server.datatypes import DocumentSymbol
+
+
+logger = logging.getLogger(__name__)
 
 
 class DBElement(TypedDict):
@@ -34,6 +37,7 @@ class DBElement(TypedDict):
     endLine: int
     endCharacter: int
     # then element specific data
+    # TODO use TypedDict with undefined keys?
 
 
 ELEMENT2KIND = {
@@ -64,12 +68,14 @@ class NestedElements:
         self._doc_symbols = []  # type: List[DocumentSymbol]
 
     def enter_block(self, node, data: DBElement):
+        # logger.debug(f"entering node: {node}")
         uuid_value = data["uuid"]
         node.uuid_value = uuid_value  # this is used to check consistency of exits
         self._add_doc_symbols(data)
         self._entered_uuid.append(uuid_value)
 
     def exit_block(self, node):
+        # logger.debug(f"exiting node: {node}")
         try:
             if self._entered_uuid[-1] != node.uuid_value:
                 raise AssertionError("Exiting a non-leaf element")
@@ -88,7 +94,7 @@ class NestedElements:
         current_parent.append(
             {
                 "name": data["title"],
-                "detail": f'type: {data["type"]}, uuid: {data["uuid"]}',
+                "detail": f'type: {data["type"]}',
                 "kind": ELEMENT2KIND.get(data["type"], SymbolKind.Constant),
                 "range": {
                     "start": {
@@ -181,7 +187,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
                 "endCharacter": end_column,
                 "dtype": node.dname,
                 "contentLine": node.line_content,
-                "contentCharacter": node.content_indent + start_indx
+                "contentCharacter": node.content_indent + start_column
                 if node.content_indent
                 else None,
                 "arguments": node.arguments,
@@ -232,7 +238,10 @@ class VisitorLSP(nodes.GenericNodeVisitor):
 
     def unknown_departure(self, node):
         """Override for generic, uniform traversals."""
-        if isinstance(node, (LSPSection, LSPDirective, LSPExplicit)):
+        if (
+            isinstance(node, (LSPSection, LSPDirective, LSPExplicit))
+            and node.line_end is not None
+        ):
             self.nesting.exit_block(node)
         elif isinstance(node, LSPInline):
             for key in ["ids", "names", "refnames"]:

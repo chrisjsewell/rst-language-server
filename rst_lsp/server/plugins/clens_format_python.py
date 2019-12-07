@@ -1,7 +1,6 @@
 from textwrap import dedent, indent
 from typing import Any, List, Optional
 
-from rst_lsp.docutils_ext.visitor import ElementType
 from rst_lsp.server.datatypes import CodeLens, WorkspaceEdit
 from rst_lsp.server.workspace import Config, Document, Workspace
 from rst_lsp.server.plugin_manager import hookimpl
@@ -19,7 +18,7 @@ def rst_code_lens(
 
     results = (
         database.query_elements(
-            name=ElementType.directive.value, uri=uri, type_name=["code", "code-block"]
+            etype="directive", uri=uri, dtype=("code", "code-block")
         )
         or []
     )
@@ -30,12 +29,12 @@ def rst_code_lens(
                 {
                     "range": {
                         "start": {
-                            "line": result["lineno"],
-                            "character": result["start_char"],
+                            "line": result["startLine"],
+                            "character": result["startCharacter"],
                         },
                         "end": {
-                            "line": result["lineno"],
-                            "character": result["start_char"],
+                            "line": result["startLine"],
+                            "character": result["startCharacter"],
                         },
                     },
                     "command": {
@@ -44,7 +43,7 @@ def rst_code_lens(
                         "arguments": [
                             uri,
                             result,
-                            document.lines[result["lineno"] : result["endline"] + 1],
+                            document.lines[result["startLine"] : result["endLine"] + 1],
                         ],
                     },
                 }
@@ -89,10 +88,10 @@ def rst_execute_command(
                 {
                     "range": {
                         "start": {
-                            "line": result["lineno"] + start_line,
+                            "line": result["startLine"] + start_line,
                             "character": 0,
                         },
-                        "end": {"line": result["endline"], "character": len(lines[-1])},
+                        "end": {"line": result["endLine"], "character": len(lines[-1])},
                     },
                     "newText": indent(text, indent_spaces * " "),
                 }

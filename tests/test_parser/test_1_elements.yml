@@ -1,276 +1,268 @@
-- element: hyperlink_target
-  label: headerlink
-  lineno: 1
-  raw: '.. _headerlink:'
-  section_uuid: null
-  start_char: 0
-  type: Block
+- block: true
+  endCharacter: 14
+  endLine: 1
+  names:
+  - headerlink
+  parent_uuid: null
+  startCharacter: 0
+  startLine: 1
+  title: hyperlink_target
+  type: hyperlink_target
   uuid: uuid_0
-- element: section
+- block: true
+  endCharacter: 16
+  endLine: 27
   level: 1
-  lineno: 3
-  section_uuid: null
-  start_char: 0
+  parent_uuid: null
+  startCharacter: 0
+  startLine: 3
   title: header 1
-  type: Block
+  type: section
   uuid: uuid_1
 - arguments:
   - html
-  element: directive
-  end_char: 19
-  endline: 10
+  block: true
+  contentCharacter: 4
+  contentLine: 8
+  dtype: only
+  endCharacter: 0
+  endLine: 11
   klass: sphinx.directives.other.Only
-  lineno: 6
   options: {}
-  section_uuid: uuid_1
-  start_char: 0
-  type: Block
-  type_name: only
+  parent_uuid: uuid_1
+  startCharacter: 0
+  startLine: 6
+  title: only
+  type: directive
   uuid: uuid_2
 - arguments: []
-  element: directive
-  end_char: 19
-  endline: 10
+  block: true
+  contentCharacter: 8
+  contentLine: 10
+  dtype: note
+  endCharacter: 19
+  endLine: 10
   klass: docutils.parsers.rst.directives.admonitions.Note
-  lineno: 8
   options: {}
-  section_uuid: uuid_1
-  start_char: 4
-  type: Block
-  type_name: note
+  parent_uuid: uuid_2
+  startCharacter: 4
+  startLine: 8
+  title: note
+  type: directive
   uuid: uuid_3
 - arguments:
   - python
-  element: directive
-  end_char: 11
-  endline: 15
+  block: true
+  contentCharacter: 4
+  contentLine: 15
+  dtype: code-block
+  endCharacter: 0
+  endLine: 16
   klass: sphinx.directives.code.CodeBlock
-  lineno: 12
   options:
     linenos: null
-  section_uuid: uuid_1
-  start_char: 0
-  type: Block
-  type_name: code-block
+  parent_uuid: uuid_1
+  startCharacter: 0
+  startLine: 12
+  title: code-block
+  type: directive
   uuid: uuid_4
-- element: link
-  end_char: 9
-  lineno: 17
-  raw: '`<sdf>`__'
-  section_uuid: uuid_1
-  start_char: 0
-  target: sdf
-  type: Inline
+- block: false
+  endCharacter: 8
+  endLine: 17
+  parent_uuid: uuid_1
+  startCharacter: 0
+  startLine: 17
+  title: ref_phrase
+  type: ref_phrase
   uuid: uuid_5
-- element: section
+- block: true
+  endCharacter: 16
+  endLine: 27
   level: 2
-  lineno: 19
-  section_uuid: uuid_1
-  start_char: 0
+  parent_uuid: uuid_1
+  startCharacter: 0
+  startLine: 19
   title: sub-title
-  type: Block
+  type: section
   uuid: uuid_6
-- element: link
-  end_char: 27
-  lineno: 22
-  raw: '`<http://www.python.org/>`_'
-  section_uuid: uuid_6
-  start_char: 0
-  target: http://www.python.org/
-  type: Inline
+- block: false
+  endCharacter: 26
+  endLine: 22
+  names:
+  - http://www.python.org/
+  parent_uuid: uuid_6
+  startCharacter: 0
+  startLine: 22
+  title: ref_phrase
+  type: ref_phrase
   uuid: uuid_7
 - arguments: []
-  element: directive
-  end_char: 16
-  endline: 27
+  block: true
+  contentCharacter: 4
+  contentLine: 26
+  dtype: note
+  endCharacter: 0
+  endLine: 28
   klass: docutils.parsers.rst.directives.admonitions.Note
-  lineno: 24
   options: {}
-  section_uuid: uuid_6
-  start_char: 0
-  type: Block
-  type_name: note
+  parent_uuid: uuid_6
+  startCharacter: 0
+  startLine: 24
+  title: note
+  type: directive
   uuid: uuid_8
-- element: link
-  end_char: 48
-  lineno: 26
-  raw: '`a link to python <www.python.org>`_'
-  section_uuid: uuid_6
-  start_char: 12
-  target: www.python.org
-  type: Inline
+- block: false
+  endCharacter: 47
+  endLine: 26
+  names:
+  - a link to python
+  parent_uuid: uuid_8
+  startCharacter: 12
+  startLine: 26
+  title: ref_phrase
+  type: ref_phrase
   uuid: uuid_9
-- content: asdasx
-  element: role
-  end_char: 17
-  lineno: 27
-  raw: :sdf:`asdasx`
-  role: sdf
-  section_uuid: uuid_6
-  start_char: 4
-  type: Inline
-  uuid: uuid_10
-- element: section
+- block: true
+  endCharacter: 20
+  endLine: 56
   level: 1
-  lineno: 29
-  section_uuid: null
-  start_char: 0
+  parent_uuid: null
+  startCharacter: 0
+  startLine: 29
   title: header 2
-  type: Block
+  type: section
+  uuid: uuid_10
+- block: false
+  endCharacter: 13
+  endLine: 36
+  parent_uuid: uuid_10
+  refnames:
+  - sadasd
+  rtype: cite
+  startCharacter: 0
+  startLine: 36
+  title: cite
+  type: role
   uuid: uuid_11
-- content: sadasd
-  element: role
-  end_char: 14
-  lineno: 36
-  raw: :cite:`sadasd`
-  role: cite
-  section_uuid: uuid_11
-  start_char: 0
-  type: Inline
+- block: false
+  endCharacter: 10
+  endLine: 37
+  parent_uuid: uuid_10
+  refnames:
+  - asd
+  rtype: cite
+  startCharacter: 0
+  startLine: 37
+  title: cite
+  type: role
   uuid: uuid_12
-- content: asd
-  element: role
-  end_char: 11
-  lineno: 37
-  raw: :cite:`asd`
-  role: cite
-  section_uuid: uuid_11
-  start_char: 0
-  type: Inline
+- block: false
+  endCharacter: 5
+  endLine: 45
+  parent_uuid: uuid_10
+  refnames:
+  - REF1
+  startCharacter: 0
+  startLine: 45
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_13
-- content: saasf
-  element: role
-  end_char: 12
-  lineno: 43
-  raw: :sdf:`saasf`
-  role: sdf
-  section_uuid: uuid_11
-  start_char: 0
-  type: Inline
+- block: false
+  endCharacter: 19
+  endLine: 45
+  parent_uuid: uuid_10
+  refnames:
+  - REF2
+  startCharacter: 14
+  startLine: 45
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_14
-- content: saasf
-  element: role
-  end_char: 27
-  lineno: 43
-  raw: :abcf:`saasf`
-  role: abcf
-  section_uuid: uuid_11
-  start_char: 14
-  type: Inline
+- block: false
+  endCharacter: 30
+  endLine: 45
+  parent_uuid: uuid_10
+  refnames:
+  - REF3
+  startCharacter: 25
+  startLine: 45
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_15
-- element: reference
-  end_char: 6
-  lineno: 45
-  raw: '|REF1|'
-  ref_type: substitution
-  section_uuid: uuid_11
-  start_char: 0
-  target: ref1
-  type: Inline
+- block: false
+  endCharacter: 12
+  endLine: 47
+  parent_uuid: uuid_10
+  refnames:
+  - headerlink
+  startCharacter: 2
+  startLine: 47
+  title: ref_basic
+  type: ref_basic
   uuid: uuid_16
-- element: reference
-  end_char: 20
-  lineno: 45
-  raw: '|REF2|'
-  ref_type: substitution
-  section_uuid: uuid_11
-  start_char: 14
-  target: ref2
-  type: Inline
+- block: false
+  endCharacter: 8
+  endLine: 49
+  parent_uuid: uuid_10
+  refnames:
+  - fn1
+  startCharacter: 2
+  startLine: 49
+  title: ref_foot
+  type: ref_foot
   uuid: uuid_17
-- element: reference
-  end_char: 31
-  lineno: 45
-  raw: '|REF3|'
-  ref_type: substitution
-  section_uuid: uuid_11
-  start_char: 25
-  target: ref3
-  type: Inline
+- block: true
+  endCharacter: 25
+  endLine: 51
+  names:
+  - REF1
+  parent_uuid: uuid_10
+  startCharacter: 0
+  startLine: 51
+  title: substitution_def
+  type: substitution_def
   uuid: uuid_18
-- element: reference
-  end_char: 13
-  lineno: 47
-  raw: headerlink_
-  ref_type: anonymous
-  section_uuid: uuid_11
-  start_char: 2
-  target: headerlink
-  type: Inline
+- block: true
+  endCharacter: 25
+  endLine: 52
+  names:
+  - REF2
+  parent_uuid: uuid_10
+  startCharacter: 0
+  startLine: 52
+  title: substitution_def
+  type: substitution_def
   uuid: uuid_19
-- element: reference
-  end_char: 9
-  lineno: 49
-  raw: '[#fn1]_'
-  ref_type: footnote
-  section_uuid: uuid_11
-  start_char: 2
-  target: '#fn1'
-  type: Inline
+- block: true
+  endCharacter: 26
+  endLine: 53
+  names:
+  - ref3
+  parent_uuid: uuid_10
+  startCharacter: 0
+  startLine: 53
+  title: hyperlink_target
+  type: hyperlink_target
   uuid: uuid_20
-- arguments:
-  - file.png
-  element: directive
-  end_char: 25
-  endline: 51
-  klass: docutils.parsers.rst.directives.images.Image
-  lineno: 51
-  options:
-    alt: REF1
-    uri: file.png
-  section_uuid: uuid_11
-  start_char: 10
-  type: Block
-  type_name: image
+- block: true
+  endCharacter: 0
+  endLine: 55
+  names: []
+  parent_uuid: uuid_10
+  startCharacter: 0
+  startLine: 54
+  title: substitution_def
+  type: substitution_def
   uuid: uuid_21
-- element: substitution_def
-  label: ref1
-  lineno: 51
-  raw: '.. |REF1| image:: file.png'
-  section_uuid: uuid_11
-  start_char: 0
-  type: Block
+- block: true
+  endCharacter: 20
+  endLine: 56
+  names:
+  - fn1
+  parent_uuid: uuid_10
+  startCharacter: 0
+  startLine: 56
+  title: footnote
+  type: footnote
   uuid: uuid_22
-- arguments: []
-  element: directive
-  end_char: 25
-  endline: 52
-  klass: docutils.parsers.rst.directives.misc.Replace
-  lineno: 52
-  options: {}
-  section_uuid: uuid_11
-  start_char: 10
-  type: Block
-  type_name: replace
-  uuid: uuid_23
-- element: substitution_def
-  label: ref2
-  lineno: 52
-  raw: '.. |REF2| replace:: MyText'
-  section_uuid: uuid_11
-  start_char: 0
-  type: Block
-  uuid: uuid_24
-- element: hyperlink_target
-  label: ref3
-  lineno: 53
-  raw: '.. _REF3: http://sdfsdf/dsf'
-  section_uuid: uuid_11
-  start_char: 0
-  type: Block
-  uuid: uuid_25
-- element: substitution_def
-  lineno: 54
-  raw: '.. |REF4| replace: bad syntax'
-  section_uuid: uuid_11
-  start_char: 0
-  type: Block
-  uuid: uuid_26
-- element: footnote
-  label: '#fn1'
-  lineno: 56
-  raw: .. [#fn1] A footnote.
-  section_uuid: uuid_11
-  start_char: 0
-  type: Block
-  uuid: uuid_27

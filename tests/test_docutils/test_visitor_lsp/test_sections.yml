@@ -101,7 +101,7 @@ db_entries:
   uuid: uuid_9
 doc_symbols:
 - children:
-  - detail: 'type: role, uuid: uuid_1'
+  - detail: 'type: role'
     kind: 12
     name: title
     range:
@@ -119,7 +119,7 @@ doc_symbols:
         character: 0
         line: 3
   - children:
-    - detail: 'type: role, uuid: uuid_3'
+    - detail: 'type: role'
       kind: 12
       name: title
       range:
@@ -136,7 +136,7 @@ doc_symbols:
         start:
           character: 0
           line: 8
-    detail: 'type: section, uuid: uuid_2'
+    detail: 'type: section'
     kind: 2
     name: sub-title
     range:
@@ -154,7 +154,7 @@ doc_symbols:
         character: 0
         line: 5
   - children:
-    - detail: 'type: role, uuid: uuid_5'
+    - detail: 'type: role'
       kind: 12
       name: title
       range:
@@ -172,7 +172,7 @@ doc_symbols:
           character: 0
           line: 13
     - children:
-      - detail: 'type: role, uuid: uuid_7'
+      - detail: 'type: role'
         kind: 12
         name: title
         range:
@@ -189,7 +189,7 @@ doc_symbols:
           start:
             character: 0
             line: 18
-      detail: 'type: section, uuid: uuid_6'
+      detail: 'type: section'
       kind: 2
       name: sub-sub-title
       range:
@@ -206,7 +206,7 @@ doc_symbols:
         start:
           character: 0
           line: 15
-    detail: 'type: section, uuid: uuid_4'
+    detail: 'type: section'
     kind: 2
     name: sub-title2
     range:
@@ -223,7 +223,7 @@ doc_symbols:
       start:
         character: 0
         line: 10
-  detail: 'type: section, uuid: uuid_0'
+  detail: 'type: section'
   kind: 2
   name: title
   range:
@@ -241,7 +241,7 @@ doc_symbols:
       character: 0
       line: 0
 - children:
-  - detail: 'type: role, uuid: uuid_9'
+  - detail: 'type: role'
     kind: 12
     name: title
     range:
@@ -258,7 +258,7 @@ doc_symbols:
       start:
         character: 0
         line: 23
-  detail: 'type: section, uuid: uuid_8'
+  detail: 'type: section'
   kind: 2
   name: title2
   range:

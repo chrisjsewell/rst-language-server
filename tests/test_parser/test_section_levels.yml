@@ -1,165 +1,192 @@
 elements:
-- element: section
+- block: true
+  endCharacter: 5
+  endLine: 13
   level: 1
-  lineno: 0
-  section_uuid: null
-  start_char: 0
+  parent_uuid: null
+  startCharacter: 0
+  startLine: 0
   title: title 1
-  type: Block
+  type: section
   uuid: uuid_0
-- element: reference
-  end_char: 6
-  lineno: 3
-  raw: '|REF1|'
-  ref_type: substitution
-  section_uuid: uuid_0
-  start_char: 0
-  target: ref1
-  type: Inline
+- block: false
+  endCharacter: 5
+  endLine: 3
+  parent_uuid: uuid_0
+  refnames:
+  - REF1
+  startCharacter: 0
+  startLine: 3
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_1
-- element: section
+- block: true
+  endCharacter: 5
+  endLine: 13
   level: 2
-  lineno: 5
-  section_uuid: uuid_0
-  start_char: 0
+  parent_uuid: uuid_0
+  startCharacter: 0
+  startLine: 5
   title: title 2
-  type: Block
+  type: section
   uuid: uuid_2
-- element: reference
-  end_char: 6
-  lineno: 8
-  raw: '|REF2|'
-  ref_type: substitution
-  section_uuid: uuid_2
-  start_char: 0
-  target: ref2
-  type: Inline
+- block: false
+  endCharacter: 5
+  endLine: 8
+  parent_uuid: uuid_2
+  refnames:
+  - REF2
+  startCharacter: 0
+  startLine: 8
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_3
-- element: section
+- block: true
+  endCharacter: 5
+  endLine: 13
   level: 3
-  lineno: 10
-  section_uuid: uuid_2
-  start_char: 0
+  parent_uuid: uuid_2
+  startCharacter: 0
+  startLine: 10
   title: title 3
-  type: Block
+  type: section
   uuid: uuid_4
-- element: reference
-  end_char: 6
-  lineno: 13
-  raw: '|REF3|'
-  ref_type: substitution
-  section_uuid: uuid_4
-  start_char: 0
-  target: ref3
-  type: Inline
+- block: false
+  endCharacter: 5
+  endLine: 13
+  parent_uuid: uuid_4
+  refnames:
+  - REF3
+  startCharacter: 0
+  startLine: 13
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_5
-- element: section
+- block: true
+  endCharacter: 5
+  endLine: 33
   level: 1
-  lineno: 15
-  section_uuid: null
-  start_char: 0
+  parent_uuid: null
+  startCharacter: 0
+  startLine: 15
   title: title 4
-  type: Block
+  type: section
   uuid: uuid_6
-- element: reference
-  end_char: 6
-  lineno: 18
-  raw: '|REF4|'
-  ref_type: substitution
-  section_uuid: uuid_6
-  start_char: 0
-  target: ref4
-  type: Inline
+- block: false
+  endCharacter: 5
+  endLine: 18
+  parent_uuid: uuid_6
+  refnames:
+  - REF4
+  startCharacter: 0
+  startLine: 18
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_7
-- element: section
+- block: true
+  endCharacter: 5
+  endLine: 23
   level: 2
-  lineno: 20
-  section_uuid: uuid_6
-  start_char: 0
+  parent_uuid: uuid_6
+  startCharacter: 0
+  startLine: 20
   title: title 5
-  type: Block
+  type: section
   uuid: uuid_8
-- element: reference
-  end_char: 6
-  lineno: 23
-  raw: '|REF5|'
-  ref_type: substitution
-  section_uuid: uuid_8
-  start_char: 0
-  target: ref5
-  type: Inline
+- block: false
+  endCharacter: 5
+  endLine: 23
+  parent_uuid: uuid_8
+  refnames:
+  - REF5
+  startCharacter: 0
+  startLine: 23
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_9
-- element: section
+- block: true
+  endCharacter: 5
+  endLine: 33
   level: 2
-  lineno: 25
-  section_uuid: uuid_6
-  start_char: 0
+  parent_uuid: uuid_6
+  startCharacter: 0
+  startLine: 25
   title: title 7
-  type: Block
+  type: section
   uuid: uuid_10
-- element: reference
-  end_char: 6
-  lineno: 28
-  raw: '|REF7|'
-  ref_type: substitution
-  section_uuid: uuid_10
-  start_char: 0
-  target: ref7
-  type: Inline
+- block: false
+  endCharacter: 5
+  endLine: 28
+  parent_uuid: uuid_10
+  refnames:
+  - REF7
+  startCharacter: 0
+  startLine: 28
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_11
-- element: section
+- block: true
+  endCharacter: 5
+  endLine: 33
   level: 3
-  lineno: 30
-  section_uuid: uuid_10
-  start_char: 0
+  parent_uuid: uuid_10
+  startCharacter: 0
+  startLine: 30
   title: title 8
-  type: Block
+  type: section
   uuid: uuid_12
-- element: reference
-  end_char: 6
-  lineno: 33
-  raw: '|REF8|'
-  ref_type: substitution
-  section_uuid: uuid_12
-  start_char: 0
-  target: ref8
-  type: Inline
+- block: false
+  endCharacter: 5
+  endLine: 33
+  parent_uuid: uuid_12
+  refnames:
+  - REF8
+  startCharacter: 0
+  startLine: 33
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_13
-- element: section
+- block: true
+  endCharacter: 5
+  endLine: 38
   level: 1
-  lineno: 35
-  section_uuid: null
-  start_char: 0
+  parent_uuid: null
+  startCharacter: 0
+  startLine: 35
   title: title 9
-  type: Block
+  type: section
   uuid: uuid_14
-- element: reference
-  end_char: 6
-  lineno: 38
-  raw: '|REF9|'
-  ref_type: substitution
-  section_uuid: uuid_14
-  start_char: 0
-  target: ref9
-  type: Inline
+- block: false
+  endCharacter: 5
+  endLine: 38
+  parent_uuid: uuid_14
+  refnames:
+  - REF9
+  startCharacter: 0
+  startLine: 38
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_15
-- element: section
+- block: true
+  endCharacter: 6
+  endLine: 43
   level: 1
-  lineno: 40
-  section_uuid: null
-  start_char: 0
+  parent_uuid: null
+  startCharacter: 0
+  startLine: 40
   title: title 10
-  type: Block
+  type: section
   uuid: uuid_16
-- element: reference
-  end_char: 7
-  lineno: 43
-  raw: '|REF10|'
-  ref_type: substitution
-  section_uuid: uuid_16
-  start_char: 0
-  target: ref10
-  type: Inline
+- block: false
+  endCharacter: 6
+  endLine: 43
+  parent_uuid: uuid_16
+  refnames:
+  - REF10
+  startCharacter: 0
+  startLine: 43
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_17
 linting:
 - description: 'Title underline too short.

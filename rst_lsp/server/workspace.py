@@ -6,7 +6,7 @@ import re
 from typing import Dict, List
 
 from rst_lsp.database.tinydb import Database
-from rst_lsp.analyse.main import (
+from rst_lsp.sphinx_ext.main import (
     assess_source,
     create_sphinx_app,
     retrieve_namespace,
@@ -144,9 +144,8 @@ class Workspace(object):
             result = doc.get_assessment()  # type: SourceAssessResult
             self._db.update_doc(
                 doc.uri,
-                endline=len(doc.lines) - 1,
-                endchar=len(doc.lines[-1]) - 1,
                 elements=result.elements,
+                doc_symbols=result.doc_symbols,
                 lints=result.linting,
             )
         return self._db

@@ -33,7 +33,7 @@ db_entries:
   type: directive
   uuid: uuid_1
 doc_symbols:
-- detail: 'type: directive, uuid: uuid_0'
+- detail: 'type: directive'
   kind: 5
   name: code
   range:
@@ -50,7 +50,7 @@ doc_symbols:
     start:
       character: 0
       line: 0
-- detail: 'type: directive, uuid: uuid_1'
+- detail: 'type: directive'
   kind: 5
   name: image
   range:

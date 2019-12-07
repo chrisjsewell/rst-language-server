@@ -1,5 +1,5 @@
-from rst_lsp.analyse.main import assess_source
-from rst_lsp.analyse.main import create_sphinx_app, retrieve_namespace
+from rst_lsp.sphinx_ext.main import assess_source
+from rst_lsp.sphinx_ext.main import create_sphinx_app, retrieve_namespace
 
 
 def test_retrieve_namespace(data_regression):
@@ -43,7 +43,7 @@ def test_section_levels(get_test_file_content, data_regression):
 
 
 def test_doctest(data_regression):
-    # NOTE this is used in example in rst_lsp.analyse example
+    # NOTE this is used in example in rst_lsp.sphinx_ext example
     from textwrap import dedent
 
     source = dedent(

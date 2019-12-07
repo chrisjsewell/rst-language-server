@@ -1,4 +1,4 @@
-from rst_lsp.analyse.main import create_sphinx_app, retrieve_namespace
+from rst_lsp.sphinx_ext.main import create_sphinx_app, retrieve_namespace
 from rst_lsp.database.tinydb import Database
 
 

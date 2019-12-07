@@ -1,9 +1,12 @@
+import logging
+
 import yaml
 
-from rst_lsp.docutils_ext.visitor import ElementType
 from rst_lsp.server.datatypes import Position, Hover
 from rst_lsp.server.workspace import Document
 from rst_lsp.server.plugin_manager import hookimpl
+
+logger = logging.getLogger(__name__)
 
 
 @hookimpl
@@ -12,21 +15,17 @@ def rst_hover(document: Document, position: Position) -> Hover:
     database = document.workspace.database
     uri = document.uri
     results = database.query_elements(
-        name=[ElementType.role.value, ElementType.directive.value],
-        uri=uri,
-        lineno=position["line"],
+        etype=("role", "directive"), uri=uri, startLine=position["line"],
     )
-    # document.workspace.server.log_message(str(results))
+    logger.debug(results)
     for result in results or []:
-        if not ("start_char" in result and "end_char" in result):
-            continue
 
-        if result["start_char"] <= position["character"] and (
-            result.get("endline", position["line"]) != position["line"]
-            or position["character"] <= result["end_char"]
+        if result["startCharacter"] <= position["character"] and (
+            result["endLine"] != position["line"]
+            or position["character"] <= result["endCharacter"]
         ):
-            if result["element"] == ElementType.role.value:
-                role_data = database.query_role(result["role"])
+            if result["type"] == "role":
+                role_data = database.query_role(result["rtype"])
                 if role_data is None:
                     return {"contents": "Unknown role"}
                 return {
@@ -39,7 +38,7 @@ def rst_hover(document: Document, position: Position) -> Hover:
                     ]
                 }
             else:
-                dir_data = database.query_directive(result["type_name"])
+                dir_data = database.query_directive(result["dtype"])
                 if dir_data is None:
                     return {"contents": "Unknown directive"}
                 options = yaml.safe_dump({"options": dir_data["options"]})

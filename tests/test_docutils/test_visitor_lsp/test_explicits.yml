@@ -88,7 +88,7 @@ db_entries:
   type: citation
   uuid: uuid_7
 doc_symbols:
-- detail: 'type: hyperlink_target, uuid: uuid_0'
+- detail: 'type: hyperlink_target'
   kind: 8
   name: hyperlink_target
   range:
@@ -105,7 +105,7 @@ doc_symbols:
     start:
       character: 0
       line: 0
-- detail: 'type: ref_foot, uuid: uuid_1'
+- detail: 'type: ref_foot'
   kind: 7
   name: ref_foot
   range:
@@ -122,7 +122,7 @@ doc_symbols:
     start:
       character: 0
       line: 2
-- detail: 'type: ref_basic, uuid: uuid_2'
+- detail: 'type: ref_basic'
   kind: 7
   name: ref_basic
   range:
@@ -139,7 +139,7 @@ doc_symbols:
     start:
       character: 5
       line: 2
-- detail: 'type: ref_sub, uuid: uuid_3'
+- detail: 'type: ref_sub'
   kind: 7
   name: ref_sub
   range:
@@ -156,7 +156,7 @@ doc_symbols:
     start:
       character: 13
       line: 2
-- detail: 'type: ref_cite, uuid: uuid_4'
+- detail: 'type: ref_cite'
   kind: 7
   name: ref_cite
   range:
@@ -173,7 +173,7 @@ doc_symbols:
     start:
       character: 22
       line: 2
-- detail: 'type: footnote, uuid: uuid_5'
+- detail: 'type: footnote'
   kind: 8
   name: footnote
   range:
@@ -190,7 +190,7 @@ doc_symbols:
     start:
       character: 0
       line: 4
-- detail: 'type: substitution_def, uuid: uuid_6'
+- detail: 'type: substitution_def'
   kind: 8
   name: substitution_def
   range:
@@ -207,7 +207,7 @@ doc_symbols:
     start:
       character: 0
       line: 5
-- detail: 'type: citation, uuid: uuid_7'
+- detail: 'type: citation'
   kind: 8
   name: citation
   range:

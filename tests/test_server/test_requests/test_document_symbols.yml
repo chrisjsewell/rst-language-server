@@ -1,66 +1,70 @@
 - children:
-  - kind: 8
-    name: ref:substitution
+  - detail: 'type: ref_sub'
+    kind: 7
+    name: ref_sub
     range:
       end:
-        character: 5
+        character: 4
         line: 3
       start:
         character: 0
         line: 3
     selectionRange:
       end:
-        character: 5
+        character: 4
         line: 3
       start:
         character: 0
         line: 3
   - children:
-    - kind: 5
+    - detail: 'type: directive'
+      kind: 5
       name: code
       range:
         end:
-          character: 14
-          line: 12
+          character: 0
+          line: 13
         start:
           character: 0
           line: 10
       selectionRange:
         end:
-          character: 14
-          line: 12
+          character: 0
+          line: 13
         start:
           character: 0
           line: 10
+    detail: 'type: section'
     kind: 2
     name: title2
     range:
       end:
-        character: 5
-        line: 7
+        character: 2
+        line: 14
       start:
         character: 0
         line: 7
     selectionRange:
       end:
-        character: 5
-        line: 7
+        character: 2
+        line: 14
       start:
         character: 0
         line: 7
+  detail: 'type: section'
   kind: 2
   name: title
   range:
     end:
-      character: 4
-      line: 0
+      character: 2
+      line: 14
     start:
       character: 0
       line: 0
   selectionRange:
     end:
-      character: 4
-      line: 0
+      character: 2
+      line: 14
     start:
       character: 0
       line: 0

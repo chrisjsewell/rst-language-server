@@ -50,7 +50,7 @@ def get_column2position(lineno: int, text_original: str, text_dedented: str):
     return char2docplace
 
 
-class PositionInliner(Inliner):
+class InlinerLSP(Inliner):
     def __init__(self, *, doc_text, **kwargs):
         """Initialise inliner."""
         super().__init__(**kwargs)

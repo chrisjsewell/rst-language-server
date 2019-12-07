@@ -29,9 +29,11 @@ from sphinx.util.console import nocolor, color_terminal, terminal_safe  # noqa
 from sphinx.util.docutils import docutils_namespace, patch_docutils
 from sphinx.util.docutils import sphinx_domains
 
-from rst_lsp.docutils_ext.parser import parse_source
+from rst_lsp.docutils_ext.block_lsp import RSTParserCustom
+from rst_lsp.docutils_ext.inliner_lsp import InlinerLSP
 from rst_lsp.docutils_ext.reporter import new_document
-from rst_lsp.docutils_ext.visitor import DocInfoVisitor
+from rst_lsp.docutils_ext.visitor_lsp import VisitorLSP
+from rst_lsp.server.datatypes import DocumentSymbol
 
 
 @attr.s
@@ -172,6 +174,7 @@ def retrieve_namespace(app_env: SphinxAppEnv):
 class SourceAssessResult:
     doctree: document = attr.ib()
     elements: List[dict] = attr.ib()
+    doc_symbols: List[DocumentSymbol] = attr.ib()
     linting: List[dict] = attr.ib()
 
 
@@ -208,13 +211,18 @@ def assess_source(
 
         document, reporter = new_document(content, settings=settings)
 
+        parser = RSTParserCustom(inliner=InlinerLSP(doc_text=content))
         try:
-            parse_source(content, document)
+            parser.parse(content, document)
         except SystemMessage:
             pass
 
-        visitor = DocInfoVisitor(document, content)
-        document.walk(visitor)
-        elements = visitor.info_datas[:]
+        visitor = VisitorLSP(document, content)
+        document.walkabout(visitor)
 
-    return SourceAssessResult(document, elements, reporter.log_capture,)
+    return SourceAssessResult(
+        document,
+        visitor.db_entries,
+        visitor.nesting.document_symbols,
+        reporter.log_capture,
+    )

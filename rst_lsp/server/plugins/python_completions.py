@@ -1,7 +1,6 @@
 import logging
 from textwrap import dedent
 
-from rst_lsp.docutils_ext.visitor import ElementType
 from rst_lsp.server.plugin_manager import hookimpl
 from rst_lsp.server.workspace import Config, Document, Workspace
 from rst_lsp.server.datatypes import Position
@@ -54,28 +53,25 @@ def rst_completions(
 
     results = (
         database.query_elements(
-            name=ElementType.directive.value, uri=uri, type_name=["code", "code-block"]
+            etype="directive",
+            uri=uri,
+            dtype=("code", "code-block"),
+            arguments=["python"],
         )
         or []
     )
-    logger.debug(str(results))
 
     for result in results:
-        if "python" not in result["arguments"]:
-            continue
-        if not ("start_char" in result and "end_char" in result):
-            continue
         if not (
-            result["start_char"] <= position["character"]
-            and (
-                result.get("endline", position["line"]) != position["line"]
-                or position["character"] <= result["end_char"]
-            )
+            position["line"] >= result["contentLine"]
+            and position["line"] <= result["endLine"]
+            and position["character"] >= result["contentCharacter"]
         ):
+            logger.debug(f"skipping: {result}")
             continue
 
         # find first line of source code
-        lines = document.lines[result["lineno"] : result["endline"] + 1]
+        lines = document.lines[result["startLine"] : result["endLine"] + 1]
         start_line = None
         for i, line in enumerate(lines):
             if not line.strip():
@@ -90,7 +86,7 @@ def rst_completions(
 
         definitions = jedi.Script(
             source=text,
-            line=position["line"] - result["lineno"] - start_line + 1,
+            line=position["line"] - result["startLine"] - start_line + 1,
             column=position["character"] - indent_spaces,
         ).completions()
         if not definitions:
@@ -141,8 +137,8 @@ def _format_docstring(contents):
     Until we can find a fast enough way of discovering and parsing each format,
     we can do a little better by at least preserving indentation.
     """
-    contents = contents.replace("\t", u"\u00A0" * 4)
-    contents = contents.replace("  ", u"\u00A0" * 2)
+    contents = contents.replace("\t", "\u00A0" * 4)
+    contents = contents.replace("  ", "\u00A0" * 2)
     # if LooseVersion(JEDI_VERSION) < LooseVersion('0.15.0'):
     #     contents = contents.replace('*', '\\*')
     return contents

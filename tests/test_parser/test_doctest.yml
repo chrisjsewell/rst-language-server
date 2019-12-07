@@ -1,93 +1,85 @@
 elements:
-- element: hyperlink_target
-  label: title
-  lineno: 0
-  raw: '.. _title:'
-  section_uuid: null
-  start_char: 0
-  type: Block
+- block: true
+  endCharacter: 9
+  endLine: 0
+  names:
+  - title
+  parent_uuid: null
+  startCharacter: 0
+  startLine: 0
+  title: hyperlink_target
+  type: hyperlink_target
   uuid: uuid_0
-- element: section
+- block: true
+  endCharacter: 34
+  endLine: 13
   level: 1
-  lineno: 2
-  section_uuid: null
-  start_char: 0
+  parent_uuid: null
+  startCharacter: 0
+  startLine: 2
   title: Title
-  type: Block
+  type: section
   uuid: uuid_1
-- content: title
-  element: role
-  end_char: 12
-  lineno: 5
-  raw: :ref:`title`
-  role: ref
-  section_uuid: uuid_1
-  start_char: 0
-  type: Inline
+- block: false
+  endCharacter: 11
+  endLine: 5
+  parent_uuid: uuid_1
+  rtype: ref
+  startCharacter: 0
+  startLine: 5
+  title: ref
+  type: role
   uuid: uuid_2
-- content: citation
-  element: role
-  end_char: 16
-  lineno: 6
-  raw: :cite:`citation`
-  role: cite
-  section_uuid: uuid_1
-  start_char: 0
-  type: Inline
+- block: false
+  endCharacter: 15
+  endLine: 6
+  parent_uuid: uuid_1
+  refnames:
+  - citation
+  rtype: cite
+  startCharacter: 0
+  startLine: 6
+  title: cite
+  type: role
   uuid: uuid_3
-- content: abc
-  element: role
-  end_char: 14
-  lineno: 7
-  raw: :unknown:`abc`
-  role: unknown
-  section_uuid: uuid_1
-  start_char: 0
-  type: Inline
-  uuid: uuid_4
 - arguments:
   - '1.0'
-  element: directive
-  end_char: 21
-  endline: 11
+  block: true
+  contentCharacter: 4
+  contentLine: 11
+  dtype: versionadded
+  endCharacter: 0
+  endLine: 12
   klass: sphinx.domains.changeset.VersionChange
-  lineno: 9
   options: {}
-  section_uuid: uuid_1
-  start_char: 0
-  type: Block
-  type_name: versionadded
+  parent_uuid: uuid_1
+  startCharacter: 0
+  startLine: 9
+  title: versionadded
+  type: directive
+  uuid: uuid_4
+- block: false
+  endCharacter: 21
+  endLine: 11
+  parent_uuid: uuid_4
+  refnames:
+  - RST
+  startCharacter: 17
+  startLine: 11
+  title: ref_sub
+  type: ref_sub
   uuid: uuid_5
-- element: reference
-  end_char: 22
-  lineno: 11
-  raw: '|RST|'
-  ref_type: substitution
-  section_uuid: uuid_1
-  start_char: 17
-  target: rst
-  type: Inline
+- block: true
+  endCharacter: 34
+  endLine: 13
+  names:
+  - RST
+  parent_uuid: uuid_1
+  startCharacter: 0
+  startLine: 13
+  title: substitution_def
+  type: substitution_def
   uuid: uuid_6
-- arguments: []
-  element: directive
-  end_char: 34
-  endline: 13
-  klass: docutils.parsers.rst.directives.misc.Replace
-  lineno: 13
-  options: {}
-  section_uuid: uuid_1
-  start_char: 9
-  type: Block
-  type_name: replace
-  uuid: uuid_7
-- element: substitution_def
-  label: rst
-  lineno: 13
-  raw: '.. |RST| replace:: ReStructuredText'
-  section_uuid: uuid_1
-  start_char: 0
-  type: Block
-  uuid: uuid_8
 lints:
 - description: Unknown interpreted text role "unknown".
   level: 3

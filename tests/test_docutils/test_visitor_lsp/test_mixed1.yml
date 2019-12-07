@@ -22,7 +22,7 @@ db_entries:
   uuid: uuid_1
 - arguments: []
   block: true
-  contentCharacter: 8
+  contentCharacter: 3
   contentLine: 7
   dtype: note
   endCharacter: 0
@@ -113,7 +113,7 @@ db_entries:
   type: citation
   uuid: uuid_9
 doc_symbols:
-- detail: 'type: hyperlink_target, uuid: uuid_0'
+- detail: 'type: hyperlink_target'
   kind: 8
   name: hyperlink_target
   range:
@@ -132,7 +132,7 @@ doc_symbols:
       line: 0
 - children:
   - children:
-    - detail: 'type: ref_foot, uuid: uuid_3'
+    - detail: 'type: ref_foot'
       kind: 7
       name: ref_foot
       range:
@@ -149,7 +149,7 @@ doc_symbols:
         start:
           character: 3
           line: 7
-    - detail: 'type: ref_basic, uuid: uuid_4'
+    - detail: 'type: ref_basic'
       kind: 7
       name: ref_basic
       range:
@@ -166,7 +166,7 @@ doc_symbols:
         start:
           character: 8
           line: 7
-    - detail: 'type: ref_sub, uuid: uuid_5'
+    - detail: 'type: ref_sub'
       kind: 7
       name: ref_sub
       range:
@@ -183,7 +183,7 @@ doc_symbols:
         start:
           character: 16
           line: 7
-    - detail: 'type: ref_cite, uuid: uuid_6'
+    - detail: 'type: ref_cite'
       kind: 7
       name: ref_cite
       range:
@@ -200,7 +200,7 @@ doc_symbols:
         start:
           character: 25
           line: 7
-    detail: 'type: directive, uuid: uuid_2'
+    detail: 'type: directive'
     kind: 5
     name: note
     range:
@@ -217,7 +217,7 @@ doc_symbols:
       start:
         character: 0
         line: 5
-  - detail: 'type: footnote, uuid: uuid_7'
+  - detail: 'type: footnote'
     kind: 8
     name: footnote
     range:
@@ -234,7 +234,7 @@ doc_symbols:
       start:
         character: 0
         line: 9
-  - detail: 'type: substitution_def, uuid: uuid_8'
+  - detail: 'type: substitution_def'
     kind: 8
     name: substitution_def
     range:
@@ -251,7 +251,7 @@ doc_symbols:
       start:
         character: 0
         line: 10
-  - detail: 'type: citation, uuid: uuid_9'
+  - detail: 'type: citation'
     kind: 8
     name: citation
     range:
@@ -268,7 +268,7 @@ doc_symbols:
       start:
         character: 0
         line: 11
-  detail: 'type: section, uuid: uuid_1'
+  detail: 'type: section'
   kind: 2
   name: title
   range:

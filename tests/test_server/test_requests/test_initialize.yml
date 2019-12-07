@@ -1,8 +1,13 @@
 capabilities:
+  codeLensProvider:
+    resolveProvider: false
   completionProvider:
     resolveProvider: false
     triggerCharacters: []
   documentSymbolProvider: true
+  executeCommandProvider:
+    commands:
+    - rst_format_python_cell
   foldingRangeProvider: true
   hoverProvider: true
   textDocumentSync:

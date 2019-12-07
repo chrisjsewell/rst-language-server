@@ -8,7 +8,7 @@ from tinydb.middlewares import CachingMiddleware
 from tinydb.storages import JSONStorage, MemoryStorage
 
 
-from rst_lsp.database.base import (
+from rst_lsp.database.utils import (
     RoleInfo,
     DirectiveInfo,
     get_role_json,
@@ -58,6 +58,9 @@ class Database:
         self._tbl_documents = self._db.table("documents")  # type: Table
         # stores information about the elements contained in each document
         self._tbl_elements = self._db.table("elements")  # type: Table
+        # stores the document symbols nested mapping for each document
+        # TODO is there a better way to store this?
+        self._tbl_doc_symbols = self._db.table("doc_symbols")  # type: Table
         # stores information about linting errors/warnings in each document
         self._tbl_linting = self._db.table("linting")  # type: Table
 
@@ -148,25 +151,23 @@ class Database:
             db_docs.append(doc)
         self._tbl_elements.insert_multiple(db_docs)
 
+    def _update_doc_symbols(self, uri: str, doc_symbols: List[dict]):
+        self._tbl_doc_symbols.remove(where("uri") == uri)
+        self._tbl_doc_symbols.insert({"uri": uri, "doc_symbols": doc_symbols})
+
     def update_doc(
         self,
         uri: str,
-        endline: int,
-        endchar: int,
         elements: List[dict],
+        doc_symbols: List[dict],
         lints: List[dict],
     ):
         self._tbl_documents.upsert(
-            {
-                "dtype": "rst",
-                "uri": uri,
-                "modified": self.get_current_time(),
-                "endline": endline,
-                "endchar": endchar,
-            },
+            {"dtype": "rst", "uri": uri, "modified": self.get_current_time()},
             (where("dtype") == "rst") & (where("uri") == uri),
         )
         self._update_doc_elements(uri, elements)
+        self._update_doc_symbols(uri, doc_symbols)
         self._update_doc_lint(uri, lints)
 
     def query_doc(self, uri):
@@ -181,30 +182,37 @@ class Database:
             (where("dtype") == "rst") & (where("uri").one_of(uris))
         )
 
+    def query_lint(self, uri: str):
+        return self._tbl_linting.search(where("uri") == uri)
+
+    def query_doc_symbols(self, uri: str):
+        doc_symbols = self._tbl_doc_symbols.get(where("uri") == uri)
+        if doc_symbols is not None:
+            return doc_symbols["doc_symbols"]
+
     def query_elements(
         self,
         *,
-        name: Optional[Union[str, list]] = NotSet(),
-        etype: Optional[Union[str, list]] = NotSet(),
-        uri: Optional[Union[str, list]] = NotSet(),
-        lineno: Optional[Union[int, list]] = NotSet(),
-        section_uuid: Optional[Union[str, list]] = NotSet(),
-        uuid: Optional[Union[str, list]] = NotSet(),
+        uri: Optional[Union[str, tuple]] = NotSet(),
+        block: Optional[bool] = NotSet(),
+        etype: Optional[Union[str, tuple]] = NotSet(),
+        parent_uuid: Optional[Union[str, tuple]] = NotSet(),
+        uuid: Optional[Union[str, tuple]] = NotSet(),
         **kwargs
         # TODO it would be ideal if uuid and database.table.doc_id were the same thing
+        # TODO match within range
     ):
         query = None
         for value, key in [
             (uri, "uri"),
             (etype, "type"),
-            (name, "element"),
-            (lineno, "lineno"),
-            (section_uuid, "section_uuid"),
+            (block, "block"),
+            (parent_uuid, "parent_uuid"),
             (uuid, "uuid"),
         ] + [(v, k) for k, v in kwargs.items()]:
             if isinstance(value, NotSet):
                 continue
-            if isinstance(value, (list, tuple)):
+            if isinstance(value, tuple):
                 key_query = where(key).one_of(value)
             else:
                 key_query = where(key) == value
@@ -216,6 +224,3 @@ class Database:
         if query is None:
             return self._tbl_elements.all()
         return self._tbl_elements.search(query)
-
-    def query_lint(self, uri: str):
-        return self._tbl_linting.search(where("uri") == uri)
