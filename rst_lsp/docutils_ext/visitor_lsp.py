@@ -6,7 +6,7 @@ The vistor should be used on a document created using the PositionInliner
 (i.e. containing `PosInline` elements), and ``document.walkabout(visitor)``
 should be used, so that the departure method is called.
 """
-from typing import Optional
+from typing import List, Optional
 
 try:
     from typing import TypedDict
@@ -20,6 +20,7 @@ from docutils import nodes
 from rst_lsp.docutils_ext.inliner_pos import PosInline
 from rst_lsp.docutils_ext.block_pos import PosDirective, PosExplicit, PosSection
 from rst_lsp.server.constants import SymbolKind
+from rst_lsp.server.datatypes import DocumentSymbol
 
 
 class DBElement(TypedDict):
@@ -58,24 +59,33 @@ class NestedElements:
     """This class keeps a record of the current elements entered."""
 
     def __init__(self):
-        self._elements = []
+        self._entered_uuid = []
+        self._doc_symbols = []  # type: List[DocumentSymbol]
 
-    def enter_block(self, node, uuid_value: str):
-        node.uuid_value = uuid_value
-        self._elements.append(uuid_value)
+    def enter_block(self, node, data: DBElement):
+        uuid_value = data["uuid"]
+        node.uuid_value = uuid_value  # this is used to check consistency of exits
+        self._entered_uuid.append(uuid_value)
 
     def exit_block(self, node):
         try:
-            if self._elements[-1] != node.uuid_value:
+            if self._entered_uuid[-1] != node.uuid_value:
                 raise AssertionError("Exiting a non-leaf element")
         except AttributeError:
             raise AssertionError("node property 'uuid_value' not set")
-        self._elements.pop()
+        self._entered_uuid.pop()
         del node.uuid_value
+
+    def add_inline(self, data: DBElement):
+        pass
 
     @property
     def parent_uuid(self):
-        return None if not self._elements else self._elements[-1]
+        return None if not self._entered_uuid else self._entered_uuid[-1]
+
+    @property
+    def document_symbols(self) -> List[DocumentSymbol]:
+        return self._doc_symbols
 
 
 class VisitorLSP(nodes.GenericNodeVisitor):
@@ -110,67 +120,64 @@ class VisitorLSP(nodes.GenericNodeVisitor):
                 node.line_start, node.line_end
             )
             uuid_value = self.get_uuid()
-            self.db_entries.append(
-                {
-                    "uuid": uuid_value,
-                    "parent_uuid": self.nesting.parent_uuid,
-                    "block": True,
-                    "type": "section",
-                    "startLine": start_indx,
-                    "startCharacter": start_column,
-                    "endLine": end_indx,
-                    "endCharacter": end_column,
-                    "level": node.level,
-                }
-            )
-            self.nesting.enter_block(node, uuid_value)
+            data = {
+                "uuid": uuid_value,
+                "parent_uuid": self.nesting.parent_uuid,
+                "block": True,
+                "type": "section",
+                "startLine": start_indx,
+                "startCharacter": start_column,
+                "endLine": end_indx,
+                "endCharacter": end_column,
+                "level": node.level,
+            }
+            self.db_entries.append(data)
+            self.nesting.enter_block(node, data)
         elif isinstance(node, PosDirective):
             start_indx, start_column, end_indx, end_column = self.get_block_range(
                 node.line_start, node.line_end
             )
             uuid_value = self.get_uuid()
-            self.db_entries.append(
-                {
-                    "uuid": uuid_value,
-                    "parent_uuid": self.nesting.parent_uuid,
-                    "block": True,
-                    "type": "directive",
-                    "startLine": start_indx,
-                    "startCharacter": start_column,
-                    "endLine": end_indx,
-                    "endCharacter": end_column,
-                    "contentLine": node.line_content,
-                    "contentCharacter": node.content_indent + start_indx
-                    if node.content_indent
-                    else None,
-                    "dname": node.dname,
-                    "arguments": node.arguments,
-                    "options": node.options,
-                    "klass": node.klass,
-                }
-            )
-            self.nesting.enter_block(node, uuid_value)
+            data = {
+                "uuid": uuid_value,
+                "parent_uuid": self.nesting.parent_uuid,
+                "block": True,
+                "type": "directive",
+                "startLine": start_indx,
+                "startCharacter": start_column,
+                "endLine": end_indx,
+                "endCharacter": end_column,
+                "contentLine": node.line_content,
+                "contentCharacter": node.content_indent + start_indx
+                if node.content_indent
+                else None,
+                "dname": node.dname,
+                "arguments": node.arguments,
+                "options": node.options,
+                "klass": node.klass,
+            }
+            self.db_entries.append(data)
+            self.nesting.enter_block(node, data)
         elif isinstance(node, PosExplicit):
             start_indx, start_column, end_indx, end_column = self.get_block_range(
                 node.line_start, node.line_end
             )
             uuid_value = self.get_uuid()
-            self.db_entries.append(
-                {
-                    "uuid": uuid_value,
-                    "parent_uuid": self.nesting.parent_uuid,
-                    "block": True,
-                    "type": node.etype,
-                    "startLine": start_indx,
-                    "startCharacter": start_column,
-                    "endLine": end_indx,
-                    "endCharacter": end_column,
-                    "names": node.children[0].attributes.get("names")
-                    if node.children
-                    else None,
-                }
-            )
-            self.nesting.enter_block(node, uuid_value)
+            data = {
+                "uuid": uuid_value,
+                "parent_uuid": self.nesting.parent_uuid,
+                "block": True,
+                "type": node.etype,
+                "startLine": start_indx,
+                "startCharacter": start_column,
+                "endLine": end_indx,
+                "endCharacter": end_column,
+                "names": node.children[0].attributes.get("names")
+                if node.children
+                else None,
+            }
+            self.db_entries.append(data)
+            self.nesting.enter_block(node, data)
         elif isinstance(node, PosInline):
             sline, scol, eline, ecol = node.attributes["position"]
             data = {
@@ -186,6 +193,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             if "role" in node.attributes:
                 data["rname"] = node.attributes["role"]
             self.current_inline = data
+            self.nesting.add_inline(data)
 
     def unknown_departure(self, node):
         """Override for generic, uniform traversals."""

@@ -1,0 +1,32 @@
+db_entries:
+- arguments:
+  - python
+  block: true
+  contentCharacter: 3
+  contentLine: 2
+  dname: code
+  endCharacter: 0
+  endLine: 3
+  klass: docutils.parsers.rst.directives.body.CodeBlock
+  options: {}
+  parent_uuid: null
+  startCharacter: 0
+  startLine: 0
+  type: directive
+  uuid: uuid_0
+- arguments:
+  - abc.png
+  block: true
+  contentCharacter: null
+  contentLine: null
+  dname: image
+  endCharacter: 17
+  endLine: 4
+  klass: docutils.parsers.rst.directives.images.Image
+  options:
+    uri: abc.png
+  parent_uuid: null
+  startCharacter: 0
+  startLine: 4
+  type: directive
+  uuid: uuid_1

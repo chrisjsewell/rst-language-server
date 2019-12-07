@@ -1,55 +1,118 @@
-import os
-import sys
+from textwrap import dedent
 
 from docutils import frontend, utils
 from docutils.parsers import rst
-import pytest
-import yaml
 
 from rst_lsp.docutils_ext.inliner_pos import PositionInliner
 from rst_lsp.docutils_ext.block_pos import RSTParserCustom
 from rst_lsp.docutils_ext.visitor_lsp import VisitorLSP
 
 
-def load_yaml(path):
-    with open(path) as fp:
-        data = yaml.safe_load(fp)
-    return data
-
-
-def run_parser(case, parser_class):
-    source = "\n".join(case["in"])
-
+def run_parser(source, parser_class):
     inliner = PositionInliner(doc_text=source)
-
     parser = parser_class(inliner=inliner)
     option_parser = frontend.OptionParser(components=(rst.Parser,))
     settings = option_parser.get_default_values()
     settings.report_level = 5
     settings.halt_level = 5
     # settings.debug = package_unittest.debug
-
     document = utils.new_document("test data", settings)
     parser.parse(source, document)
     return document
 
 
-@pytest.mark.parametrize(
-    "name,number,case",
-    [
-        (name, i, case)
-        for name, cases in load_yaml(
-            os.path.join(os.path.dirname(__file__), "inputs/test_visitor_lsp.yaml")
-        ).items()
-        for i, case in enumerate(cases)
-    ],
-)
-def test_doc_position(name, number, case):
-    document = run_parser(case, parser_class=RSTParserCustom)
-    visitor = VisitorLSP(document, "\n".join(case["in"]))
+def test_inline_mixed(data_regression):
+    source = dedent("""\
+    [citation]_ |sub| ref_ `embed <ref_>`_ :title:`a`
+    anonymous__
+    _`inline-target`
+    [1]_ [#]_ [*]_
+    """)
+    document = run_parser(source, parser_class=RSTParserCustom)
+    visitor = VisitorLSP(document, source)
     document.walkabout(visitor)
-    try:
-        assert case["out"] == visitor.db_entries
-    except AssertionError:
-        yaml.dump(visitor.db_entries, sys.stdout, default_flow_style=False)
-        raise
+    data_regression.check({"db_entries": visitor.db_entries})
+
+
+def test_sections(data_regression):
+    source = dedent("""\
+    title
+    =====
+
+    :title:`a`
+
+    sub-title
+    ---------
+
+    :title:`b`
+
+    sub-title2
+    ----------
+
+    :title:`c`
+
+    sub-sub-title
+    ~~~~~~~~~~~~~
+
+    :title:`d`
+
+    title2
+    ======
+
+    :title:`e`
+    """)
+    document = run_parser(source, parser_class=RSTParserCustom)
+    visitor = VisitorLSP(document, source)
+    document.walkabout(visitor)
+    data_regression.check({"db_entries": visitor.db_entries})
+
+
+def test_explicits(data_regression):
+    source = dedent("""\
+    .. _target:
+
+    [1]_ target_ |symbol| [cite]_
+
+    .. [1] This is a footnote.
+    .. |symbol| image:: symbol.png
+    .. [cite] This is a citation.
+    """)
+    document = run_parser(source, parser_class=RSTParserCustom)
+    visitor = VisitorLSP(document, source)
+    document.walkabout(visitor)
+    data_regression.check({"db_entries": visitor.db_entries})
+
+
+def test_directives(data_regression):
+    source = dedent("""\
+    .. code:: python
+
+       a=1
+
+    .. image:: abc.png
+    """)
+    document = run_parser(source, parser_class=RSTParserCustom)
+    visitor = VisitorLSP(document, source)
+    document.walkabout(visitor)
+    data_regression.check({"db_entries": visitor.db_entries})
+
+
+def test_mixed1(data_regression):
+    source = dedent("""\
+    .. _target:
+
+    title
+    -----
+
+    .. note::
+
+       [1]_ target_ |symbol| [cite]_
+
+    .. [1] This is a footnote.
+    .. |symbol| image:: symbol.png
+    .. [cite] This is a citation.
+    """)
+    document = run_parser(source, parser_class=RSTParserCustom)
+    visitor = VisitorLSP(document, source)
+    document.walkabout(visitor)
+    data_regression.check({"db_entries": visitor.db_entries})

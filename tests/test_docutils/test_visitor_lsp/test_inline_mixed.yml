@@ -1,0 +1,96 @@
+db_entries:
+- block: false
+  endCharacter: 10
+  endLine: 0
+  parent_uuid: null
+  refnames:
+  - citation
+  startCharacter: 0
+  startLine: 0
+  type: ref_cite
+  uuid: uuid_1
+- block: false
+  endCharacter: 16
+  endLine: 0
+  parent_uuid: null
+  refnames:
+  - sub
+  startCharacter: 12
+  startLine: 0
+  type: ref_sub
+  uuid: uuid_2
+- block: false
+  endCharacter: 21
+  endLine: 0
+  parent_uuid: null
+  refnames:
+  - ref
+  startCharacter: 18
+  startLine: 0
+  type: ref_basic
+  uuid: uuid_3
+- block: false
+  endCharacter: 37
+  endLine: 0
+  names:
+  - embed
+  parent_uuid: null
+  refnames:
+  - ref
+  startCharacter: 23
+  startLine: 0
+  type: ref_phrase
+  uuid: uuid_4
+- block: false
+  endCharacter: 48
+  endLine: 0
+  parent_uuid: null
+  rname: title
+  startCharacter: 39
+  startLine: 0
+  type: role
+  uuid: uuid_5
+- block: false
+  endCharacter: 10
+  endLine: 1
+  parent_uuid: null
+  startCharacter: 0
+  startLine: 1
+  type: ref_anon
+  uuid: uuid_6
+- block: false
+  endCharacter: 15
+  endLine: 2
+  names:
+  - inline-target
+  parent_uuid: null
+  startCharacter: 0
+  startLine: 2
+  type: target_inline
+  uuid: uuid_7
+- block: false
+  endCharacter: 3
+  endLine: 3
+  parent_uuid: null
+  refnames:
+  - '1'
+  startCharacter: 0
+  startLine: 3
+  type: ref_foot
+  uuid: uuid_8
+- block: false
+  endCharacter: 8
+  endLine: 3
+  parent_uuid: null
+  startCharacter: 5
+  startLine: 3
+  type: ref_foot
+  uuid: uuid_9
+- block: false
+  endCharacter: 13
+  endLine: 3
+  parent_uuid: null
+  startCharacter: 10
+  startLine: 3
+  type: ref_foot
+  uuid: uuid_10

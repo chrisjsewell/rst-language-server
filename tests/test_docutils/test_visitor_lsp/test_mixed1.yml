@@ -1,0 +1,104 @@
+db_entries:
+- block: true
+  endCharacter: 10
+  endLine: 0
+  names:
+  - target
+  parent_uuid: null
+  startCharacter: 0
+  startLine: 0
+  type: hyperlink_target
+  uuid: uuid_0
+- block: true
+  endCharacter: 28
+  endLine: 11
+  level: 1
+  parent_uuid: null
+  startCharacter: 0
+  startLine: 2
+  type: section
+  uuid: uuid_1
+- arguments: []
+  block: true
+  contentCharacter: 8
+  contentLine: 7
+  dname: note
+  endCharacter: 0
+  endLine: 8
+  klass: docutils.parsers.rst.directives.admonitions.Note
+  options: {}
+  parent_uuid: uuid_1
+  startCharacter: 0
+  startLine: 5
+  type: directive
+  uuid: uuid_2
+- block: false
+  endCharacter: 6
+  endLine: 7
+  parent_uuid: uuid_2
+  refnames:
+  - '1'
+  startCharacter: 3
+  startLine: 7
+  type: ref_foot
+  uuid: uuid_3
+- block: false
+  endCharacter: 14
+  endLine: 7
+  parent_uuid: uuid_2
+  refnames:
+  - target
+  startCharacter: 8
+  startLine: 7
+  type: ref_basic
+  uuid: uuid_4
+- block: false
+  endCharacter: 23
+  endLine: 7
+  parent_uuid: uuid_2
+  refnames:
+  - symbol
+  startCharacter: 16
+  startLine: 7
+  type: ref_sub
+  uuid: uuid_5
+- block: false
+  endCharacter: 31
+  endLine: 7
+  parent_uuid: uuid_2
+  refnames:
+  - cite
+  startCharacter: 25
+  startLine: 7
+  type: ref_cite
+  uuid: uuid_6
+- block: true
+  endCharacter: 25
+  endLine: 9
+  names:
+  - '1'
+  parent_uuid: uuid_1
+  startCharacter: 0
+  startLine: 9
+  type: footnote
+  uuid: uuid_7
+- block: true
+  endCharacter: 29
+  endLine: 10
+  names:
+  - symbol
+  parent_uuid: uuid_1
+  startCharacter: 0
+  startLine: 10
+  type: substitution_def
+  uuid: uuid_8
+- block: true
+  endCharacter: 28
+  endLine: 11
+  names:
+  - cite
+  parent_uuid: uuid_1
+  startCharacter: 0
+  startLine: 11
+  type: citation
+  uuid: uuid_9
