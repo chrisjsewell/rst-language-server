@@ -7,6 +7,7 @@ db_entries:
   parent_uuid: null
   startCharacter: 0
   startLine: 0
+  title: hyperlink_target
   type: hyperlink_target
   uuid: uuid_0
 - block: true
@@ -16,13 +17,14 @@ db_entries:
   parent_uuid: null
   startCharacter: 0
   startLine: 2
+  title: title
   type: section
   uuid: uuid_1
 - arguments: []
   block: true
   contentCharacter: 8
   contentLine: 7
-  dname: note
+  dtype: note
   endCharacter: 0
   endLine: 8
   klass: docutils.parsers.rst.directives.admonitions.Note
@@ -30,6 +32,7 @@ db_entries:
   parent_uuid: uuid_1
   startCharacter: 0
   startLine: 5
+  title: note
   type: directive
   uuid: uuid_2
 - block: false
@@ -40,6 +43,7 @@ db_entries:
   - '1'
   startCharacter: 3
   startLine: 7
+  title: ref_foot
   type: ref_foot
   uuid: uuid_3
 - block: false
@@ -50,6 +54,7 @@ db_entries:
   - target
   startCharacter: 8
   startLine: 7
+  title: ref_basic
   type: ref_basic
   uuid: uuid_4
 - block: false
@@ -60,6 +65,7 @@ db_entries:
   - symbol
   startCharacter: 16
   startLine: 7
+  title: ref_sub
   type: ref_sub
   uuid: uuid_5
 - block: false
@@ -70,6 +76,7 @@ db_entries:
   - cite
   startCharacter: 25
   startLine: 7
+  title: ref_cite
   type: ref_cite
   uuid: uuid_6
 - block: true
@@ -80,6 +87,7 @@ db_entries:
   parent_uuid: uuid_1
   startCharacter: 0
   startLine: 9
+  title: footnote
   type: footnote
   uuid: uuid_7
 - block: true
@@ -90,6 +98,7 @@ db_entries:
   parent_uuid: uuid_1
   startCharacter: 0
   startLine: 10
+  title: substitution_def
   type: substitution_def
   uuid: uuid_8
 - block: true
@@ -100,5 +109,179 @@ db_entries:
   parent_uuid: uuid_1
   startCharacter: 0
   startLine: 11
+  title: citation
   type: citation
   uuid: uuid_9
+doc_symbols:
+- detail: 'type: hyperlink_target, uuid: uuid_0'
+  kind: 8
+  name: hyperlink_target
+  range:
+    end:
+      character: 10
+      line: 0
+    start:
+      character: 0
+      line: 0
+  selectionRange:
+    end:
+      character: 10
+      line: 0
+    start:
+      character: 0
+      line: 0
+- children:
+  - children:
+    - detail: 'type: ref_foot, uuid: uuid_3'
+      kind: 7
+      name: ref_foot
+      range:
+        end:
+          character: 6
+          line: 7
+        start:
+          character: 3
+          line: 7
+      selectionRange:
+        end:
+          character: 6
+          line: 7
+        start:
+          character: 3
+          line: 7
+    - detail: 'type: ref_basic, uuid: uuid_4'
+      kind: 7
+      name: ref_basic
+      range:
+        end:
+          character: 14
+          line: 7
+        start:
+          character: 8
+          line: 7
+      selectionRange:
+        end:
+          character: 14
+          line: 7
+        start:
+          character: 8
+          line: 7
+    - detail: 'type: ref_sub, uuid: uuid_5'
+      kind: 7
+      name: ref_sub
+      range:
+        end:
+          character: 23
+          line: 7
+        start:
+          character: 16
+          line: 7
+      selectionRange:
+        end:
+          character: 23
+          line: 7
+        start:
+          character: 16
+          line: 7
+    - detail: 'type: ref_cite, uuid: uuid_6'
+      kind: 7
+      name: ref_cite
+      range:
+        end:
+          character: 31
+          line: 7
+        start:
+          character: 25
+          line: 7
+      selectionRange:
+        end:
+          character: 31
+          line: 7
+        start:
+          character: 25
+          line: 7
+    detail: 'type: directive, uuid: uuid_2'
+    kind: 5
+    name: note
+    range:
+      end:
+        character: 0
+        line: 8
+      start:
+        character: 0
+        line: 5
+    selectionRange:
+      end:
+        character: 0
+        line: 8
+      start:
+        character: 0
+        line: 5
+  - detail: 'type: footnote, uuid: uuid_7'
+    kind: 8
+    name: footnote
+    range:
+      end:
+        character: 25
+        line: 9
+      start:
+        character: 0
+        line: 9
+    selectionRange:
+      end:
+        character: 25
+        line: 9
+      start:
+        character: 0
+        line: 9
+  - detail: 'type: substitution_def, uuid: uuid_8'
+    kind: 8
+    name: substitution_def
+    range:
+      end:
+        character: 29
+        line: 10
+      start:
+        character: 0
+        line: 10
+    selectionRange:
+      end:
+        character: 29
+        line: 10
+      start:
+        character: 0
+        line: 10
+  - detail: 'type: citation, uuid: uuid_9'
+    kind: 8
+    name: citation
+    range:
+      end:
+        character: 28
+        line: 11
+      start:
+        character: 0
+        line: 11
+    selectionRange:
+      end:
+        character: 28
+        line: 11
+      start:
+        character: 0
+        line: 11
+  detail: 'type: section, uuid: uuid_1'
+  kind: 2
+  name: title
+  range:
+    end:
+      character: 28
+      line: 11
+    start:
+      character: 0
+      line: 2
+  selectionRange:
+    end:
+      character: 28
+      line: 11
+    start:
+      character: 0
+      line: 2

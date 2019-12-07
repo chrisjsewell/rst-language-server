@@ -4,7 +4,7 @@ db_entries:
   block: true
   contentCharacter: 3
   contentLine: 2
-  dname: code
+  dtype: code
   endCharacter: 0
   endLine: 3
   klass: docutils.parsers.rst.directives.body.CodeBlock
@@ -12,6 +12,7 @@ db_entries:
   parent_uuid: null
   startCharacter: 0
   startLine: 0
+  title: code
   type: directive
   uuid: uuid_0
 - arguments:
@@ -19,7 +20,7 @@ db_entries:
   block: true
   contentCharacter: null
   contentLine: null
-  dname: image
+  dtype: image
   endCharacter: 17
   endLine: 4
   klass: docutils.parsers.rst.directives.images.Image
@@ -28,5 +29,41 @@ db_entries:
   parent_uuid: null
   startCharacter: 0
   startLine: 4
+  title: image
   type: directive
   uuid: uuid_1
+doc_symbols:
+- detail: 'type: directive, uuid: uuid_0'
+  kind: 5
+  name: code
+  range:
+    end:
+      character: 0
+      line: 3
+    start:
+      character: 0
+      line: 0
+  selectionRange:
+    end:
+      character: 0
+      line: 3
+    start:
+      character: 0
+      line: 0
+- detail: 'type: directive, uuid: uuid_1'
+  kind: 5
+  name: image
+  range:
+    end:
+      character: 17
+      line: 4
+    start:
+      character: 0
+      line: 4
+  selectionRange:
+    end:
+      character: 17
+      line: 4
+    start:
+      character: 0
+      line: 4

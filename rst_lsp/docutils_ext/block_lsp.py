@@ -49,7 +49,7 @@ class LSPSection(nodes.Element, nodes.Invisible):
         title: str
         section: nodes.section
         """
-        attributes = {"start_line": start_line, "level": level}
+        attributes = {"start_line": start_line, "level": level, "title": title}
         children = [section]
         super().__init__(title, *children, **attributes)
 
@@ -64,6 +64,10 @@ class LSPSection(nodes.Element, nodes.Invisible):
     @property
     def level(self):
         return self.attributes["level"]
+
+    @property
+    def title(self):
+        return self.attributes["title"]
 
 
 class LSPExplicit(nodes.Element, nodes.Invisible):

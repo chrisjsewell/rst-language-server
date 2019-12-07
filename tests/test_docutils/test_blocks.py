@@ -62,7 +62,7 @@ def test_block_markup(name, number, case):
     [
         (name, i, case)
         for name, cases in load_yaml(
-            os.path.join(os.path.dirname(__file__), "inputs/test_block_pos.yaml")
+            os.path.join(os.path.dirname(__file__), "inputs/test_block_lsp.yaml")
         ).items()
         for i, case in enumerate(cases)
     ],

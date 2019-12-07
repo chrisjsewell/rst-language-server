@@ -9,11 +9,11 @@ sections:
       - 'a'
     out:
       - <document source="test data">
-      - '    <LSPSection end_line="7" level="1" start_line="0">'
+      - '    <LSPSection end_line="7" level="1" start_line="0" title="title">'
       - '        <section ids="title" names="title">'
       - '            <title>'
       - '                title'
-      - '            <LSPSection end_line="6" level="2" start_line="3">'
+      - '            <LSPSection end_line="6" level="2" start_line="3" title="sub-title">'
       - '                <section ids="sub-title" names="sub-title">'
       - '                    <title>'
       - '                        sub-title'
@@ -195,7 +195,7 @@ mixed:
       - <document source="test data">
       - '    <LSPExplicit end_line="0" start_line="0" type="hyperlink_target">'
       - '        <target ids="target" names="target">'
-      - '    <LSPSection end_line="3" level="1" start_line="2">'
+      - '    <LSPSection end_line="3" level="1" start_line="2" title="title">'
       - '        <section ids="title" names="title">'
       - '            <title>'
       - '                title'

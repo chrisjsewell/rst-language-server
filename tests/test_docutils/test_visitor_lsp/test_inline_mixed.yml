@@ -7,6 +7,7 @@ db_entries:
   - citation
   startCharacter: 0
   startLine: 0
+  title: ref_cite
   type: ref_cite
   uuid: uuid_1
 - block: false
@@ -17,6 +18,7 @@ db_entries:
   - sub
   startCharacter: 12
   startLine: 0
+  title: ref_sub
   type: ref_sub
   uuid: uuid_2
 - block: false
@@ -27,6 +29,7 @@ db_entries:
   - ref
   startCharacter: 18
   startLine: 0
+  title: ref_basic
   type: ref_basic
   uuid: uuid_3
 - block: false
@@ -39,15 +42,17 @@ db_entries:
   - ref
   startCharacter: 23
   startLine: 0
+  title: ref_phrase
   type: ref_phrase
   uuid: uuid_4
 - block: false
   endCharacter: 48
   endLine: 0
   parent_uuid: null
-  rname: title
+  rtype: title
   startCharacter: 39
   startLine: 0
+  title: title
   type: role
   uuid: uuid_5
 - block: false
@@ -56,6 +61,7 @@ db_entries:
   parent_uuid: null
   startCharacter: 0
   startLine: 1
+  title: ref_anon
   type: ref_anon
   uuid: uuid_6
 - block: false
@@ -66,6 +72,7 @@ db_entries:
   parent_uuid: null
   startCharacter: 0
   startLine: 2
+  title: target_inline
   type: target_inline
   uuid: uuid_7
 - block: false
@@ -76,6 +83,7 @@ db_entries:
   - '1'
   startCharacter: 0
   startLine: 3
+  title: ref_foot
   type: ref_foot
   uuid: uuid_8
 - block: false
@@ -84,6 +92,7 @@ db_entries:
   parent_uuid: null
   startCharacter: 5
   startLine: 3
+  title: ref_foot
   type: ref_foot
   uuid: uuid_9
 - block: false
@@ -92,5 +101,177 @@ db_entries:
   parent_uuid: null
   startCharacter: 10
   startLine: 3
+  title: ref_foot
   type: ref_foot
   uuid: uuid_10
+doc_symbols:
+- detail: 'type: ref_cite, uuid: uuid_1'
+  kind: 7
+  name: ref_cite
+  range:
+    end:
+      character: 10
+      line: 0
+    start:
+      character: 0
+      line: 0
+  selectionRange:
+    end:
+      character: 10
+      line: 0
+    start:
+      character: 0
+      line: 0
+- detail: 'type: ref_sub, uuid: uuid_2'
+  kind: 7
+  name: ref_sub
+  range:
+    end:
+      character: 16
+      line: 0
+    start:
+      character: 12
+      line: 0
+  selectionRange:
+    end:
+      character: 16
+      line: 0
+    start:
+      character: 12
+      line: 0
+- detail: 'type: ref_basic, uuid: uuid_3'
+  kind: 7
+  name: ref_basic
+  range:
+    end:
+      character: 21
+      line: 0
+    start:
+      character: 18
+      line: 0
+  selectionRange:
+    end:
+      character: 21
+      line: 0
+    start:
+      character: 18
+      line: 0
+- detail: 'type: ref_phrase, uuid: uuid_4'
+  kind: 7
+  name: ref_phrase
+  range:
+    end:
+      character: 37
+      line: 0
+    start:
+      character: 23
+      line: 0
+  selectionRange:
+    end:
+      character: 37
+      line: 0
+    start:
+      character: 23
+      line: 0
+- detail: 'type: role, uuid: uuid_5'
+  kind: 12
+  name: title
+  range:
+    end:
+      character: 48
+      line: 0
+    start:
+      character: 39
+      line: 0
+  selectionRange:
+    end:
+      character: 48
+      line: 0
+    start:
+      character: 39
+      line: 0
+- detail: 'type: ref_anon, uuid: uuid_6'
+  kind: 7
+  name: ref_anon
+  range:
+    end:
+      character: 10
+      line: 1
+    start:
+      character: 0
+      line: 1
+  selectionRange:
+    end:
+      character: 10
+      line: 1
+    start:
+      character: 0
+      line: 1
+- detail: 'type: target_inline, uuid: uuid_7'
+  kind: 8
+  name: target_inline
+  range:
+    end:
+      character: 15
+      line: 2
+    start:
+      character: 0
+      line: 2
+  selectionRange:
+    end:
+      character: 15
+      line: 2
+    start:
+      character: 0
+      line: 2
+- detail: 'type: ref_foot, uuid: uuid_8'
+  kind: 7
+  name: ref_foot
+  range:
+    end:
+      character: 3
+      line: 3
+    start:
+      character: 0
+      line: 3
+  selectionRange:
+    end:
+      character: 3
+      line: 3
+    start:
+      character: 0
+      line: 3
+- detail: 'type: ref_foot, uuid: uuid_9'
+  kind: 7
+  name: ref_foot
+  range:
+    end:
+      character: 8
+      line: 3
+    start:
+      character: 5
+      line: 3
+  selectionRange:
+    end:
+      character: 8
+      line: 3
+    start:
+      character: 5
+      line: 3
+- detail: 'type: ref_foot, uuid: uuid_10'
+  kind: 7
+  name: ref_foot
+  range:
+    end:
+      character: 13
+      line: 3
+    start:
+      character: 10
+      line: 3
+  selectionRange:
+    end:
+      character: 13
+      line: 3
+    start:
+      character: 10
+      line: 3

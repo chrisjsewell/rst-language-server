@@ -7,6 +7,7 @@ db_entries:
   parent_uuid: null
   startCharacter: 0
   startLine: 0
+  title: hyperlink_target
   type: hyperlink_target
   uuid: uuid_0
 - block: false
@@ -17,6 +18,7 @@ db_entries:
   - '1'
   startCharacter: 0
   startLine: 2
+  title: ref_foot
   type: ref_foot
   uuid: uuid_1
 - block: false
@@ -27,6 +29,7 @@ db_entries:
   - target
   startCharacter: 5
   startLine: 2
+  title: ref_basic
   type: ref_basic
   uuid: uuid_2
 - block: false
@@ -37,6 +40,7 @@ db_entries:
   - symbol
   startCharacter: 13
   startLine: 2
+  title: ref_sub
   type: ref_sub
   uuid: uuid_3
 - block: false
@@ -47,6 +51,7 @@ db_entries:
   - cite
   startCharacter: 22
   startLine: 2
+  title: ref_cite
   type: ref_cite
   uuid: uuid_4
 - block: true
@@ -57,6 +62,7 @@ db_entries:
   parent_uuid: null
   startCharacter: 0
   startLine: 4
+  title: footnote
   type: footnote
   uuid: uuid_5
 - block: true
@@ -67,6 +73,7 @@ db_entries:
   parent_uuid: null
   startCharacter: 0
   startLine: 5
+  title: substitution_def
   type: substitution_def
   uuid: uuid_6
 - block: true
@@ -77,5 +84,143 @@ db_entries:
   parent_uuid: null
   startCharacter: 0
   startLine: 6
+  title: citation
   type: citation
   uuid: uuid_7
+doc_symbols:
+- detail: 'type: hyperlink_target, uuid: uuid_0'
+  kind: 8
+  name: hyperlink_target
+  range:
+    end:
+      character: 10
+      line: 0
+    start:
+      character: 0
+      line: 0
+  selectionRange:
+    end:
+      character: 10
+      line: 0
+    start:
+      character: 0
+      line: 0
+- detail: 'type: ref_foot, uuid: uuid_1'
+  kind: 7
+  name: ref_foot
+  range:
+    end:
+      character: 3
+      line: 2
+    start:
+      character: 0
+      line: 2
+  selectionRange:
+    end:
+      character: 3
+      line: 2
+    start:
+      character: 0
+      line: 2
+- detail: 'type: ref_basic, uuid: uuid_2'
+  kind: 7
+  name: ref_basic
+  range:
+    end:
+      character: 11
+      line: 2
+    start:
+      character: 5
+      line: 2
+  selectionRange:
+    end:
+      character: 11
+      line: 2
+    start:
+      character: 5
+      line: 2
+- detail: 'type: ref_sub, uuid: uuid_3'
+  kind: 7
+  name: ref_sub
+  range:
+    end:
+      character: 20
+      line: 2
+    start:
+      character: 13
+      line: 2
+  selectionRange:
+    end:
+      character: 20
+      line: 2
+    start:
+      character: 13
+      line: 2
+- detail: 'type: ref_cite, uuid: uuid_4'
+  kind: 7
+  name: ref_cite
+  range:
+    end:
+      character: 28
+      line: 2
+    start:
+      character: 22
+      line: 2
+  selectionRange:
+    end:
+      character: 28
+      line: 2
+    start:
+      character: 22
+      line: 2
+- detail: 'type: footnote, uuid: uuid_5'
+  kind: 8
+  name: footnote
+  range:
+    end:
+      character: 25
+      line: 4
+    start:
+      character: 0
+      line: 4
+  selectionRange:
+    end:
+      character: 25
+      line: 4
+    start:
+      character: 0
+      line: 4
+- detail: 'type: substitution_def, uuid: uuid_6'
+  kind: 8
+  name: substitution_def
+  range:
+    end:
+      character: 29
+      line: 5
+    start:
+      character: 0
+      line: 5
+  selectionRange:
+    end:
+      character: 29
+      line: 5
+    start:
+      character: 0
+      line: 5
+- detail: 'type: citation, uuid: uuid_7'
+  kind: 8
+  name: citation
+  range:
+    end:
+      character: 28
+      line: 6
+    start:
+      character: 0
+      line: 6
+  selectionRange:
+    end:
+      character: 28
+      line: 6
+    start:
+      character: 0
+      line: 6

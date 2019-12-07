@@ -6,15 +6,17 @@ db_entries:
   parent_uuid: null
   startCharacter: 0
   startLine: 0
+  title: title
   type: section
   uuid: uuid_0
 - block: false
   endCharacter: 9
   endLine: 3
   parent_uuid: uuid_0
-  rname: title
+  rtype: title
   startCharacter: 0
   startLine: 3
+  title: title
   type: role
   uuid: uuid_1
 - block: true
@@ -24,15 +26,17 @@ db_entries:
   parent_uuid: uuid_0
   startCharacter: 0
   startLine: 5
+  title: sub-title
   type: section
   uuid: uuid_2
 - block: false
   endCharacter: 9
   endLine: 8
   parent_uuid: uuid_2
-  rname: title
+  rtype: title
   startCharacter: 0
   startLine: 8
+  title: title
   type: role
   uuid: uuid_3
 - block: true
@@ -42,15 +46,17 @@ db_entries:
   parent_uuid: uuid_0
   startCharacter: 0
   startLine: 10
+  title: sub-title2
   type: section
   uuid: uuid_4
 - block: false
   endCharacter: 9
   endLine: 13
   parent_uuid: uuid_4
-  rname: title
+  rtype: title
   startCharacter: 0
   startLine: 13
+  title: title
   type: role
   uuid: uuid_5
 - block: true
@@ -60,15 +66,17 @@ db_entries:
   parent_uuid: uuid_4
   startCharacter: 0
   startLine: 15
+  title: sub-sub-title
   type: section
   uuid: uuid_6
 - block: false
   endCharacter: 9
   endLine: 18
   parent_uuid: uuid_6
-  rname: title
+  rtype: title
   startCharacter: 0
   startLine: 18
+  title: title
   type: role
   uuid: uuid_7
 - block: true
@@ -78,14 +86,192 @@ db_entries:
   parent_uuid: null
   startCharacter: 0
   startLine: 20
+  title: title2
   type: section
   uuid: uuid_8
 - block: false
   endCharacter: 9
   endLine: 23
   parent_uuid: uuid_8
-  rname: title
+  rtype: title
   startCharacter: 0
   startLine: 23
+  title: title
   type: role
   uuid: uuid_9
+doc_symbols:
+- children:
+  - detail: 'type: role, uuid: uuid_1'
+    kind: 12
+    name: title
+    range:
+      end:
+        character: 9
+        line: 3
+      start:
+        character: 0
+        line: 3
+    selectionRange:
+      end:
+        character: 9
+        line: 3
+      start:
+        character: 0
+        line: 3
+  - children:
+    - detail: 'type: role, uuid: uuid_3'
+      kind: 12
+      name: title
+      range:
+        end:
+          character: 9
+          line: 8
+        start:
+          character: 0
+          line: 8
+      selectionRange:
+        end:
+          character: 9
+          line: 8
+        start:
+          character: 0
+          line: 8
+    detail: 'type: section, uuid: uuid_2'
+    kind: 2
+    name: sub-title
+    range:
+      end:
+        character: 9
+        line: 8
+      start:
+        character: 0
+        line: 5
+    selectionRange:
+      end:
+        character: 9
+        line: 8
+      start:
+        character: 0
+        line: 5
+  - children:
+    - detail: 'type: role, uuid: uuid_5'
+      kind: 12
+      name: title
+      range:
+        end:
+          character: 9
+          line: 13
+        start:
+          character: 0
+          line: 13
+      selectionRange:
+        end:
+          character: 9
+          line: 13
+        start:
+          character: 0
+          line: 13
+    - children:
+      - detail: 'type: role, uuid: uuid_7'
+        kind: 12
+        name: title
+        range:
+          end:
+            character: 9
+            line: 18
+          start:
+            character: 0
+            line: 18
+        selectionRange:
+          end:
+            character: 9
+            line: 18
+          start:
+            character: 0
+            line: 18
+      detail: 'type: section, uuid: uuid_6'
+      kind: 2
+      name: sub-sub-title
+      range:
+        end:
+          character: 9
+          line: 18
+        start:
+          character: 0
+          line: 15
+      selectionRange:
+        end:
+          character: 9
+          line: 18
+        start:
+          character: 0
+          line: 15
+    detail: 'type: section, uuid: uuid_4'
+    kind: 2
+    name: sub-title2
+    range:
+      end:
+        character: 9
+        line: 18
+      start:
+        character: 0
+        line: 10
+    selectionRange:
+      end:
+        character: 9
+        line: 18
+      start:
+        character: 0
+        line: 10
+  detail: 'type: section, uuid: uuid_0'
+  kind: 2
+  name: title
+  range:
+    end:
+      character: 9
+      line: 18
+    start:
+      character: 0
+      line: 0
+  selectionRange:
+    end:
+      character: 9
+      line: 18
+    start:
+      character: 0
+      line: 0
+- children:
+  - detail: 'type: role, uuid: uuid_9'
+    kind: 12
+    name: title
+    range:
+      end:
+        character: 9
+        line: 23
+      start:
+        character: 0
+        line: 23
+    selectionRange:
+      end:
+        character: 9
+        line: 23
+      start:
+        character: 0
+        line: 23
+  detail: 'type: section, uuid: uuid_8'
+  kind: 2
+  name: title2
+  range:
+    end:
+      character: 9
+      line: 23
+    start:
+      character: 0
+      line: 20
+  selectionRange:
+    end:
+      character: 9
+      line: 23
+    start:
+      character: 0
+      line: 20

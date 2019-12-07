@@ -22,20 +22,28 @@ def run_parser(source, parser_class):
 
 
 def test_inline_mixed(data_regression):
-    source = dedent("""\
+    source = dedent(
+        """\
     [citation]_ |sub| ref_ `embed <ref_>`_ :title:`a`
     anonymous__
     _`inline-target`
     [1]_ [#]_ [*]_
-    """)
+    """
+    )
     document = run_parser(source, parser_class=RSTParserCustom)
     visitor = VisitorLSP(document, source)
     document.walkabout(visitor)
-    data_regression.check({"db_entries": visitor.db_entries})
+    data_regression.check(
+        {
+            "db_entries": visitor.db_entries,
+            "doc_symbols": visitor.nesting.document_symbols,
+        }
+    )
 
 
 def test_sections(data_regression):
-    source = dedent("""\
+    source = dedent(
+        """\
     title
     =====
 
@@ -60,15 +68,22 @@ def test_sections(data_regression):
     ======
 
     :title:`e`
-    """)
+    """
+    )
     document = run_parser(source, parser_class=RSTParserCustom)
     visitor = VisitorLSP(document, source)
     document.walkabout(visitor)
-    data_regression.check({"db_entries": visitor.db_entries})
+    data_regression.check(
+        {
+            "db_entries": visitor.db_entries,
+            "doc_symbols": visitor.nesting.document_symbols,
+        }
+    )
 
 
 def test_explicits(data_regression):
-    source = dedent("""\
+    source = dedent(
+        """\
     .. _target:
 
     [1]_ target_ |symbol| [cite]_
@@ -76,29 +91,43 @@ def test_explicits(data_regression):
     .. [1] This is a footnote.
     .. |symbol| image:: symbol.png
     .. [cite] This is a citation.
-    """)
+    """
+    )
     document = run_parser(source, parser_class=RSTParserCustom)
     visitor = VisitorLSP(document, source)
     document.walkabout(visitor)
-    data_regression.check({"db_entries": visitor.db_entries})
+    data_regression.check(
+        {
+            "db_entries": visitor.db_entries,
+            "doc_symbols": visitor.nesting.document_symbols,
+        }
+    )
 
 
 def test_directives(data_regression):
-    source = dedent("""\
+    source = dedent(
+        """\
     .. code:: python
 
        a=1
 
     .. image:: abc.png
-    """)
+    """
+    )
     document = run_parser(source, parser_class=RSTParserCustom)
     visitor = VisitorLSP(document, source)
     document.walkabout(visitor)
-    data_regression.check({"db_entries": visitor.db_entries})
+    data_regression.check(
+        {
+            "db_entries": visitor.db_entries,
+            "doc_symbols": visitor.nesting.document_symbols,
+        }
+    )
 
 
 def test_mixed1(data_regression):
-    source = dedent("""\
+    source = dedent(
+        """\
     .. _target:
 
     title
@@ -111,8 +140,14 @@ def test_mixed1(data_regression):
     .. [1] This is a footnote.
     .. |symbol| image:: symbol.png
     .. [cite] This is a citation.
-    """)
+    """
+    )
     document = run_parser(source, parser_class=RSTParserCustom)
     visitor = VisitorLSP(document, source)
     document.walkabout(visitor)
-    data_regression.check({"db_entries": visitor.db_entries})
+    data_regression.check(
+        {
+            "db_entries": visitor.db_entries,
+            "doc_symbols": visitor.nesting.document_symbols,
+        }
+    )

@@ -28,6 +28,7 @@ class DBElement(TypedDict):
     parent_uuid: Optional[str]
     block: bool
     type: str
+    title: str
     startLine: int
     startCharacter: int
     endLine: int
@@ -65,6 +66,7 @@ class NestedElements:
     def enter_block(self, node, data: DBElement):
         uuid_value = data["uuid"]
         node.uuid_value = uuid_value  # this is used to check consistency of exits
+        self._add_doc_symbols(data)
         self._entered_uuid.append(uuid_value)
 
     def exit_block(self, node):
@@ -77,7 +79,34 @@ class NestedElements:
         del node.uuid_value
 
     def add_inline(self, data: DBElement):
-        pass
+        self._add_doc_symbols(data)
+
+    def _add_doc_symbols(self, data: DBElement):
+        current_parent = self._doc_symbols
+        for _ in self._entered_uuid:
+            current_parent = current_parent[-1].setdefault("children", [])
+        current_parent.append(
+            {
+                "name": data["title"],
+                "detail": f'type: {data["type"]}, uuid: {data["uuid"]}',
+                "kind": ELEMENT2KIND.get(data["type"], SymbolKind.Constant),
+                "range": {
+                    "start": {
+                        "line": data["startLine"],
+                        "character": data["startCharacter"],
+                    },
+                    "end": {"line": data["endLine"], "character": data["endCharacter"]},
+                },
+                # TODO only select first line?
+                "selectionRange": {
+                    "start": {
+                        "line": data["startLine"],
+                        "character": data["startCharacter"],
+                    },
+                    "end": {"line": data["endLine"], "character": data["endCharacter"]},
+                },
+            }
+        )
 
     @property
     def parent_uuid(self):
@@ -123,6 +152,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             uuid_value = self.get_uuid()
             data = {
                 "uuid": uuid_value,
+                "title": node.title,
                 "parent_uuid": self.nesting.parent_uuid,
                 "block": True,
                 "type": "section",
@@ -141,6 +171,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             uuid_value = self.get_uuid()
             data = {
                 "uuid": uuid_value,
+                "title": node.dname,
                 "parent_uuid": self.nesting.parent_uuid,
                 "block": True,
                 "type": "directive",
@@ -148,11 +179,11 @@ class VisitorLSP(nodes.GenericNodeVisitor):
                 "startCharacter": start_column,
                 "endLine": end_indx,
                 "endCharacter": end_column,
+                "dtype": node.dname,
                 "contentLine": node.line_content,
                 "contentCharacter": node.content_indent + start_indx
                 if node.content_indent
                 else None,
-                "dname": node.dname,
                 "arguments": node.arguments,
                 "options": node.options,
                 "klass": node.klass,
@@ -166,6 +197,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             uuid_value = self.get_uuid()
             data = {
                 "uuid": uuid_value,
+                "title": node.etype,
                 "parent_uuid": self.nesting.parent_uuid,
                 "block": True,
                 "type": node.etype,
@@ -183,6 +215,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             sline, scol, eline, ecol = node.attributes["position"]
             data = {
                 "uuid": self.get_uuid(),
+                "title": node.attributes["type"],
                 "parent_uuid": self.nesting.parent_uuid,
                 "block": False,
                 "type": node.attributes["type"],
@@ -192,7 +225,8 @@ class VisitorLSP(nodes.GenericNodeVisitor):
                 "endCharacter": ecol,
             }
             if "role" in node.attributes:
-                data["rname"] = node.attributes["role"]
+                data["title"] = node.attributes["role"]
+                data["rtype"] = node.attributes["role"]
             self.current_inline = data
             self.nesting.add_inline(data)
 
