@@ -79,3 +79,9 @@ class TextDocumentSyncKind:
     # Documents are synced by sending the full content on open
     # After that only incremental updates to the document are sent
     INCREMENTAL = 2
+
+
+class FoldingRangeKind:
+    Comment = "comment"
+    Imports = "imports"
+    Region = "region"

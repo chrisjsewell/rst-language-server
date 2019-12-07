@@ -53,6 +53,18 @@ class PosSection(nodes.Element, nodes.Invisible):
         children = [section]
         super().__init__(title, *children, **attributes)
 
+    @property
+    def line_start(self):
+        return self.attributes["start_line"]
+
+    @property
+    def line_end(self):
+        return self.attributes.get("end_line", None)
+
+    @property
+    def level(self):
+        return self.attributes["level"]
+
 
 class PosExplicit(nodes.Element, nodes.Invisible):
     """A node which stores the source text position in the document, of its children."""
@@ -66,6 +78,18 @@ class PosExplicit(nodes.Element, nodes.Invisible):
         attributes = {"type": etype, "start_line": start_line, "end_line": end_line}
         super().__init__("", *children, **attributes)
 
+    @property
+    def line_start(self):
+        return self.attributes["start_line"]
+
+    @property
+    def line_end(self):
+        return self.attributes.get("end_line", None)
+
+    @property
+    def etype(self):
+        return self.attributes.get("type", None)
+
 
 class PosDirective(nodes.Element, nodes.Invisible):
     """A node which stores the source text position in the document, of its children."""
@@ -75,6 +99,38 @@ class PosDirective(nodes.Element, nodes.Invisible):
         """
         attributes.update({"line_start": line_start, "line_end": line_end})
         super().__init__(rawsource, *children, **attributes)
+
+    @property
+    def line_start(self):
+        return self.attributes["line_start"]
+
+    @property
+    def line_end(self):
+        return self.attributes["line_end"]
+
+    @property
+    def line_content(self):
+        return self.attributes["line_content"]
+
+    @property
+    def content_indent(self):
+        return self.attributes["content_indent"]
+
+    @property
+    def dname(self):
+        return self.attributes["dtype"]
+
+    @property
+    def arguments(self):
+        return self.attributes["arguments"]
+
+    @property
+    def options(self):
+        return self.attributes["options"]
+
+    @property
+    def klass(self):
+        return self.attributes["klass"]
 
 
 class SectionMixin:
@@ -233,8 +289,11 @@ class ExplicitMixin:
             rawsource=block_text,
             line_start=line_offset,
             line_end=self.state_machine.abs_line_number() - 1,
-            line_content=content_offset,  # the line at which content starts
-            content_indent=indent,  # relative to initial indent of directive
+            # the line at which content starts
+            line_content=content_offset if content else None,
+            content_indent=indent
+            if content
+            else None,  # relative to initial indent of directive
             dtype=type_name,
             arguments=arguments,
             options=options,

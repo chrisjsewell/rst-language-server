@@ -7,6 +7,7 @@ import pytest
 import yaml
 
 from rst_lsp.docutils_ext.inliner_pos import PositionInliner
+from rst_lsp.docutils_ext.block_pos import RSTParserCustom
 from rst_lsp.docutils_ext.visitor_db import DatabaseVisitor
 
 
@@ -16,12 +17,12 @@ def load_yaml(path):
     return data
 
 
-def run_parser(case):
+def run_parser(case, parser_class):
     source = "\n".join(case["in"])
 
     inliner = PositionInliner(doc_text=source)
 
-    parser = rst.Parser(inliner=inliner)
+    parser = parser_class(inliner=inliner)
     option_parser = frontend.OptionParser(components=(rst.Parser,))
     settings = option_parser.get_default_values()
     settings.report_level = 5
@@ -44,7 +45,7 @@ def run_parser(case):
     ],
 )
 def test_doc_position(name, number, case):
-    document = run_parser(case)
+    document = run_parser(case, parser_class=RSTParserCustom)
     visitor = DatabaseVisitor(document, "\n".join(case["in"]))
     document.walkabout(visitor)
     try:
