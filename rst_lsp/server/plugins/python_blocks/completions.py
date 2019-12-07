@@ -1,5 +1,4 @@
 import logging
-from textwrap import dedent
 
 from rst_lsp.server.plugin_manager import hookimpl
 from rst_lsp.server.workspace import Config, Document, Workspace
@@ -65,29 +64,19 @@ def rst_completions(
         if not (
             position["line"] >= result["contentLine"]
             and position["line"] <= result["endLine"]
-            and position["character"] >= result["contentCharacter"]
+            and position["character"] >= result["contentIndent"]
         ):
-            logger.debug(f"skipping: {result}")
             continue
 
-        # find first line of source code
-        lines = document.lines[result["startLine"] : result["endLine"] + 1]
-        start_line = None
-        for i, line in enumerate(lines):
-            if not line.strip():
-                start_line = i + 1
-                break
-        if start_line is None or start_line >= len(lines):
-            return []
-        indent_spaces = len(lines[start_line]) - len(lines[start_line].lstrip())
-        text = dedent("".join(lines[start_line:]))
+        lines = document.lines[result["contentLine"] : result["endLine"] + 1]
+        text = "".join([l[result["contentIndent"] :] for l in lines])
         # TODO add warning message, if jedi not installed
         import jedi
 
         definitions = jedi.Script(
             source=text,
-            line=position["line"] - result["startLine"] - start_line + 1,
-            column=position["character"] - indent_spaces,
+            line=position["line"] - result["contentLine"] + 1,
+            column=position["character"] - result["contentIndent"],
         ).completions()
         if not definitions:
             return None

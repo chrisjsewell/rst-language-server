@@ -17,7 +17,6 @@ setup(
         'typing-extensions; python_version<"3.8"',
     ],
     extras_require={
-        "cli": ["click>=7,<8"],
         "jsonrpc": ["python-jsonrpc-server>0.3,<0.4", "pluggy"],
         "testing": ["pytest", "pytest-regressions", "sphinxcontrib-bibtex>=1.0.0"],
         "code_style": ["black", "flake8"],
@@ -33,8 +32,8 @@ setup(
             "completions = rst_lsp.server.plugins.completions",
             "document_symbols = rst_lsp.server.plugins.doc_symbols",
             "hover = rst_lsp.server.plugins.hover",
-            "format_python = rst_lsp.server.plugins.clens_format_python",
-            "completions_python = rst_lsp.server.plugins.python_completions",
+            "format_python = rst_lsp.server.plugins.python_blocks.clens_format",
+            "completions_python = rst_lsp.server.plugins.python_blocks.completions",
         ],
     },
 )
