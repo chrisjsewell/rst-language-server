@@ -5,6 +5,8 @@ from rst_lsp.server.workspace import Config, Document, Workspace
 from rst_lsp.server.datatypes import Position
 from rst_lsp.server.constants import CompletionItemKind
 
+from .utils import format_docstring
+
 logger = logging.getLogger(__name__)
 
 # Map to the VSCode type
@@ -85,7 +87,7 @@ def rst_completions(
                 "label": _label(d),
                 "kind": _TYPE_MAP.get(d.type),
                 "detail": _detail(d),
-                "documentation": _format_docstring(d.docstring()),
+                "documentation": format_docstring(d.docstring()),
                 "sortText": _sort_text(d),
                 "insertText": d.name,
             }
@@ -118,16 +120,3 @@ def _sort_text(definition):
     # If its 'hidden', put it next last
     prefix = "z{}" if definition.name.startswith("_") else "a{}"
     return prefix.format(definition.name)
-
-
-def _format_docstring(contents):
-    """Python doc strings come in a number of formats, but LSP wants markdown.
-
-    Until we can find a fast enough way of discovering and parsing each format,
-    we can do a little better by at least preserving indentation.
-    """
-    contents = contents.replace("\t", "\u00A0" * 4)
-    contents = contents.replace("  ", "\u00A0" * 2)
-    # if LooseVersion(JEDI_VERSION) < LooseVersion('0.15.0'):
-    #     contents = contents.replace('*', '\\*')
-    return contents

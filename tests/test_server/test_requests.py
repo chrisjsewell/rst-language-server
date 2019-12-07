@@ -128,3 +128,12 @@ def test_python_completion1(client_server, data_regression):
         {"textDocument": doc, "position": {"line": 3, "character": 4}},
     ).result(timeout=CALL_TIMEOUT)
     data_regression.check(response3["items"][0])
+
+
+def test_python_hover(client_server, data_regression):
+    doc = open_test_doc(client_server, ".. code-block:: python\n\n    print('hallo')\n")
+    response3 = client_server._endpoint.request(
+        "text_document/hover",
+        {"textDocument": doc, "position": {"line": 2, "character": 5}},
+    ).result(timeout=CALL_TIMEOUT)
+    data_regression.check(response3)

@@ -18,6 +18,7 @@ setup(
     ],
     extras_require={
         "jsonrpc": ["python-jsonrpc-server>0.3,<0.4", "pluggy"],
+        "python_plugins": ["jedi>=0.15", "black"],
         "testing": ["pytest", "pytest-regressions", "sphinxcontrib-bibtex>=1.0.0"],
         "code_style": ["black", "flake8"],
     },
@@ -34,6 +35,7 @@ setup(
             "hover = rst_lsp.server.plugins.hover",
             "format_python = rst_lsp.server.plugins.python_blocks.clens_format",
             "completions_python = rst_lsp.server.plugins.python_blocks.completions",
+            "hover_python = rst_lsp.server.plugins.python_blocks.hover",
         ],
     },
 )
