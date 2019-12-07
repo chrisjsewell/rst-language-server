@@ -33,6 +33,7 @@ setup(
             "completions = rst_lsp.server.plugins.completions",
             "document_symbols = rst_lsp.server.plugins.doc_symbols",
             "hover = rst_lsp.server.plugins.hover",
+            "definitions = rst_lsp.server.plugins.definitions",
             "format_python = rst_lsp.server.plugins.python_blocks.clens_format",
             "completions_python = rst_lsp.server.plugins.python_blocks.completions",
             "hover_python = rst_lsp.server.plugins.python_blocks.hover",

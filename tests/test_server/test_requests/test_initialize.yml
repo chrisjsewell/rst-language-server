@@ -4,6 +4,7 @@ capabilities:
   completionProvider:
     resolveProvider: false
     triggerCharacters: []
+  definitionProvider: true
   documentSymbolProvider: true
   executeCommandProvider:
     commands:

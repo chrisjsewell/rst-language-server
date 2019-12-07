@@ -26,11 +26,12 @@ repository:
       - include: "#literal"
       - include: "#footnotes"
       - include: "#citations"
+      - include: "#sub-definition"
       - include: "#tags"
       - include: "#tables"
       - include: "#headings"
-      - include: "#comments"
       - include: "#substitution"
+      - include: "#comments"
   citations:
     patterns:
       - captures:
@@ -315,9 +316,27 @@ repository:
       - captures:
           "1":
             name: punctuation.definition.substitution.restructuredtext
+          "2":
+            name: string.other.substitution.restructuredtext
+          "3":
+            name: punctuation.definition.substitution.restructuredtext
         comment: substitution
-        match: (\|)[^| ]+[^|]*[^| ]*(\|_{0,2})
+        match: (\|)([^| ]+[^|]*[^| ]*)(\|_{0,2})
         name: markup.underline.substitution.restructuredtext
+  sub-definition:
+    patterns:
+      - captures:
+          "1":
+            name: punctuation.substitution.def.restructuredtext
+          "2":
+            name: punctuation.substitution.def.restructuredtext
+          "3":
+            name: string.other.substitution.def.restructuredtext
+          "4":
+            name: punctuation.substitution.def.restructuredtext
+        comment: replacement
+        match: ^(\.\.)\s+(\|)([^\|]+)(|)
+        name: meta.link.substitution.def.restructuredtext
   tables:
     patterns:
       - captures:

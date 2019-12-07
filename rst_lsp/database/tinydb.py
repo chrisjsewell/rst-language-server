@@ -224,3 +224,17 @@ class Database:
         if query is None:
             return self._tbl_elements.all()
         return self._tbl_elements.search(query)
+
+    def query_references(
+        self,
+        refnames: List[str],
+        *,
+        etypes=("footnote", "substitution_def", "hyperlink_target", "target_inline"),
+        target_key="names",
+    ):
+        def contains_ref(targets):
+            return True if set(targets).intersection(refnames) else False
+
+        query = (where("type").one_of(etypes)) & (where(target_key).test(contains_ref))
+        # query = (query) & (where(target_key).exists())
+        return self._tbl_elements.search(query)

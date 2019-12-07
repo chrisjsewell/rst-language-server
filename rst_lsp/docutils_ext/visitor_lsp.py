@@ -6,6 +6,8 @@ The vistor should be used on a document created using the PositionInliner
 (i.e. containing `LSPInline` elements), and ``document.walkabout(visitor)``
 should be used, so that the departure method is called.
 """
+# TODO formalise references link to definitions,
+# probably by applying docutils/docutils/transforms/references.py
 import logging
 from typing import List, Optional
 import uuid
@@ -168,6 +170,9 @@ class VisitorLSP(nodes.GenericNodeVisitor):
                 "endCharacter": end_column,
                 "level": node.level,
             }
+            # ids = node.children[0].attributes.get("ids", [])
+            # if ids:
+            #     data["names"] = ids
             self.db_entries.append(data)
             self.nesting.enter_block(node, data)
         elif isinstance(node, LSPDirective):
