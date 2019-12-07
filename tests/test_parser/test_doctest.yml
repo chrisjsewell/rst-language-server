@@ -45,7 +45,7 @@ elements:
 - arguments:
   - '1.0'
   block: true
-  contentCharacter: 4
+  contentIndent: 4
   contentLine: 11
   dtype: versionadded
   endCharacter: 0

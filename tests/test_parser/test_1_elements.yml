@@ -22,7 +22,7 @@
 - arguments:
   - html
   block: true
-  contentCharacter: 4
+  contentIndent: 4
   contentLine: 8
   dtype: only
   endCharacter: 0
@@ -37,7 +37,7 @@
   uuid: uuid_2
 - arguments: []
   block: true
-  contentCharacter: 8
+  contentIndent: 8
   contentLine: 10
   dtype: note
   endCharacter: 19
@@ -53,7 +53,7 @@
 - arguments:
   - python
   block: true
-  contentCharacter: 4
+  contentIndent: 4
   contentLine: 15
   dtype: code-block
   endCharacter: 0
@@ -99,7 +99,7 @@
   uuid: uuid_7
 - arguments: []
   block: true
-  contentCharacter: 4
+  contentIndent: 4
   contentLine: 26
   dtype: note
   endCharacter: 0

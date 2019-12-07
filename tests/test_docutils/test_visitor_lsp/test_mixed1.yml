@@ -22,7 +22,7 @@ db_entries:
   uuid: uuid_1
 - arguments: []
   block: true
-  contentCharacter: 3
+  contentIndent: 3
   contentLine: 7
   dtype: note
   endCharacter: 0

@@ -187,7 +187,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
                 "endCharacter": end_column,
                 "dtype": node.dname,
                 "contentLine": node.line_content,
-                "contentCharacter": node.content_indent + start_column
+                "contentIndent": node.content_indent + start_column
                 if node.content_indent
                 else None,
                 "arguments": node.arguments,

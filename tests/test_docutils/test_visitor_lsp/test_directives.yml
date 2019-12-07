@@ -2,7 +2,7 @@ db_entries:
 - arguments:
   - python
   block: true
-  contentCharacter: 3
+  contentIndent: 3
   contentLine: 2
   dtype: code
   endCharacter: 0
@@ -18,7 +18,7 @@ db_entries:
 - arguments:
   - abc.png
   block: true
-  contentCharacter: null
+  contentIndent: null
   contentLine: null
   dtype: image
   endCharacter: 17
