@@ -30,6 +30,7 @@ phrase ref      `phrase`_ 	    A hyperlink reference, with spaces or punctuation
 embedded ref    `text <ref_>`_
 anonymous ref   anonymous__ 	Both simple and phrase references may be anonymous
                                 (the reference text is not repeated at the target).
+                                e.g. target: .. __: anonymous
 inline target   _`target` 	 	A cross-reference target within text.
 sub ref         |sub| 	        e.g. target: .. |sub| image:: myimage.png
                                 Substitution can be text, an image, a hyperlink,

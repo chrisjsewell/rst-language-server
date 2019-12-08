@@ -2,14 +2,14 @@ elements:
 - block: true
   endCharacter: 9
   endLine: 0
-  names:
-  - title
   parent_uuid: null
   startCharacter: 0
   startLine: 0
+  targets:
+  - uuid_1
   title: hyperlink_target
   type: hyperlink_target
-  uuid: uuid_0
+  uuid: uuid_2
 - block: true
   endCharacter: 34
   endLine: 13
@@ -19,29 +19,27 @@ elements:
   startLine: 2
   title: Title
   type: section
-  uuid: uuid_1
+  uuid: uuid_3
 - block: false
   endCharacter: 11
   endLine: 5
-  parent_uuid: uuid_1
+  parent_uuid: uuid_3
   rtype: ref
   startCharacter: 0
   startLine: 5
   title: ref
   type: role
-  uuid: uuid_2
+  uuid: uuid_4
 - block: false
   endCharacter: 15
   endLine: 6
-  parent_uuid: uuid_1
-  refnames:
-  - citation
+  parent_uuid: uuid_3
   rtype: cite
   startCharacter: 0
   startLine: 6
   title: cite
   type: role
-  uuid: uuid_3
+  uuid: uuid_5
 - arguments:
   - '1.0'
   block: true
@@ -52,34 +50,34 @@ elements:
   endLine: 12
   klass: sphinx.domains.changeset.VersionChange
   options: {}
-  parent_uuid: uuid_1
+  parent_uuid: uuid_3
   startCharacter: 0
   startLine: 9
   title: versionadded
   type: directive
-  uuid: uuid_4
+  uuid: uuid_6
 - block: false
   endCharacter: 21
   endLine: 11
-  parent_uuid: uuid_4
-  refnames:
-  - RST
+  parent_uuid: uuid_6
+  refs_samedoc:
+  - uuid_0
   startCharacter: 17
   startLine: 11
   title: ref_sub
   type: ref_sub
-  uuid: uuid_5
+  uuid: uuid_7
 - block: true
   endCharacter: 34
   endLine: 13
-  names:
-  - RST
-  parent_uuid: uuid_1
+  parent_uuid: uuid_3
   startCharacter: 0
   startLine: 13
+  targets:
+  - uuid_0
   title: substitution_def
   type: substitution_def
-  uuid: uuid_6
+  uuid: uuid_8
 lints:
 - description: Unknown interpreted text role "unknown".
   level: 3

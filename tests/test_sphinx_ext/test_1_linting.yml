@@ -28,3 +28,8 @@
   line: 54
   source: docutils
   type: WARNING
+- description: 'Undefined substitution referenced: "REF3".'
+  level: 2
+  line: 45
+  source: docutils
+  type: WARNING

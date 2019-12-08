@@ -1,0 +1,69 @@
+<document source="test data">
+    <LSPBlockTarget end_line="0" start_line="0" type="hyperlink_target">
+        <target ids="ref" names="ref" targetid="uuid_3">
+    <LSPBlockTarget end_line="2" start_line="2" type="hyperlink_target">
+        <target anonymous="1" ids="id1" refuri="anonymous" targetid="uuid_4">
+    <paragraph>
+        <LSPInline position="4 0 4 3" type="ref_basic">
+            <reference name="ref" refname="ref" targetrefid="uuid_3">
+                ref
+         
+        <LSPInline position="4 5 4 10" type="ref_phrase">
+            <reference name="ref" refname="ref" targetrefid="uuid_3">
+                ref
+         
+        <LSPInline position="4 12 4 27" type="ref_phrase">
+            <reference name="phrase" refname="ref" targetrefid="uuid_3">
+                phrase
+            <target names="phrase" refname="ref" targetid="uuid_5" targetrefid="uuid_3">
+         
+        <LSPInline position="4 29 4 33" type="ref_basic">
+            <reference name="ref2" refname="ref2" targetrefid="uuid_6">
+                ref2
+         
+        <LSPInline position="4 35 4 45" type="ref_anon">
+            <reference anonymous="1" name="anonymous">
+                anonymous
+         
+        <LSPInline position="4 47 4 54" type="ref_basic">
+            <reference name="unknown" refname="unknown">
+                unknown
+    <paragraph>
+        <LSPInline position="6 0 6 6" type="target_inline">
+            <target ids="ref2" names="ref2" targetid="uuid_6">
+                ref2
+    <paragraph>
+        <LSPInline position="8 0 8 7" type="ref_sub">
+            <substitution_reference refname="symbol" subrefid="uuid_0">
+                symbol
+         
+        <LSPInline position="8 9 8 17" type="ref_sub">
+            <substitution_reference refname="unknown" subrefid="False">
+                unknown
+    <paragraph>
+        <LSPInline position="10 0 10 6" type="ref_cite">
+            <citation_reference citerefid="uuid_1" ids="id2" refname="cite">
+                cite
+         
+        <LSPInline position="10 8 10 17" type="ref_cite">
+            <citation_reference citerefid="False" ids="id3" refname="unknown">
+                unknown
+    <paragraph>
+        <LSPInline position="12 0 12 3" type="ref_foot">
+            <footnote_reference footrefid="uuid_2" ids="id4" refname="1">
+                1
+    <LSPBlockTarget end_line="14" start_line="14" type="substitution_def">
+        <substitution_definition names="symbol" subdefid="uuid_0">
+            <image alt="symbol" uri="symbol.png">
+    <LSPBlockTarget end_line="15" start_line="15" type="citation">
+        <citation citeid="uuid_1" ids="cite" names="cite">
+            <label>
+                cite
+            <paragraph>
+                This is a citation.
+    <LSPBlockTarget end_line="17" start_line="16" type="footnote">
+        <footnote footid="uuid_2" ids="id5" names="1">
+            <label>
+                1
+            <paragraph>
+                This is a footnote.

@@ -13,8 +13,6 @@ elements:
   endCharacter: 5
   endLine: 3
   parent_uuid: uuid_0
-  refnames:
-  - REF1
   startCharacter: 0
   startLine: 3
   title: ref_sub
@@ -34,8 +32,6 @@ elements:
   endCharacter: 5
   endLine: 8
   parent_uuid: uuid_2
-  refnames:
-  - REF2
   startCharacter: 0
   startLine: 8
   title: ref_sub
@@ -55,8 +51,6 @@ elements:
   endCharacter: 5
   endLine: 13
   parent_uuid: uuid_4
-  refnames:
-  - REF3
   startCharacter: 0
   startLine: 13
   title: ref_sub
@@ -66,8 +60,6 @@ elements:
   endCharacter: 5
   endLine: 19
   parent_uuid: null
-  refnames:
-  - REF4
   startCharacter: 0
   startLine: 19
   title: ref_sub
@@ -84,3 +76,23 @@ linting:
   line: 21
   source: docutils
   type: SEVERE
+- description: 'Undefined substitution referenced: "REF1".'
+  level: 2
+  line: 3
+  source: docutils
+  type: WARNING
+- description: 'Undefined substitution referenced: "REF2".'
+  level: 2
+  line: 8
+  source: docutils
+  type: WARNING
+- description: 'Undefined substitution referenced: "REF3".'
+  level: 2
+  line: 13
+  source: docutils
+  type: WARNING
+- description: 'Undefined substitution referenced: "REF4".'
+  level: 2
+  line: 19
+  source: docutils
+  type: WARNING

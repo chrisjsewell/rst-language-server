@@ -32,7 +32,7 @@ from sphinx.util.docutils import sphinx_domains
 from rst_lsp.docutils_ext.block_lsp import RSTParserCustom
 from rst_lsp.docutils_ext.inliner_lsp import InlinerLSP
 from rst_lsp.docutils_ext.reporter import new_document
-from rst_lsp.docutils_ext.visitor_lsp import VisitorLSP
+from rst_lsp.docutils_ext.visitor_lsp import VisitorLSP, VisitorRef2Target
 from rst_lsp.server.datatypes import DocumentSymbol
 
 
@@ -217,12 +217,14 @@ def assess_source(
         except SystemMessage:
             pass
 
-        visitor = VisitorLSP(document, content)
-        document.walkabout(visitor)
+        visitor_ref = VisitorRef2Target(document)
+        document.walk(visitor_ref)
+        visitor_lsp = VisitorLSP(document, content)
+        document.walkabout(visitor_lsp)
 
     return SourceAssessResult(
         document,
-        visitor.db_entries,
-        visitor.nesting.document_symbols,
+        visitor_lsp.db_entries,
+        visitor_lsp.nesting.document_symbols,
         reporter.log_capture,
     )

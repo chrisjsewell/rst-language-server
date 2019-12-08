@@ -13,8 +13,6 @@ elements:
   endCharacter: 5
   endLine: 3
   parent_uuid: uuid_0
-  refnames:
-  - REF1
   startCharacter: 0
   startLine: 3
   title: ref_sub
@@ -34,8 +32,6 @@ elements:
   endCharacter: 5
   endLine: 8
   parent_uuid: uuid_2
-  refnames:
-  - REF2
   startCharacter: 0
   startLine: 8
   title: ref_sub
@@ -55,8 +51,6 @@ elements:
   endCharacter: 5
   endLine: 13
   parent_uuid: uuid_4
-  refnames:
-  - REF3
   startCharacter: 0
   startLine: 13
   title: ref_sub
@@ -76,8 +70,6 @@ elements:
   endCharacter: 5
   endLine: 18
   parent_uuid: uuid_6
-  refnames:
-  - REF4
   startCharacter: 0
   startLine: 18
   title: ref_sub
@@ -97,8 +89,6 @@ elements:
   endCharacter: 5
   endLine: 23
   parent_uuid: uuid_8
-  refnames:
-  - REF5
   startCharacter: 0
   startLine: 23
   title: ref_sub
@@ -118,8 +108,6 @@ elements:
   endCharacter: 5
   endLine: 28
   parent_uuid: uuid_10
-  refnames:
-  - REF7
   startCharacter: 0
   startLine: 28
   title: ref_sub
@@ -139,8 +127,6 @@ elements:
   endCharacter: 5
   endLine: 33
   parent_uuid: uuid_12
-  refnames:
-  - REF8
   startCharacter: 0
   startLine: 33
   title: ref_sub
@@ -160,8 +146,6 @@ elements:
   endCharacter: 5
   endLine: 38
   parent_uuid: uuid_14
-  refnames:
-  - REF9
   startCharacter: 0
   startLine: 38
   title: ref_sub
@@ -181,8 +165,6 @@ elements:
   endCharacter: 6
   endLine: 43
   parent_uuid: uuid_16
-  refnames:
-  - REF10
   startCharacter: 0
   startLine: 43
   title: ref_sub
@@ -207,5 +189,50 @@ linting:
     ======='
   level: 2
   line: 41
+  source: docutils
+  type: WARNING
+- description: 'Undefined substitution referenced: "REF1".'
+  level: 2
+  line: 3
+  source: docutils
+  type: WARNING
+- description: 'Undefined substitution referenced: "REF2".'
+  level: 2
+  line: 8
+  source: docutils
+  type: WARNING
+- description: 'Undefined substitution referenced: "REF3".'
+  level: 2
+  line: 13
+  source: docutils
+  type: WARNING
+- description: 'Undefined substitution referenced: "REF4".'
+  level: 2
+  line: 18
+  source: docutils
+  type: WARNING
+- description: 'Undefined substitution referenced: "REF5".'
+  level: 2
+  line: 23
+  source: docutils
+  type: WARNING
+- description: 'Undefined substitution referenced: "REF7".'
+  level: 2
+  line: 28
+  source: docutils
+  type: WARNING
+- description: 'Undefined substitution referenced: "REF8".'
+  level: 2
+  line: 33
+  source: docutils
+  type: WARNING
+- description: 'Undefined substitution referenced: "REF9".'
+  level: 2
+  line: 38
+  source: docutils
+  type: WARNING
+- description: 'Undefined substitution referenced: "REF10".'
+  level: 2
+  line: 43
   source: docutils
   type: WARNING

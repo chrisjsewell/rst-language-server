@@ -2,14 +2,14 @@ db_entries:
 - block: true
   endCharacter: 10
   endLine: 0
-  names:
-  - target
   parent_uuid: null
   startCharacter: 0
   startLine: 0
+  targets:
+  - uuid_3
   title: hyperlink_target
   type: hyperlink_target
-  uuid: uuid_0
+  uuid: uuid_4
 - block: true
   endCharacter: 28
   endLine: 11
@@ -19,7 +19,7 @@ db_entries:
   startLine: 2
   title: title
   type: section
-  uuid: uuid_1
+  uuid: uuid_5
 - arguments: []
   block: true
   contentIndent: 3
@@ -29,89 +29,89 @@ db_entries:
   endLine: 8
   klass: docutils.parsers.rst.directives.admonitions.Note
   options: {}
-  parent_uuid: uuid_1
+  parent_uuid: uuid_5
   startCharacter: 0
   startLine: 5
   title: note
   type: directive
-  uuid: uuid_2
+  uuid: uuid_6
 - block: false
   endCharacter: 6
   endLine: 7
-  parent_uuid: uuid_2
-  refnames:
-  - '1'
+  parent_uuid: uuid_6
+  refs_samedoc:
+  - uuid_2
   startCharacter: 3
   startLine: 7
   title: ref_foot
   type: ref_foot
-  uuid: uuid_3
+  uuid: uuid_7
 - block: false
   endCharacter: 14
   endLine: 7
-  parent_uuid: uuid_2
-  refnames:
-  - target
+  parent_uuid: uuid_6
+  refs_samedoc:
+  - uuid_3
   startCharacter: 8
   startLine: 7
   title: ref_basic
   type: ref_basic
-  uuid: uuid_4
+  uuid: uuid_8
 - block: false
   endCharacter: 23
   endLine: 7
-  parent_uuid: uuid_2
-  refnames:
-  - symbol
+  parent_uuid: uuid_6
+  refs_samedoc:
+  - uuid_0
   startCharacter: 16
   startLine: 7
   title: ref_sub
   type: ref_sub
-  uuid: uuid_5
+  uuid: uuid_9
 - block: false
   endCharacter: 31
   endLine: 7
-  parent_uuid: uuid_2
-  refnames:
-  - cite
+  parent_uuid: uuid_6
+  refs_samedoc:
+  - uuid_1
   startCharacter: 25
   startLine: 7
   title: ref_cite
   type: ref_cite
-  uuid: uuid_6
+  uuid: uuid_10
 - block: true
   endCharacter: 25
   endLine: 9
-  names:
-  - '1'
-  parent_uuid: uuid_1
+  parent_uuid: uuid_5
   startCharacter: 0
   startLine: 9
+  targets:
+  - uuid_2
   title: footnote
   type: footnote
-  uuid: uuid_7
+  uuid: uuid_11
 - block: true
   endCharacter: 29
   endLine: 10
-  names:
-  - symbol
-  parent_uuid: uuid_1
+  parent_uuid: uuid_5
   startCharacter: 0
   startLine: 10
+  targets:
+  - uuid_0
   title: substitution_def
   type: substitution_def
-  uuid: uuid_8
+  uuid: uuid_12
 - block: true
   endCharacter: 28
   endLine: 11
-  names:
-  - cite
-  parent_uuid: uuid_1
+  parent_uuid: uuid_5
   startCharacter: 0
   startLine: 11
+  targets:
+  - uuid_1
   title: citation
   type: citation
-  uuid: uuid_9
+  uuid: uuid_13
 doc_symbols:
 - detail: 'type: hyperlink_target'
   kind: 8

@@ -198,11 +198,17 @@ class Database:
         etype: Optional[Union[str, tuple]] = NotSet(),
         parent_uuid: Optional[Union[str, tuple]] = NotSet(),
         uuid: Optional[Union[str, tuple]] = NotSet(),
+        has_keys: List[str] = (),
         **kwargs
         # TODO it would be ideal if uuid and database.table.doc_id were the same thing
         # TODO match within range
     ):
-        query = None
+        if has_keys:
+            query = where(has_keys[0]).exists()
+            for key in has_keys[1:]:
+                query = (query) & (where(key).exists())
+        else:
+            query = None
         for value, key in [
             (uri, "uri"),
             (etype, "type"),
@@ -225,16 +231,11 @@ class Database:
             return self._tbl_elements.all()
         return self._tbl_elements.search(query)
 
-    def query_references(
-        self,
-        refnames: List[str],
-        *,
-        etypes=("footnote", "substitution_def", "hyperlink_target", "target_inline"),
-        target_key="names",
+    def query_targets(
+        self, uri: str, refs_samedoc: List[str], *, target_key="targets",
     ):
         def contains_ref(targets):
-            return True if set(targets).intersection(refnames) else False
+            return True if set(targets).intersection(refs_samedoc) else False
 
-        query = (where("type").one_of(etypes)) & (where(target_key).test(contains_ref))
-        # query = (query) & (where(target_key).exists())
+        query = (where("uri") == uri) & (where(target_key).test(contains_ref))
         return self._tbl_elements.search(query)

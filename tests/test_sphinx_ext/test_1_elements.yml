@@ -1,14 +1,14 @@
 - block: true
   endCharacter: 14
   endLine: 1
-  names:
-  - headerlink
   parent_uuid: null
   startCharacter: 0
   startLine: 1
+  targets:
+  - uuid_2
   title: hyperlink_target
   type: hyperlink_target
-  uuid: uuid_0
+  uuid: uuid_6
 - block: true
   endCharacter: 16
   endLine: 27
@@ -18,7 +18,7 @@
   startLine: 3
   title: header 1
   type: section
-  uuid: uuid_1
+  uuid: uuid_7
 - arguments:
   - html
   block: true
@@ -29,12 +29,12 @@
   endLine: 11
   klass: sphinx.directives.other.Only
   options: {}
-  parent_uuid: uuid_1
+  parent_uuid: uuid_7
   startCharacter: 0
   startLine: 6
   title: only
   type: directive
-  uuid: uuid_2
+  uuid: uuid_8
 - arguments: []
   block: true
   contentIndent: 8
@@ -44,12 +44,12 @@
   endLine: 10
   klass: docutils.parsers.rst.directives.admonitions.Note
   options: {}
-  parent_uuid: uuid_2
+  parent_uuid: uuid_8
   startCharacter: 4
   startLine: 8
   title: note
   type: directive
-  uuid: uuid_3
+  uuid: uuid_9
 - arguments:
   - python
   block: true
@@ -61,42 +61,42 @@
   klass: sphinx.directives.code.CodeBlock
   options:
     linenos: null
-  parent_uuid: uuid_1
+  parent_uuid: uuid_7
   startCharacter: 0
   startLine: 12
   title: code-block
   type: directive
-  uuid: uuid_4
+  uuid: uuid_10
 - block: false
   endCharacter: 8
   endLine: 17
-  parent_uuid: uuid_1
+  parent_uuid: uuid_7
   startCharacter: 0
   startLine: 17
   title: ref_phrase
   type: ref_phrase
-  uuid: uuid_5
+  uuid: uuid_11
 - block: true
   endCharacter: 16
   endLine: 27
   level: 2
-  parent_uuid: uuid_1
+  parent_uuid: uuid_7
   startCharacter: 0
   startLine: 19
   title: sub-title
   type: section
-  uuid: uuid_6
+  uuid: uuid_12
 - block: false
   endCharacter: 26
   endLine: 22
-  names:
-  - http://www.python.org/
-  parent_uuid: uuid_6
+  parent_uuid: uuid_12
   startCharacter: 0
   startLine: 22
+  targets:
+  - uuid_3
   title: ref_phrase
   type: ref_phrase
-  uuid: uuid_7
+  uuid: uuid_13
 - arguments: []
   block: true
   contentIndent: 4
@@ -106,23 +106,23 @@
   endLine: 28
   klass: docutils.parsers.rst.directives.admonitions.Note
   options: {}
-  parent_uuid: uuid_6
+  parent_uuid: uuid_12
   startCharacter: 0
   startLine: 24
   title: note
   type: directive
-  uuid: uuid_8
+  uuid: uuid_14
 - block: false
   endCharacter: 47
   endLine: 26
-  names:
-  - a link to python
-  parent_uuid: uuid_8
+  parent_uuid: uuid_14
   startCharacter: 12
   startLine: 26
+  targets:
+  - uuid_4
   title: ref_phrase
   type: ref_phrase
-  uuid: uuid_9
+  uuid: uuid_15
 - block: true
   endCharacter: 20
   endLine: 56
@@ -132,137 +132,126 @@
   startLine: 29
   title: header 2
   type: section
-  uuid: uuid_10
+  uuid: uuid_16
 - block: false
   endCharacter: 13
   endLine: 36
-  parent_uuid: uuid_10
-  refnames:
-  - sadasd
+  parent_uuid: uuid_16
   rtype: cite
   startCharacter: 0
   startLine: 36
   title: cite
   type: role
-  uuid: uuid_11
+  uuid: uuid_17
 - block: false
   endCharacter: 10
   endLine: 37
-  parent_uuid: uuid_10
-  refnames:
-  - asd
+  parent_uuid: uuid_16
   rtype: cite
   startCharacter: 0
   startLine: 37
   title: cite
   type: role
-  uuid: uuid_12
+  uuid: uuid_18
 - block: false
   endCharacter: 5
   endLine: 45
-  parent_uuid: uuid_10
-  refnames:
-  - REF1
+  parent_uuid: uuid_16
+  refs_samedoc:
+  - uuid_0
   startCharacter: 0
   startLine: 45
   title: ref_sub
   type: ref_sub
-  uuid: uuid_13
+  uuid: uuid_19
 - block: false
   endCharacter: 19
   endLine: 45
-  parent_uuid: uuid_10
-  refnames:
-  - REF2
+  parent_uuid: uuid_16
+  refs_samedoc:
+  - uuid_1
   startCharacter: 14
   startLine: 45
   title: ref_sub
   type: ref_sub
-  uuid: uuid_14
+  uuid: uuid_20
 - block: false
   endCharacter: 30
   endLine: 45
-  parent_uuid: uuid_10
-  refnames:
-  - REF3
+  parent_uuid: uuid_16
   startCharacter: 25
   startLine: 45
   title: ref_sub
   type: ref_sub
-  uuid: uuid_15
+  uuid: uuid_21
 - block: false
   endCharacter: 12
   endLine: 47
-  parent_uuid: uuid_10
-  refnames:
-  - headerlink
+  parent_uuid: uuid_16
+  refs_samedoc:
+  - uuid_2
   startCharacter: 2
   startLine: 47
   title: ref_basic
   type: ref_basic
-  uuid: uuid_16
+  uuid: uuid_22
 - block: false
   endCharacter: 8
   endLine: 49
-  parent_uuid: uuid_10
-  refnames:
-  - fn1
+  parent_uuid: uuid_16
   startCharacter: 2
   startLine: 49
   title: ref_foot
   type: ref_foot
-  uuid: uuid_17
+  uuid: uuid_23
 - block: true
   endCharacter: 25
   endLine: 51
-  names:
-  - REF1
-  parent_uuid: uuid_10
+  parent_uuid: uuid_16
   startCharacter: 0
   startLine: 51
+  targets:
+  - uuid_0
   title: substitution_def
   type: substitution_def
-  uuid: uuid_18
+  uuid: uuid_24
 - block: true
   endCharacter: 25
   endLine: 52
-  names:
-  - REF2
-  parent_uuid: uuid_10
+  parent_uuid: uuid_16
   startCharacter: 0
   startLine: 52
+  targets:
+  - uuid_1
   title: substitution_def
   type: substitution_def
-  uuid: uuid_19
+  uuid: uuid_25
 - block: true
   endCharacter: 26
   endLine: 53
-  names:
-  - ref3
-  parent_uuid: uuid_10
+  parent_uuid: uuid_16
   startCharacter: 0
   startLine: 53
+  targets:
+  - uuid_5
   title: hyperlink_target
   type: hyperlink_target
-  uuid: uuid_20
+  uuid: uuid_26
 - block: true
   endCharacter: 0
   endLine: 55
-  names: []
-  parent_uuid: uuid_10
+  parent_uuid: uuid_16
   startCharacter: 0
   startLine: 54
   title: substitution_def
   type: substitution_def
-  uuid: uuid_21
+  uuid: uuid_27
 - block: true
   endCharacter: 20
   endLine: 56
-  names:
-  - fn1
-  parent_uuid: uuid_10
+  parent_uuid: uuid_16
   startCharacter: 0
   startLine: 56
   title: footnote
   type: footnote
-  uuid: uuid_22
+  uuid: uuid_28

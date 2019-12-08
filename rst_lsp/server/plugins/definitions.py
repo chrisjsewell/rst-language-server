@@ -16,9 +16,7 @@ def rst_definitions(
     database = document.workspace.database
     uri = document.uri
     results = database.query_elements(
-        etype=("ref_basic", "ref_cite", "ref_foot", "ref_sub", "ref_phrase"),
-        uri=uri,
-        startLine=position["line"],
+        uri=uri, startLine=position["line"], has_keys=["refs_samedoc"]
     )
     # TODO handle specific roles/directives, e.g. :ref: and :cite:
     found_result = False
@@ -29,14 +27,11 @@ def rst_definitions(
         ):
             found_result = True
             break
-    if not found_result or not result.get("refnames", None):
+    if not found_result:
         return []
     locations = []
-    etypes = {"ref_sub": ("substitution_def",), "ref_foot": ("footnote",)}.get(
-        result["type"], ("hyperlink_target", "target_inline", "section")
-    )
     for element in (
-        database.query_references(refnames=result["refnames"], etypes=etypes) or []
+        database.query_targets(uri=uri, refs_samedoc=result["refs_samedoc"]) or []
     ):
         locations.append(
             {

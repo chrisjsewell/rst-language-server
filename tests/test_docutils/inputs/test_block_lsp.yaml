@@ -24,7 +24,7 @@ targets:
       - '.. _target:'
     out:
       - <document source="test data">
-      - '    <LSPExplicit end_line="0" start_line="0" type="hyperlink_target">'
+      - '    <LSPBlockTarget end_line="0" start_line="0" type="hyperlink_target">'
       - '        <target ids="target" names="target">'
 footnotes:
   - in:
@@ -51,29 +51,29 @@ footnotes:
       - '        <footnote_reference auto="*" ids="id5">'
       - '         '
       - '        <footnote_reference auto="1" ids="id6" refname="first">'
-      - '    <LSPExplicit end_line="2" start_line="2" type="footnote">'
+      - '    <LSPBlockTarget end_line="2" start_line="2" type="footnote">'
       - '        <footnote ids="id7" names="1">'
       - '            <label>'
       - '                1'
       - '            <paragraph>'
       - '                This is a footnote.'
-      - '    <LSPExplicit end_line="3" start_line="3" type="footnote">'
+      - '    <LSPBlockTarget end_line="3" start_line="3" type="footnote">'
       - '        <footnote auto="1" ids="id8">'
       - '            <paragraph>'
       - '                auto nrumbe footnote.'
-      - '    <LSPExplicit end_line="4" start_line="4" type="footnote">'
+      - '    <LSPBlockTarget end_line="4" start_line="4" type="footnote">'
       - '        <footnote auto="1" ids="id9">'
       - '            <paragraph>'
       - '                second auto nrumbe footnote.'
-      - '    <LSPExplicit end_line="5" start_line="5" type="footnote">'
+      - '    <LSPBlockTarget end_line="5" start_line="5" type="footnote">'
       - '        <footnote auto="*" ids="id10">'
       - '            <paragraph>'
       - '                symbol footnote.'
-      - '    <LSPExplicit end_line="6" start_line="6" type="footnote">'
+      - '    <LSPBlockTarget end_line="6" start_line="6" type="footnote">'
       - '        <footnote auto="*" ids="id11">'
       - '            <paragraph>'
       - '                second symbol footnote.'
-      - '    <LSPExplicit end_line="7" start_line="7" type="footnote">'
+      - '    <LSPBlockTarget end_line="7" start_line="7" type="footnote">'
       - '        <footnote auto="1" ids="first" names="first">'
       - '            <paragraph>'
       - '                auto number label footnote.'
@@ -82,14 +82,14 @@ substitution_definitions:
       - '.. |symbol| image:: symbol.png'
     out:
     - <document source="test data">
-    - '    <LSPExplicit end_line="0" start_line="0" type="substitution_def">'
+    - '    <LSPBlockTarget end_line="0" start_line="0" type="substitution_def">'
     - '        <substitution_definition names="symbol">'
     - '            <image alt="symbol" uri="symbol.png">'
   - in:
       - '.. |Eacute| replace:: \u00C9'
     out:
       - <document source="test data">
-      - '    <LSPExplicit end_line="0" start_line="0" type="substitution_def">'
+      - '    <LSPBlockTarget end_line="0" start_line="0" type="substitution_def">'
       - '        <substitution_definition names="Eacute">'
       - '            u00C9'
   - in:
@@ -99,7 +99,7 @@ substitution_definitions:
       - ''
     out:
       - <document source="test data">
-      - '    <LSPExplicit end_line="2" start_line="0" type="substitution_def">'
+      - '    <LSPBlockTarget end_line="2" start_line="0" type="substitution_def">'
       - '        <substitution_definition names="sub">'
       - '            <image alt="sub" height="50" uri="symbol.png" width="50">'
   - in:
@@ -108,7 +108,7 @@ substitution_definitions:
       - '  $\\\\alpha$'
     out:
       - <document source="test data">
-      - '    <LSPExplicit end_line="2" start_line="0" type="substitution_def">'
+      - '    <LSPBlockTarget end_line="2" start_line="0" type="substitution_def">'
       - '        <substitution_definition names="alpha">'
       - '            <raw format="latex" xml:space="preserve">'
       - '                $\\\\alpha$'
@@ -117,7 +117,7 @@ citations:
       - '.. [citation] This is a citation.'
     out:
       - <document source="test data">
-      - '    <LSPExplicit end_line="0" start_line="0" type="citation">'
+      - '    <LSPBlockTarget end_line="0" start_line="0" type="citation">'
       - '        <citation ids="citation" names="citation">'
       - '            <label>'
       - '                citation'
@@ -182,7 +182,7 @@ mixed:
       - <document source="test data">
       - '    <LSPDirective arguments="" content_indent="3" dtype="note" klass="docutils.parsers.rst.directives.admonitions.Note" line_content="2" line_end="4" line_start="0" options="{}">'
       - '        <note>'
-      - '            <LSPExplicit end_line="4" start_line="2" type="substitution_def">'
+      - '            <LSPBlockTarget end_line="4" start_line="2" type="substitution_def">'
       - '                <substitution_definition names="alpha">'
       - '                    <raw format="latex" xml:space="preserve">'
       - '                        $\\\\alpha$'
@@ -193,7 +193,7 @@ mixed:
       - '-----'
     out:
       - <document source="test data">
-      - '    <LSPExplicit end_line="0" start_line="0" type="hyperlink_target">'
+      - '    <LSPBlockTarget end_line="0" start_line="0" type="hyperlink_target">'
       - '        <target ids="target" names="target">'
       - '    <LSPSection end_line="3" level="1" start_line="2" title="title">'
       - '        <section ids="title" names="title">'
