@@ -1,5 +1,6 @@
 """TinyDB implementation of a backend database."""
 from datetime import datetime
+import logging
 from typing import List, Optional, Union
 
 from tinydb import TinyDB, where
@@ -14,6 +15,8 @@ from rst_lsp.database.utils import (
     get_role_json,
     get_directive_json,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class NotSet:
@@ -238,4 +241,13 @@ class Database:
             return True if set(targets).intersection(refs_samedoc) else False
 
         query = (where("uri") == uri) & (where(target_key).test(contains_ref))
+        return self._tbl_elements.search(query)
+
+    def query_references(
+        self, uri: str, targets: List[str], *, ref_key="refs_samedoc",
+    ):
+        def contains_targets(refs):
+            return True if set(refs).intersection(targets) else False
+
+        query = (where("uri") == uri) & (where(ref_key).test(contains_targets))
         return self._tbl_elements.search(query)

@@ -11,6 +11,7 @@ capabilities:
     - rst_format_python_cell
   foldingRangeProvider: true
   hoverProvider: true
+  referencesProvider: true
   textDocumentSync:
     change: 2
     openClose: true

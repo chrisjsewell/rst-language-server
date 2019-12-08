@@ -173,7 +173,7 @@ class RstLanguageServer(MethodDispatcher):
                 )
             },
             "hoverProvider": True,
-            # "referencesProvider": True,
+            "referencesProvider": True,
             # "renameProvider": True,
             "foldingRangeProvider": True,
             # "signatureHelpProvider": {"triggerCharacters": []},
@@ -473,6 +473,19 @@ class RstLanguageServer(MethodDispatcher):
         return self.call_plugins(
             PluginTypes.rst_hover.value, textDocument["uri"], position=position
         ) or {"contents": ""}
+
+    def m_text_document__references(
+        self, textDocument: TextDocument, position: Position, context=None, **_kwargs
+    ) -> List[Location]:
+        return utils.flatten(
+            self.call_plugins(
+                PluginTypes.rst_references.value,
+                textDocument["uri"],
+                position=position,
+                # Include the declaration of the current symbol
+                exclude_declaration=not context["includeDeclaration"],
+            )
+        )
 
     def m_workspace__execute_command(
         self, command: str, arguments: Optional[List[Any]] = None

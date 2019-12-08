@@ -120,6 +120,19 @@ def test_definitions(client_server, data_regression):
     data_regression.check(response3)
 
 
+def test_references(client_server, data_regression):
+    doc = open_test_doc(client_server, "|sub|\n\n.. |sub| replace:: a")
+    response3 = client_server._endpoint.request(
+        "text_document/references",
+        {
+            "textDocument": doc,
+            "position": {"line": 2, "character": 1},
+            "context": {"includeDeclaration": True},
+        },
+    ).result(timeout=CALL_TIMEOUT)
+    data_regression.check(response3)
+
+
 def test_code_lens_black(client_server, data_regression):
     doc = open_test_doc(client_server, ".. code-block:: python\n\n    a='b'\n")
     response3 = client_server._endpoint.request(

@@ -34,6 +34,7 @@ setup(
             "document_symbols = rst_lsp.server.plugins.doc_symbols",
             "hover = rst_lsp.server.plugins.hover",
             "definitions = rst_lsp.server.plugins.definitions",
+            "references = rst_lsp.server.plugins.references",
             "format_python = rst_lsp.server.plugins.python_blocks.clens_format",
             "completions_python = rst_lsp.server.plugins.python_blocks.completions",
             "hover_python = rst_lsp.server.plugins.python_blocks.hover",
