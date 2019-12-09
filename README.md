@@ -27,6 +27,15 @@
   - [zodb](https://github.com/zopefoundation/ZODB) (last commit month ago, 358 stars, 8 dependencies)
   - [Flata](https://blog.ruanbekker.com/blog/2018/04/15/experimenting-with-python-and-flata-the-lightweight-document-orientated-database/) (last commit 2017, 12 stars)
   - [Comparison of pickledb/tinydb/zodb](https://opensourceforu.com/2017/05/three-python-databases-pickledb-tinydb-zodb/)
+- TexMate Grammar
+  - [Guide](https://macromates.com/manual/en/language_grammars)
+  - [VSCode Python](https://github.com/microsoft/vscode/blob/master/extensions/python/syntaxes/MagicPython.tmLanguage.json)
+  - [Regex Tutorial](https://www.regular-expressions.info/posixbrackets.html)
+  - [Writing TexMate Grammar Blog](https://www.apeth.com/nonblog/stories/textmatebundle.html)
+  - Multiline captures (not possible?)
+    - https://github.com/microsoft/vscode-textmate/issues/41
+    - https://github.com/microsoft/vscode-textmate/issues/57
+  - [LSP Semantic highlighting feature request](https://github.com/microsoft/language-server-protocol/issues/513)
 
 ## Docutils Transforms
 
