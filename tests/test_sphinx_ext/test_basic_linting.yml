@@ -10,12 +10,12 @@
   type: ERROR
 - description: Unknown interpreted text role "sdf".
   level: 3
-  line: 43
+  line: 45
   source: docutils
   type: ERROR
 - description: Unknown interpreted text role "abcf".
   level: 3
-  line: 43
+  line: 45
   source: docutils
   type: ERROR
 - description: 'Substitution definition "REF4" empty or invalid.
@@ -25,11 +25,11 @@
 
     '
   level: 2
-  line: 54
+  line: 56
   source: docutils
   type: WARNING
 - description: 'Undefined substitution referenced: "REF3".'
   level: 2
-  line: 45
+  line: 47
   source: docutils
   type: WARNING

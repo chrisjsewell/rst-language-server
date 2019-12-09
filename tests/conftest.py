@@ -9,9 +9,10 @@ PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), "raw_files"))
 TEST_UUIDS = ["uuid_{}".format(i) for i in range(10000)]
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def mock_uuid():
-    with mock.patch.object(uuid, "uuid4", side_effect=TEST_UUIDS):
+    # TODO uuids in tests increase by 1 if the test is called first??
+    with mock.patch.object(uuid, "uuid4", side_effect=TEST_UUIDS[:]):
         yield
 
 

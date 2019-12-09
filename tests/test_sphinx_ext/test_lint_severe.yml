@@ -8,54 +8,54 @@ elements:
   startLine: 0
   title: title 1
   type: section
-  uuid: uuid_0
+  uuid: uuid_4
 - block: false
   endCharacter: 5
   endLine: 3
-  parent_uuid: uuid_0
+  parent_uuid: uuid_4
   startCharacter: 0
   startLine: 3
   title: ref_sub
   type: ref_sub
-  uuid: uuid_1
+  uuid: uuid_5
 - block: true
   endCharacter: 0
   endLine: 14
   level: 2
-  parent_uuid: uuid_0
+  parent_uuid: uuid_4
   startCharacter: 0
   startLine: 5
   title: title 2
   type: section
-  uuid: uuid_2
+  uuid: uuid_6
 - block: false
   endCharacter: 5
   endLine: 8
-  parent_uuid: uuid_2
+  parent_uuid: uuid_6
   startCharacter: 0
   startLine: 8
   title: ref_sub
   type: ref_sub
-  uuid: uuid_3
+  uuid: uuid_7
 - block: true
   endCharacter: 0
   endLine: 14
   level: 3
-  parent_uuid: uuid_2
+  parent_uuid: uuid_6
   startCharacter: 0
   startLine: 10
   title: title 3
   type: section
-  uuid: uuid_4
+  uuid: uuid_8
 - block: false
   endCharacter: 5
   endLine: 13
-  parent_uuid: uuid_4
+  parent_uuid: uuid_8
   startCharacter: 0
   startLine: 13
   title: ref_sub
   type: ref_sub
-  uuid: uuid_5
+  uuid: uuid_9
 - block: false
   endCharacter: 5
   endLine: 19
@@ -64,7 +64,7 @@ elements:
   startLine: 19
   title: ref_sub
   type: ref_sub
-  uuid: uuid_6
+  uuid: uuid_10
 linting:
 - description: 'Title level inconsistent:
 

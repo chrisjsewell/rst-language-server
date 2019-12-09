@@ -3,7 +3,13 @@ which generates JSONable, 'database friendly', information about the document.
 This can be used for fast-lookup of the position of elements in the document,
 and to reference/target mappings.
 
-See ``rst_lsp.sphinx_ext.main.assess_source`` for their use
+The visitor should be run via the ``LSPTransform`` class::
+
+    transform = LSPTransform(document)
+    transform.apply(source_content)
+    transform.name_to_uuid
+    transform.db_entries
+    transform.document_symbols
 
 """
 import logging
@@ -16,6 +22,7 @@ except ImportError:
     from typing_extensions import TypedDict
 
 from docutils import nodes
+from docutils.transforms import Transform
 
 from rst_lsp.docutils_ext.inliner_lsp import LSPInline
 from rst_lsp.docutils_ext.block_lsp import LSPDirective, LSPBlockTarget, LSPSection
@@ -24,6 +31,61 @@ from rst_lsp.server.datatypes import DocumentSymbol
 
 
 logger = logging.getLogger(__name__)
+
+
+class LSPTransform(Transform):
+    default_priority = 1
+
+    def __init__(self, document, startnode=None):
+        super().__init__(document, startnode=startnode)
+        self._visitor_ref = None
+        self._visitor_lsp = None
+
+    @property
+    def name_to_uuid(self):
+        if self._visitor_ref is None:
+            raise AttributeError("must call `apply` first")
+        return self._visitor_ref.name_to_uuid
+
+    @property
+    def db_entries(self):
+        if self._visitor_lsp is None:
+            raise AttributeError("must call `apply` first")
+        return self._visitor_lsp.db_entries
+
+    @property
+    def document_symbols(self):
+        if self._visitor_lsp is None:
+            raise AttributeError("must call `apply` first")
+        return self._visitor_lsp.nesting.document_symbols
+
+    def apply(self, source_content):
+        remove = []
+        try:
+            for node in [LSPInline, LSPDirective, LSPBlockTarget, LSPSection]:
+                name = node.__name__
+                if not hasattr(nodes.GenericNodeVisitor, "visit_" + node.__name__):
+                    setattr(
+                        nodes.GenericNodeVisitor,
+                        "visit_" + name,
+                        nodes._call_default_visit,
+                    )
+                    setattr(
+                        nodes.GenericNodeVisitor,
+                        "depart_" + name,
+                        nodes._call_default_departure,
+                    )
+                    remove.append(name)
+            self._visitor_ref = VisitorRef2Target(self.document)
+            self.document.walk(self._visitor_ref)
+            self._visitor_lsp = VisitorLSP(self.document, source_content)
+            self.document.walkabout(self._visitor_lsp)
+        finally:
+            for name in remove:
+                delattr(nodes.GenericNodeVisitor, "visit_" + name)
+                delattr(
+                    nodes.GenericNodeVisitor, "depart_" + name,
+                )
 
 
 class VisitorRef2Target(nodes.GenericNodeVisitor):
@@ -38,22 +100,26 @@ class VisitorRef2Target(nodes.GenericNodeVisitor):
 
     """
 
-    def __init__(self, document):
+    def __init__(self, document: nodes.document):
         super().__init__(document)
-
+        self.document = self.document  # type: nodes.document
+        self.name_to_uuid = []
+        # TODO handle anonymous in VisitorLSP
         self.anonymous_targets = []
         self.anonymous_refs = []
-        # TODO handle anonymous in VisitorLSP
 
         # assign ids to substitution definitions
         for sub_def_node in self.document.substitution_defs.values():
-            sub_def_node["subdefid"] = self.get_uuid()
+            sub_def_node["target_uuid"] = self.get_uuid()
+            for name in sub_def_node["names"]:
+                self.add_name_to_uuid(sub_def_node, name, sub_def_node["target_uuid"])
 
         # assign ids to citation definitions
         for citation_node in self.document.citations:
             citation_id = self.get_uuid()
-            citation_node["citeid"] = citation_id
+            citation_node["target_uuid"] = citation_id
             for label in citation_node["names"]:
+                self.add_name_to_uuid(citation_node, label, citation_id)
                 if label in self.document.citation_refs:
                     for refnode in self.document.citation_refs[label]:
                         if "citerefid" not in refnode:
@@ -62,32 +128,31 @@ class VisitorRef2Target(nodes.GenericNodeVisitor):
         # assign ids to footnote definitions
         for footnode_node in self.document.footnotes:
             foot_id = self.get_uuid()
-            footnode_node["footid"] = foot_id
+            footnode_node["target_uuid"] = foot_id
             for label in footnode_node["names"]:
+                self.add_name_to_uuid(footnode_node, label, foot_id)
                 if label in self.document.footnote_refs:
                     for refnode in self.document.footnote_refs[label]:
                         if "footrefid" not in refnode:
                             refnode["footrefid"] = foot_id
         # TODO assign ids to auto-numbered / symbol footnote definitions
 
+    def add_name_to_uuid(self, node, name, nid):
+        self.name_to_uuid.append(
+            {"type": node.__class__.__name__, "name": name, "uuid": nid}
+        )
+
     def get_uuid(self):
         return str(uuid.uuid4())
 
-    def default_visit(self, node):
-        """Override for generic, uniform traversals."""
-        pass
-
-    def unknown_visit(self, node):
-        """Override for generic, uniform traversals."""
-        pass
-
     def visit_target(self, node):
         targetid = self.get_uuid()
-        node["targetid"] = targetid
+        node["target_uuid"] = targetid
         if node.get("anonymous"):
             self.anonymous_targets.append(node)
             return
         for name in node["names"]:
+            self.add_name_to_uuid(node, name, targetid)
             reflist = self.document.refnames.get(name, [])
             for ref in reflist:
                 if "targetrefid" not in ref:
@@ -112,7 +177,7 @@ class VisitorRef2Target(nodes.GenericNodeVisitor):
             )
             node["subrefid"] = False
         else:
-            node["subrefid"] = self.document.substitution_defs[key]["subdefid"]
+            node["subrefid"] = self.document.substitution_defs[key]["target_uuid"]
 
     def visit_citation_reference(self, node):
         if "citerefid" not in node:
@@ -127,6 +192,38 @@ class VisitorRef2Target(nodes.GenericNodeVisitor):
                     base_node=node,
                 )
             node["citerefid"] = False
+
+    def add_target_uuid(self, node):
+        if "names" in node and node["names"] and "target_uuid" not in node:
+            node["target_uuid"] = self.get_uuid()
+            for name in node.get("names", []):
+                self.add_name_to_uuid(node, name, node["target_uuid"])
+
+    # def visit_image(self, node):
+    #     self.add_target_uuid(node)
+
+    # def visit_figure(self, node):
+    #     self.add_target_uuid(node)
+
+    # def visit_table(self, node):
+    #     self.add_target_uuid(node)
+
+    # def visit_literal_block(self, node):
+    #     self.add_target_uuid(node)
+
+    def visit_math_block(self, node):
+        if "label" in node:
+            node["target_uuid"] = self.get_uuid()
+            self.add_name_to_uuid(node, node["label"], node["target_uuid"])
+
+    def default_visit(self, node):
+        """Override for generic, uniform traversals."""
+        # TODO ignore auto-numbered footnotes?
+        self.add_target_uuid(node)
+
+    def unknown_visit(self, node):
+        """Override for generic, uniform traversals."""
+        pass
 
 
 class DBElement(TypedDict):
@@ -171,7 +268,14 @@ class NestedElements:
 
     def __init__(self):
         self._entered_uuid = []
+        self._entered_data = []
         self._doc_symbols = []  # type: List[DocumentSymbol]
+
+    @property
+    def current_block(self):
+        if not self._entered_data:
+            return None
+        return self._entered_data[-1]
 
     def enter_block(self, node, data: DBElement):
         # logger.debug(f"entering node: {node}")
@@ -179,6 +283,7 @@ class NestedElements:
         node.uuid_value = uuid_value  # this is used to check consistency of exits
         self._add_doc_symbols(data)
         self._entered_uuid.append(uuid_value)
+        self._entered_data.append(data)
 
     def exit_block(self, node):
         # logger.debug(f"exiting node: {node}")
@@ -188,6 +293,7 @@ class NestedElements:
         except AttributeError:
             raise AssertionError("node property 'uuid_value' not set")
         self._entered_uuid.pop()
+        self._entered_data.pop()
         del node.uuid_value
 
     def add_inline(self, data: DBElement):
@@ -235,12 +341,6 @@ class VisitorLSP(nodes.GenericNodeVisitor):
     def __init__(self, document, source):
         super().__init__(document)
         self.source_lines = source.splitlines()
-        self.block2idname = {
-            "footnote": "footid",
-            "citation": "citeid",
-            "hyperlink_target": "targetid",
-            "substitution_def": "subdefid",
-        }
         self.db_entries = []
         self.nesting = NestedElements()
         self.current_inline = None
@@ -261,9 +361,8 @@ class VisitorLSP(nodes.GenericNodeVisitor):
         end_column = 0 if end_column < 0 else end_column
         return (start_indx, start_column, end_indx, end_column)
 
-    def unknown_visit(self, node):
-        """Override for generic, uniform traversals."""
-        if isinstance(node, LSPSection) and node.line_end is not None:
+    def visit_LSPSection(self, node):
+        if node.line_end is not None:
             start_indx, start_column, end_indx, end_column = self.get_block_range(
                 node.line_start, node.line_end
             )
@@ -282,99 +381,128 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             }
             self.db_entries.append(data)
             self.nesting.enter_block(node, data)
-        elif isinstance(node, LSPDirective):
-            start_indx, start_column, end_indx, end_column = self.get_block_range(
-                node.line_start, node.line_end
-            )
-            uuid_value = self.get_uuid()
-            data = {
-                "uuid": uuid_value,
-                "title": node.dname,
-                "parent_uuid": self.nesting.parent_uuid,
-                "block": True,
-                "type": "directive",
-                "startLine": start_indx,
-                "startCharacter": start_column,
-                "endLine": end_indx,
-                "endCharacter": end_column,
-                "dtype": node.dname,
-                "contentLine": node.line_content,
-                "contentIndent": node.content_indent + start_column
-                if node.content_indent
-                else None,
-                "arguments": node.arguments,
-                "options": node.options,
-                "klass": node.klass,
-            }
-            self.db_entries.append(data)
-            self.nesting.enter_block(node, data)
-        elif isinstance(node, LSPBlockTarget):
-            start_indx, start_column, end_indx, end_column = self.get_block_range(
-                node.line_start, node.line_end
-            )
-            uuid_value = self.get_uuid()
-            data = {
-                "uuid": uuid_value,
-                "title": node.etype,
-                "parent_uuid": self.nesting.parent_uuid,
-                "block": True,
-                "type": node.etype,
-                "startLine": start_indx,
-                "startCharacter": start_column,
-                "endLine": end_indx,
-                "endCharacter": end_column,
-            }
-            if node.etype in self.block2idname:
-                target = node.children[0].get(self.block2idname[node.etype], None)
-                if target is not None:
-                    data["targets"] = [target]
-            self.db_entries.append(data)
-            self.nesting.enter_block(node, data)
-        elif isinstance(node, LSPInline):
-            sline, scol, eline, ecol = node.attributes["position"]
-            data = {
-                "uuid": self.get_uuid(),
-                "title": node.attributes["type"],
-                "parent_uuid": self.nesting.parent_uuid,
-                "block": False,
-                "type": node.attributes["type"],
-                "startLine": sline,
-                "startCharacter": scol,
-                "endLine": eline,
-                "endCharacter": ecol,
-            }
-            if "role" in node.attributes:
-                data["title"] = node.attributes["role"]
-                data["rtype"] = node.attributes["role"]
-            self.current_inline = data
-            self.nesting.add_inline(data)
 
-    def unknown_departure(self, node):
-        """Override for generic, uniform traversals."""
-        if (
-            isinstance(node, (LSPSection, LSPDirective, LSPBlockTarget))
-            and node.line_end is not None
-        ):
+    def visit_LSPDirective(self, node):
+        start_indx, start_column, end_indx, end_column = self.get_block_range(
+            node.line_start, node.line_end
+        )
+        uuid_value = self.get_uuid()
+        data = {
+            "uuid": uuid_value,
+            "title": node.dname,
+            "parent_uuid": self.nesting.parent_uuid,
+            "block": True,
+            "type": "directive",
+            "startLine": start_indx,
+            "startCharacter": start_column,
+            "endLine": end_indx,
+            "endCharacter": end_column,
+            "dtype": node.dname,
+            "contentLine": node.line_content,
+            "contentIndent": node.content_indent + start_column
+            if node.content_indent
+            else None,
+            "arguments": node.arguments,
+            "options": node.options,
+            "klass": node.klass,
+        }
+        self.db_entries.append(data)
+        self.nesting.enter_block(node, data)
+
+    def visit_LSPBlockTarget(self, node):
+        start_indx, start_column, end_indx, end_column = self.get_block_range(
+            node.line_start, node.line_end
+        )
+        uuid_value = self.get_uuid()
+        data = {
+            "uuid": uuid_value,
+            "title": node.etype,
+            "parent_uuid": self.nesting.parent_uuid,
+            "block": True,
+            "type": node.etype,
+            "startLine": start_indx,
+            "startCharacter": start_column,
+            "endLine": end_indx,
+            "endCharacter": end_column,
+        }
+        target = node.children[0].get("target_uuid", None)
+        if target is not None:
+            data["targets"] = [target]
+        self.db_entries.append(data)
+        self.nesting.enter_block(node, data)
+
+    def visit_LSPInline(self, node):
+        sline, scol, eline, ecol = node.attributes["position"]
+        data = {
+            "uuid": self.get_uuid(),
+            "title": node.attributes["type"],
+            "parent_uuid": self.nesting.parent_uuid,
+            "block": False,
+            "type": node.attributes["type"],
+            "startLine": sline,
+            "startCharacter": scol,
+            "endLine": eline,
+            "endCharacter": ecol,
+        }
+        if "role" in node.attributes:
+            data["title"] = node.attributes["role"]
+            data["rtype"] = node.attributes["role"]
+        self.current_inline = data
+        self.nesting.add_inline(data)
+
+    def depart_LSPSection(self, node):
+        if node.line_end is not None:
             self.nesting.exit_block(node)
-        elif isinstance(node, LSPInline):
-            for key in ["targets", "refs_samedoc"]:
-                if key in self.current_inline:
-                    self.current_inline[key] = list(self.current_inline[key])
-            self.db_entries.append(self.current_inline)
-            self.current_inline = None
+
+    def depart_LSPDirective(self, node):
+        for key in ["targets", "refs_samedoc"]:
+            if key in self.nesting.current_block:
+                self.nesting.current_block[key] = list(self.nesting.current_block[key])
+        self.nesting.exit_block(node)
+
+    def depart_LSPBlockTarget(self, node):
+        self.nesting.exit_block(node)
+
+    def depart_LSPInline(self, node):
+        for key in ["targets", "refs_samedoc"]:
+            if key in self.current_inline:
+                self.current_inline[key] = list(self.current_inline[key])
+        self.db_entries.append(self.current_inline)
+        self.current_inline = None
+
+    def visit_pending_xref(self, node):
+        """deal with roles like ``:ref:`` and ``:numref:``"""
+        # attrs: {"refdoc", "refdomain", "reftype", "refexplicit", "refwarn", "reftarget"}
+        if self.current_inline is not None:
+            self.current_inline.setdefault("refs_multidoc", []).append(
+                {
+                    name: node[name]
+                    for name in ("refdomain", "reftype", "reftarget", "refexplicit")
+                }
+            )
 
     def default_visit(self, node):
+        data = None
         if self.current_inline is not None:
-            for target_attr in ("footid", "citeid", "targetid", "subdefid"):
-                if target_attr in node and node[target_attr]:
-                    self.current_inline.setdefault("targets", set()).add(
-                        node[target_attr]
-                    )
+            data = self.current_inline
+        elif (
+            self.nesting.current_block is not None
+            and self.nesting.current_block["type"] == "directive"
+        ):
+            data = self.nesting.current_block
+
+        if data is not None:
+            if "target_uuid" in node:
+                data.setdefault("targets", set()).add(node["target_uuid"])
             for ref_attr in ("footrefid", "citerefid", "targetrefid", "subrefid"):
                 if ref_attr in node and node[ref_attr]:
-                    self.current_inline.setdefault("refs_samedoc", set()).add(
-                        node[ref_attr]
-                    )
+                    data.setdefault("refs_samedoc", set()).add(node[ref_attr])
 
     def default_departure(self, node):
+        pass
+
+    def unknown_visit(self, node):
+        pass
+
+    def unknown_departure(self, node):
         pass

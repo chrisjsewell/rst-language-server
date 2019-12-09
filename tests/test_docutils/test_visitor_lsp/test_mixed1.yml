@@ -9,7 +9,7 @@ db_entries:
   - uuid_3
   title: hyperlink_target
   type: hyperlink_target
-  uuid: uuid_4
+  uuid: uuid_5
 - block: true
   endCharacter: 28
   endLine: 11
@@ -19,7 +19,7 @@ db_entries:
   startLine: 2
   title: title
   type: section
-  uuid: uuid_5
+  uuid: uuid_6
 - arguments: []
   block: true
   contentIndent: 3
@@ -29,89 +29,89 @@ db_entries:
   endLine: 8
   klass: docutils.parsers.rst.directives.admonitions.Note
   options: {}
-  parent_uuid: uuid_5
+  parent_uuid: uuid_6
   startCharacter: 0
   startLine: 5
   title: note
   type: directive
-  uuid: uuid_6
+  uuid: uuid_7
 - block: false
   endCharacter: 6
   endLine: 7
-  parent_uuid: uuid_6
+  parent_uuid: uuid_7
   refs_samedoc:
   - uuid_2
   startCharacter: 3
   startLine: 7
   title: ref_foot
   type: ref_foot
-  uuid: uuid_7
+  uuid: uuid_8
 - block: false
   endCharacter: 14
   endLine: 7
-  parent_uuid: uuid_6
+  parent_uuid: uuid_7
   refs_samedoc:
   - uuid_3
   startCharacter: 8
   startLine: 7
   title: ref_basic
   type: ref_basic
-  uuid: uuid_8
+  uuid: uuid_9
 - block: false
   endCharacter: 23
   endLine: 7
-  parent_uuid: uuid_6
+  parent_uuid: uuid_7
   refs_samedoc:
   - uuid_0
   startCharacter: 16
   startLine: 7
   title: ref_sub
   type: ref_sub
-  uuid: uuid_9
+  uuid: uuid_10
 - block: false
   endCharacter: 31
   endLine: 7
-  parent_uuid: uuid_6
+  parent_uuid: uuid_7
   refs_samedoc:
   - uuid_1
   startCharacter: 25
   startLine: 7
   title: ref_cite
   type: ref_cite
-  uuid: uuid_10
+  uuid: uuid_11
 - block: true
   endCharacter: 25
   endLine: 9
-  parent_uuid: uuid_5
+  parent_uuid: uuid_6
   startCharacter: 0
   startLine: 9
   targets:
   - uuid_2
   title: footnote
   type: footnote
-  uuid: uuid_11
+  uuid: uuid_12
 - block: true
   endCharacter: 29
   endLine: 10
-  parent_uuid: uuid_5
+  parent_uuid: uuid_6
   startCharacter: 0
   startLine: 10
   targets:
   - uuid_0
   title: substitution_def
   type: substitution_def
-  uuid: uuid_12
+  uuid: uuid_13
 - block: true
   endCharacter: 28
   endLine: 11
-  parent_uuid: uuid_5
+  parent_uuid: uuid_6
   startCharacter: 0
   startLine: 11
   targets:
   - uuid_1
   title: citation
   type: citation
-  uuid: uuid_13
+  uuid: uuid_14
 doc_symbols:
 - detail: 'type: hyperlink_target'
   kind: 8

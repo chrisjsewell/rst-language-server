@@ -261,7 +261,7 @@ class Document:
         if self._assessment is None:
             # TODO partial reassessment of source, given applied changes
             self._assessment = assess_source(
-                self.source, self.workspace.app_env, filename=self.uri
+                self.source, self.workspace.app_env, doc_uri=self.uri
             )
         return self._assessment
 

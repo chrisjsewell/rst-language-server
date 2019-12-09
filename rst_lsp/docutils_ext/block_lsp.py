@@ -256,7 +256,7 @@ class ExplicitMixin:
             arguments, options, content, content_offset = self.parse_directive_block(
                 indented, line_offset, directive, option_presets
             )
-        except nodes.MarkupError as detail:
+        except states.MarkupError as detail:
             error = self.reporter.error(
                 'Error in "%s" directive:\n%s.' % (type_name, " ".join(detail.args)),
                 nodes.literal_block(block_text, block_text),

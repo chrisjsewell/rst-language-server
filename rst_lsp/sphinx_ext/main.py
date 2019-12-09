@@ -32,7 +32,7 @@ from sphinx.util.docutils import sphinx_domains
 from rst_lsp.docutils_ext.block_lsp import RSTParserCustom
 from rst_lsp.docutils_ext.inliner_lsp import InlinerLSP
 from rst_lsp.docutils_ext.reporter import new_document
-from rst_lsp.docutils_ext.visitor_lsp import VisitorLSP, VisitorRef2Target
+from rst_lsp.docutils_ext.visitor_lsp import LSPTransform
 from rst_lsp.server.datatypes import DocumentSymbol
 
 
@@ -41,6 +41,7 @@ class SphinxAppEnv:
     app: Sphinx = attr.ib()
     roles: dict = attr.ib()
     directives: dict = attr.ib()
+    additional_nodes: set = attr.ib()
     stream_status: IO = attr.ib()
     stream_error: IO = attr.ib()
 
@@ -86,6 +87,7 @@ def create_sphinx_app(
         with patch_docutils(confdir), docutils_namespace():
             from docutils.parsers.rst.directives import _directives
             from docutils.parsers.rst.roles import _roles
+            from sphinx.util.docutils import additional_nodes
 
             app = Sphinx(
                 sourcedir,
@@ -102,6 +104,7 @@ def create_sphinx_app(
             )
             roles = copy.copy(_roles)
             directives = copy.copy(_directives)
+            additional_nodes = copy.copy(additional_nodes)
 
     except (Exception, KeyboardInterrupt) as exc:
         # handle_exception(app, args, exc, error)
@@ -112,7 +115,9 @@ def create_sphinx_app(
         if not output_dir:
             shutil.rmtree(outputdir, ignore_errors=True)
 
-    return SphinxAppEnv(app, roles, directives, log_stream_status, log_stream_warning)
+    return SphinxAppEnv(
+        app, roles, directives, additional_nodes, log_stream_status, log_stream_warning
+    )
 
 
 @contextmanager
@@ -120,18 +125,21 @@ def sphinx_env(app_env: SphinxAppEnv):
     with patch_docutils(app_env.app.confdir), docutils_namespace():
         from docutils.parsers.rst.directives import _directives
         from docutils.parsers.rst.roles import _roles
+        from sphinx.util.docutils import register_node
 
         if app_env.roles:
             _roles.update(app_env.roles)
         if app_env.directives:
             _directives.update(app_env.directives)
+        for node in app_env.additional_nodes:
+            register_node(node)
 
         with sphinx_domains(app_env.app.env):
             yield
 
 
 def retrieve_namespace(app_env: SphinxAppEnv):
-    """Retrieve all available roles and directives."""
+    """Retrieve all available roles, directives and additional nodes."""
     # regarding the ``_roles`` and ``_directives`` mapping;
     # sphinx presumably checks loads all roles/directives,
     # when it loads its internal and conf specified extensions,
@@ -170,16 +178,17 @@ def retrieve_namespace(app_env: SphinxAppEnv):
     return all_roles, all_directives
 
 
-@attr.s
+@attr.s(kw_only=True)
 class SourceAssessResult:
     doctree: document = attr.ib()
     elements: List[dict] = attr.ib()
+    name_to_target: List[dict] = attr.ib()
     doc_symbols: List[DocumentSymbol] = attr.ib()
     linting: List[dict] = attr.ib()
 
 
 def assess_source(
-    content: str, app_env: SphinxAppEnv, filename: str = "input.rst",
+    content: str, app_env: SphinxAppEnv, doc_uri: str = "input.rst",
 ) -> SourceAssessResult:
     """Assess the content of an file.
 
@@ -197,10 +206,10 @@ def assess_source(
     """
     with sphinx_env(app_env):
 
-        # TODO maybe sub-class sphinx.io.SphinxStandaloneReader?
+        # TODO look at sphinx.io.read_doc function, that is used for sphinx parsing
         # (see also sphinx.testing.restructuredtext.parse, for a basic implementation)
         settings = OptionParser(components=(RSTParser,)).get_default_values()
-        app_env.app.env.prepare_settings(filename)
+        app_env.app.env.prepare_settings(doc_uri)
         settings.env = app_env.app.env
         doc_warning_stream = StringIO()
         settings.warning_stream = doc_warning_stream
@@ -209,7 +218,7 @@ def assess_source(
         # The level at or above which `SystemMessage` exceptions
         # will be raised, halting execution.
 
-        document, reporter = new_document(content, settings=settings)
+        document, reporter = new_document(doc_uri, settings=settings)
 
         parser = RSTParserCustom(inliner=InlinerLSP(doc_text=content))
         try:
@@ -217,14 +226,13 @@ def assess_source(
         except SystemMessage:
             pass
 
-        visitor_ref = VisitorRef2Target(document)
-        document.walk(visitor_ref)
-        visitor_lsp = VisitorLSP(document, content)
-        document.walkabout(visitor_lsp)
+        transform = LSPTransform(document)
+        transform.apply(content)
 
     return SourceAssessResult(
-        document,
-        visitor_lsp.db_entries,
-        visitor_lsp.nesting.document_symbols,
-        reporter.log_capture,
+        doctree=document,
+        elements=transform.db_entries,
+        name_to_target=transform.name_to_uuid,
+        doc_symbols=transform.document_symbols,
+        linting=reporter.log_capture,
     )

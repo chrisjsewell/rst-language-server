@@ -1,8 +1,8 @@
 <document source="test data">
     <LSPBlockTarget end_line="0" start_line="0" type="hyperlink_target">
-        <target ids="ref" names="ref" targetid="uuid_3">
+        <target ids="ref" names="ref" target_uuid="uuid_3">
     <LSPBlockTarget end_line="2" start_line="2" type="hyperlink_target">
-        <target anonymous="1" ids="id1" refuri="anonymous" targetid="uuid_4">
+        <target anonymous="1" ids="id1" refuri="anonymous" target_uuid="uuid_4">
     <paragraph>
         <LSPInline position="4 0 4 3" type="ref_basic">
             <reference name="ref" refname="ref" targetrefid="uuid_3">
@@ -15,7 +15,7 @@
         <LSPInline position="4 12 4 27" type="ref_phrase">
             <reference name="phrase" refname="ref" targetrefid="uuid_3">
                 phrase
-            <target names="phrase" refname="ref" targetid="uuid_5" targetrefid="uuid_3">
+            <target names="phrase" refname="ref" target_uuid="uuid_5" targetrefid="uuid_3">
          
         <LSPInline position="4 29 4 33" type="ref_basic">
             <reference name="ref2" refname="ref2" targetrefid="uuid_6">
@@ -30,7 +30,7 @@
                 unknown
     <paragraph>
         <LSPInline position="6 0 6 6" type="target_inline">
-            <target ids="ref2" names="ref2" targetid="uuid_6">
+            <target ids="ref2" names="ref2" target_uuid="uuid_6">
                 ref2
     <paragraph>
         <LSPInline position="8 0 8 7" type="ref_sub">
@@ -53,16 +53,16 @@
             <footnote_reference footrefid="uuid_2" ids="id4" refname="1">
                 1
     <LSPBlockTarget end_line="14" start_line="14" type="substitution_def">
-        <substitution_definition names="symbol" subdefid="uuid_0">
+        <substitution_definition names="symbol" target_uuid="uuid_0">
             <image alt="symbol" uri="symbol.png">
     <LSPBlockTarget end_line="15" start_line="15" type="citation">
-        <citation citeid="uuid_1" ids="cite" names="cite">
+        <citation ids="cite" names="cite" target_uuid="uuid_1">
             <label>
                 cite
             <paragraph>
                 This is a citation.
     <LSPBlockTarget end_line="17" start_line="16" type="footnote">
-        <footnote footid="uuid_2" ids="id5" names="1">
+        <footnote ids="id5" names="1" target_uuid="uuid_2">
             <label>
                 1
             <paragraph>

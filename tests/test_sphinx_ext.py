@@ -13,16 +13,30 @@ def test_retrieve_namespace(data_regression):
     )
 
 
-def test_1_linting(get_test_file_content, data_regression):
-    content = get_test_file_content("test1.rst")
+def test_basic_doctree(get_test_file_content, file_regression):
+    content = get_test_file_content("test_basic.rst")
+    app_env = create_sphinx_app(confoverrides={"extensions": ["sphinxcontrib.bibtex"]})
+    results = assess_source(content, app_env)
+    file_regression.check(results.doctree.pformat())
+
+
+def test_basic_linting(get_test_file_content, data_regression):
+    content = get_test_file_content("test_basic.rst")
     app_env = create_sphinx_app(confoverrides={"extensions": ["sphinxcontrib.bibtex"]})
     results = assess_source(content, app_env)
     # TODO inline errors from docutils refers to wrong line, if after line break
     data_regression.check(results.linting)
 
 
-def test_1_elements(get_test_file_content, data_regression):
-    content = get_test_file_content("test1.rst")
+def test_basic_name_to_target(get_test_file_content, data_regression):
+    content = get_test_file_content("test_basic.rst")
+    app_env = create_sphinx_app(confoverrides={"extensions": ["sphinxcontrib.bibtex"]})
+    results = assess_source(content, app_env)
+    data_regression.check(results.name_to_target)
+
+
+def test_basic_elements(get_test_file_content, data_regression):
+    content = get_test_file_content("test_basic.rst")
     app_env = create_sphinx_app(confoverrides={"extensions": ["sphinxcontrib.bibtex"]})
     results = assess_source(content, app_env)
     data_regression.check(results.elements)
@@ -42,8 +56,7 @@ def test_section_levels(get_test_file_content, data_regression):
     data_regression.check({"elements": results.elements, "linting": results.linting})
 
 
-def test_doctest(data_regression):
-    # NOTE this is used in example in rst_lsp.sphinx_ext example
+def test_sphinx_elements(file_regression, data_regression):
     from textwrap import dedent
 
     source = dedent(
@@ -54,6 +67,10 @@ def test_doctest(data_regression):
         -----
 
         :ref:`title`
+        :ref:`fig1`
+        :ref:`tbl1`
+        :eq:`eq1`
+        :numref:`code1`
         :cite:`citation`
         :unknown:`abc`
 
@@ -61,9 +78,44 @@ def test_doctest(data_regression):
 
             A note about |RST|
 
+        .. figure:: abc.png
+           :name: fig1
+
+        .. table:: Truth table for "not"
+            :widths: auto
+            :name: tbl1
+
+            =====  =====
+            A      not A
+            =====  =====
+            False  True
+            True   False
+            =====  =====
+
+        .. math::
+            :nowrap:
+            :label: eq1
+
+            \\begin{eqnarray}
+                y    & = & ax^2 + bx + c \\\\
+                f(x) & = & x^2 + 2xy + y^2
+            \\end{eqnarray}
+
+        .. code-block:: python::
+            :name: code1
+
+            pass
+
         .. |RST| replace:: ReStructuredText
         """
     )
     app_env = create_sphinx_app(confoverrides={"extensions": ["sphinxcontrib.bibtex"]})
     results = assess_source(source, app_env)
-    data_regression.check({"lints": results.linting, "elements": results.elements})
+    file_regression.check(results.doctree.pformat())
+    data_regression.check(
+        {
+            "lints": results.linting,
+            "elements": results.elements,
+            "name_to_uuid": results.name_to_target,
+        }
+    )
