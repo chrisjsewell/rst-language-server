@@ -1,4 +1,4 @@
-db_entries:
+db_positions:
 - block: true
   endCharacter: 9
   endLine: 18
@@ -99,6 +99,27 @@ db_entries:
   title: title
   type: role
   uuid: uuid_14
+db_references:
+- classes: []
+  node: section
+  position_uuid: uuid_5
+  target: uuid_0
+- classes: []
+  node: section
+  position_uuid: uuid_7
+  target: uuid_1
+- classes: []
+  node: section
+  position_uuid: uuid_9
+  target: uuid_2
+- classes: []
+  node: section
+  position_uuid: uuid_11
+  target: uuid_3
+- classes: []
+  node: section
+  position_uuid: uuid_13
+  target: uuid_4
 doc_symbols:
 - children:
   - detail: 'type: role'

@@ -8,8 +8,8 @@ The visitor should be run via the ``LSPTransform`` class::
     transform = LSPTransform(document)
     transform.apply(source_content)
     transform.name_to_uuid
-    transform.db_entries
-    transform.document_symbols
+    transform.db_positions
+    transform.db_doc_symbols
 
 """
 import logging
@@ -48,16 +48,22 @@ class LSPTransform(Transform):
         return self._visitor_ref.name_to_uuid
 
     @property
-    def db_entries(self):
+    def db_positions(self):
         if self._visitor_lsp is None:
             raise AttributeError("must call `apply` first")
-        return self._visitor_lsp.db_entries
+        return self._visitor_lsp.db_positions
 
     @property
-    def document_symbols(self):
+    def db_references(self):
         if self._visitor_lsp is None:
             raise AttributeError("must call `apply` first")
-        return self._visitor_lsp.nesting.document_symbols
+        return self._visitor_lsp.db_references
+
+    @property
+    def db_doc_symbols(self):
+        if self._visitor_lsp is None:
+            raise AttributeError("must call `apply` first")
+        return self._visitor_lsp.nesting.db_doc_symbols
 
     def apply(self, source_content):
         remove = []
@@ -175,7 +181,7 @@ class VisitorRef2Target(nodes.GenericNodeVisitor):
             self.document.reporter.warning(
                 f'Undefined substitution referenced: "{refname}".', base_node=node
             )
-            node["subrefid"] = False
+            node["subrefid"] = None
         else:
             node["subrefid"] = self.document.substitution_defs[key]["target_uuid"]
 
@@ -191,7 +197,7 @@ class VisitorRef2Target(nodes.GenericNodeVisitor):
                     f'Undefined citation referenced: "{refname}" {classes}.',
                     base_node=node,
                 )
-            node["citerefid"] = False
+            node["citerefid"] = None
 
     def add_target_uuid(self, node):
         if "names" in node and node["names"] and "target_uuid" not in node:
@@ -268,14 +274,7 @@ class NestedElements:
 
     def __init__(self):
         self._entered_uuid = []
-        self._entered_data = []
         self._doc_symbols = []  # type: List[DocumentSymbol]
-
-    @property
-    def current_block(self):
-        if not self._entered_data:
-            return None
-        return self._entered_data[-1]
 
     def enter_block(self, node, data: DBElement):
         # logger.debug(f"entering node: {node}")
@@ -283,7 +282,6 @@ class NestedElements:
         node.uuid_value = uuid_value  # this is used to check consistency of exits
         self._add_doc_symbols(data)
         self._entered_uuid.append(uuid_value)
-        self._entered_data.append(data)
 
     def exit_block(self, node):
         # logger.debug(f"exiting node: {node}")
@@ -293,7 +291,6 @@ class NestedElements:
         except AttributeError:
             raise AssertionError("node property 'uuid_value' not set")
         self._entered_uuid.pop()
-        self._entered_data.pop()
         del node.uuid_value
 
     def add_inline(self, data: DBElement):
@@ -331,7 +328,7 @@ class NestedElements:
         return None if not self._entered_uuid else self._entered_uuid[-1]
 
     @property
-    def document_symbols(self) -> List[DocumentSymbol]:
+    def db_doc_symbols(self) -> List[DocumentSymbol]:
         return self._doc_symbols
 
 
@@ -341,7 +338,8 @@ class VisitorLSP(nodes.GenericNodeVisitor):
     def __init__(self, document, source):
         super().__init__(document)
         self.source_lines = source.splitlines()
-        self.db_entries = []
+        self.db_positions = []
+        self.db_references = []
         self.nesting = NestedElements()
         self.current_inline = None
         # TODO add option to remove LSP nodes
@@ -379,7 +377,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
                 "endCharacter": end_column,
                 "level": node.level,
             }
-            self.db_entries.append(data)
+            self.db_positions.append(data)
             self.nesting.enter_block(node, data)
 
     def visit_LSPDirective(self, node):
@@ -406,7 +404,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             "options": node.options,
             "klass": node.klass,
         }
-        self.db_entries.append(data)
+        self.db_positions.append(data)
         self.nesting.enter_block(node, data)
 
     def visit_LSPBlockTarget(self, node):
@@ -425,10 +423,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             "endLine": end_indx,
             "endCharacter": end_column,
         }
-        target = node.children[0].get("target_uuid", None)
-        if target is not None:
-            data["targets"] = [target]
-        self.db_entries.append(data)
+        self.db_positions.append(data)
         self.nesting.enter_block(node, data)
 
     def visit_LSPInline(self, node):
@@ -447,7 +442,8 @@ class VisitorLSP(nodes.GenericNodeVisitor):
         if "role" in node.attributes:
             data["title"] = node.attributes["role"]
             data["rtype"] = node.attributes["role"]
-        self.current_inline = data
+        self.current_inline = data["uuid"]
+        self.db_positions.append(data)
         self.nesting.add_inline(data)
 
     def depart_LSPSection(self, node):
@@ -455,48 +451,68 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             self.nesting.exit_block(node)
 
     def depart_LSPDirective(self, node):
-        for key in ["targets", "refs_samedoc"]:
-            if key in self.nesting.current_block:
-                self.nesting.current_block[key] = list(self.nesting.current_block[key])
         self.nesting.exit_block(node)
 
     def depart_LSPBlockTarget(self, node):
         self.nesting.exit_block(node)
 
     def depart_LSPInline(self, node):
-        for key in ["targets", "refs_samedoc"]:
-            if key in self.current_inline:
-                self.current_inline[key] = list(self.current_inline[key])
-        self.db_entries.append(self.current_inline)
         self.current_inline = None
 
     def visit_pending_xref(self, node):
         """deal with roles like ``:ref:`` and ``:numref:``"""
-        # attrs: {"refdoc", "refdomain", "reftype", "refexplicit", "refwarn", "reftarget"}
+        parent_uuid = None
         if self.current_inline is not None:
-            self.current_inline.setdefault("refs_multidoc", []).append(
-                {
-                    name: node[name]
-                    for name in ("refdomain", "reftype", "reftarget", "refexplicit")
-                }
-            )
+            parent_uuid = self.current_inline
+        elif self.nesting.parent_uuid is not None:
+            parent_uuid = self.nesting.parent_uuid
+        if parent_uuid is not None:
+            data = {
+                "position_uuid": parent_uuid,
+                "node": node.__class__.__name__,
+                "classes": node.get("classes", []),
+                "same_doc": False,
+            }
+            for name in (
+                "refdomain",
+                "refexplicit",
+                "reftarget",
+                "reftype",
+                "refwarn",
+            ):
+                data[name] = node[name]
+
+            self.db_references.append(data)
 
     def default_visit(self, node):
-        data = None
+        parent_uuid = None
         if self.current_inline is not None:
-            data = self.current_inline
-        elif (
-            self.nesting.current_block is not None
-            and self.nesting.current_block["type"] == "directive"
-        ):
-            data = self.nesting.current_block
-
-        if data is not None:
-            if "target_uuid" in node:
-                data.setdefault("targets", set()).add(node["target_uuid"])
+            parent_uuid = self.current_inline
+        elif self.nesting.parent_uuid is not None:
+            parent_uuid = self.nesting.parent_uuid
+        if parent_uuid is not None:
+            if "target_uuid" in node and node["target_uuid"]:
+                self.db_references.append(
+                    {
+                        "position_uuid": parent_uuid,
+                        "node": node.__class__.__name__,
+                        "classes": node.get("classes", []),
+                        "target": node["target_uuid"],
+                    }
+                )
             for ref_attr in ("footrefid", "citerefid", "targetrefid", "subrefid"):
-                if ref_attr in node and node[ref_attr]:
-                    data.setdefault("refs_samedoc", set()).add(node[ref_attr])
+                if ref_attr in node:  # and node[ref_attr]:
+                    self.db_references.append(
+                        {
+                            "position_uuid": parent_uuid,
+                            "node": node.__class__.__name__,
+                            "classes": node.get("classes", []),
+                            "same_doc": True
+                            if not node.get("classes", False)
+                            else False,
+                            "reference": node[ref_attr],
+                        }
+                    )
 
     def default_departure(self, node):
         pass

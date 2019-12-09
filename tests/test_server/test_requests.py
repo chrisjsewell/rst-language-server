@@ -94,6 +94,8 @@ def test_document_symbols(client_server, data_regression):
 
 
 def test_completion(client_server, data_regression):
+    # TODO this is changing dependent on if it is called,
+    # when running all tests or just the test_request ones (removing roles)
     doc = open_test_doc(client_server, ":\n")
     response3 = client_server._endpoint.request(
         "text_document/completion",
@@ -102,11 +104,20 @@ def test_completion(client_server, data_regression):
     data_regression.check(response3)
 
 
-def test_hover(client_server, data_regression):
+def test_hover_role(client_server, data_regression):
     doc = open_test_doc(client_server, ":index:`abc`\n")
     response3 = client_server._endpoint.request(
         "text_document/hover",
-        {"textDocument": doc, "position": {"line": 0, "character": 1}},
+        {"textDocument": doc, "position": {"line": 0, "character": 4}},
+    ).result(timeout=CALL_TIMEOUT)
+    data_regression.check(response3)
+
+
+def test_hover_directive(client_server, data_regression):
+    doc = open_test_doc(client_server, ".. note::\n\n   Hi\n")
+    response3 = client_server._endpoint.request(
+        "text_document/hover",
+        {"textDocument": doc, "position": {"line": 0, "character": 4}},
     ).result(timeout=CALL_TIMEOUT)
     data_regression.check(response3)
 

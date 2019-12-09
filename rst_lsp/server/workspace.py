@@ -144,7 +144,8 @@ class Workspace(object):
             result = doc.get_assessment()  # type: SourceAssessResult
             self._db.update_doc(
                 doc.uri,
-                elements=result.elements,
+                positions=result.positions,
+                references=result.references,
                 doc_symbols=result.doc_symbols,
                 lints=result.linting,
             )

@@ -38,7 +38,7 @@
                 symbol
          
         <LSPInline position="8 9 8 17" type="ref_sub">
-            <substitution_reference refname="unknown" subrefid="False">
+            <substitution_reference refname="unknown" subrefid="True">
                 unknown
     <paragraph>
         <LSPInline position="10 0 10 6" type="ref_cite">
@@ -46,7 +46,7 @@
                 cite
          
         <LSPInline position="10 8 10 17" type="ref_cite">
-            <citation_reference citerefid="False" ids="id3" refname="unknown">
+            <citation_reference citerefid="True" ids="id3" refname="unknown">
                 unknown
     <paragraph>
         <LSPInline position="12 0 12 3" type="ref_foot">

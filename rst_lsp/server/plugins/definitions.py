@@ -15,35 +15,31 @@ def rst_definitions(
 
     database = document.workspace.database
     uri = document.uri
-    results = database.query_elements(
-        uri=uri, startLine=position["line"], has_keys=["refs_samedoc"]
+    result = database.query_at_position(
+        uri=uri, line=position["line"], character=position["character"]
     )
-    # TODO handle specific roles/directives, e.g. :ref: and :cite:
-    found_result = False
-    for result in results or []:
-        if result["startCharacter"] <= position["character"] and (
-            result["endLine"] != position["line"]
-            or position["character"] <= result["endCharacter"]
-        ):
-            found_result = True
-            break
-    if not found_result:
+    if result is None:
         return []
+
+    # TODO handle specific roles/directives, e.g. :ref: and :cite:
+    elements = database.query_definitions(uri=uri, position_uuid=result["uuid"])
+
     locations = []
-    for element in (
-        database.query_targets(uri=uri, refs_samedoc=result["refs_samedoc"]) or []
-    ):
+    for element in elements:
+        position = database.query_position_uuid(uuid=element["position_uuid"])
+        if not position:
+            continue
         locations.append(
             {
-                "uri": element["uri"],
+                "uri": position["uri"],
                 "range": {
                     "start": {
-                        "line": element["startLine"],
-                        "character": element["startCharacter"],
+                        "line": position["startLine"],
+                        "character": position["startCharacter"],
                     },
                     "end": {
-                        "line": element["endLine"],
-                        "character": element["endCharacter"],
+                        "line": position["endLine"],
+                        "character": position["endCharacter"],
                     },
                 },
             }

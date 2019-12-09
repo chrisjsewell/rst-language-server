@@ -60,7 +60,10 @@ class Database:
         # e.g. their uri and last time they were updated
         self._tbl_documents = self._db.table("documents")  # type: Table
         # stores information about the elements contained in each document
-        self._tbl_elements = self._db.table("elements")  # type: Table
+        self._tbl_positions = self._db.table("positions")  # type: Table
+        # stores information references and targets,
+        # linking back to uuids in the positions table
+        self._tbl_references = self._db.table("references")  # type: Table
         # stores the document symbols nested mapping for each document
         # TODO is there a better way to store this?
         self._tbl_doc_symbols = self._db.table("doc_symbols")  # type: Table
@@ -145,14 +148,23 @@ class Database:
             db_docs.append(doc)
         self._tbl_linting.insert_multiple(db_docs)
 
-    def _update_doc_elements(self, uri: str, elements: List[dict]):
-        self._tbl_elements.remove(where("uri") == uri)
+    def _update_doc_positions(self, uri: str, positions: List[dict]):
+        self._tbl_positions.remove(where("uri") == uri)
         db_docs = []
-        for element in elements:
+        for element in positions:
             doc = {"uri": uri}
             doc.update(element)
             db_docs.append(doc)
-        self._tbl_elements.insert_multiple(db_docs)
+        self._tbl_positions.insert_multiple(db_docs)
+
+    def _update_doc_references(self, uri: str, references: List[dict]):
+        self._tbl_references.remove(where("uri") == uri)
+        db_docs = []
+        for element in references:
+            doc = {"uri": uri}
+            doc.update(element)
+            db_docs.append(doc)
+        self._tbl_references.insert_multiple(db_docs)
 
     def _update_doc_symbols(self, uri: str, doc_symbols: List[dict]):
         self._tbl_doc_symbols.remove(where("uri") == uri)
@@ -161,7 +173,8 @@ class Database:
     def update_doc(
         self,
         uri: str,
-        elements: List[dict],
+        positions: List[dict],
+        references: List[dict],
         doc_symbols: List[dict],
         lints: List[dict],
     ):
@@ -169,7 +182,8 @@ class Database:
             {"dtype": "rst", "uri": uri, "modified": self.get_current_time()},
             (where("dtype") == "rst") & (where("uri") == uri),
         )
-        self._update_doc_elements(uri, elements)
+        self._update_doc_positions(uri, positions)
+        self._update_doc_references(uri, references)
         self._update_doc_symbols(uri, doc_symbols)
         self._update_doc_lint(uri, lints)
 
@@ -193,7 +207,37 @@ class Database:
         if doc_symbols is not None:
             return doc_symbols["doc_symbols"]
 
-    def query_elements(
+    def query_position_uuid(self, uuid: str):
+        return self._tbl_positions.get(where("uuid") == uuid)
+
+    def query_at_position(self, uri: str, line: int, character: int, **kwargs):
+        query = where("uri") == uri
+        for key, value in kwargs.items():
+            if isinstance(value, tuple):
+                query = (query) & (where(key).one_of(value))
+            else:
+                query = (query) & (where(key) == value)
+        query = (query) & (where("startLine") <= line) & (where("endLine") >= line)
+        # find the result that has the smallest line range
+        # TODO also smallest character range?
+        final_result = None
+        final_line_range = None
+        for result in self._tbl_positions.search(query) or []:
+            if line == result["startLine"] and character < result["startCharacter"]:
+                continue
+            if line == result["endLine"] and character > result["endCharacter"]:
+                continue
+            line_range = result["endLine"] - result["startLine"]
+            if final_result is None:
+                final_line_range = line_range
+                final_result = result
+                continue
+            if line_range < final_line_range:
+                final_line_range = line_range
+                final_result = result
+        return final_result
+
+    def query_positions(
         self,
         *,
         uri: Optional[Union[str, tuple]] = NotSet(),
@@ -201,17 +245,10 @@ class Database:
         etype: Optional[Union[str, tuple]] = NotSet(),
         parent_uuid: Optional[Union[str, tuple]] = NotSet(),
         uuid: Optional[Union[str, tuple]] = NotSet(),
-        has_keys: List[str] = (),
         **kwargs
-        # TODO it would be ideal if uuid and database.table.doc_id were the same thing
         # TODO match within range
     ):
-        if has_keys:
-            query = where(has_keys[0]).exists()
-            for key in has_keys[1:]:
-                query = (query) & (where(key).exists())
-        else:
-            query = None
+        query = None
         for value, key in [
             (uri, "uri"),
             (etype, "type"),
@@ -231,23 +268,44 @@ class Database:
                 query = (query) & (key_query)
 
         if query is None:
-            return self._tbl_elements.all()
-        return self._tbl_elements.search(query)
+            return self._tbl_positions.all()
+        return self._tbl_positions.search(query)
 
-    def query_targets(
-        self, uri: str, refs_samedoc: List[str], *, target_key="targets",
-    ):
-        def contains_ref(targets):
-            return True if set(targets).intersection(refs_samedoc) else False
+    def query_references(self, uri: str, position_uuid: str):
+        query = (where("uri") == uri) & (where("position_uuid") == position_uuid)
+        results = self._tbl_references.search(query) or []
+        all_results = []
+        for result in results:
+            if result.get("target", None) or result.get("reference", None):
+                all_results.append(result)
+            if result.get("target", None):
+                query = (
+                    (where("uri") == uri)
+                    & (where("position_uuid") != position_uuid)
+                    & (where("reference") == result["target"])
+                )
+                all_results.extend(self._tbl_references.search(query) or [])
+            if result.get("reference", None):
+                query = (
+                    (where("uri") == uri)
+                    & (where("position_uuid") != position_uuid)
+                    & (where("target") == result["reference"])
+                )
+                all_results.extend(self._tbl_references.search(query) or [])
+                query = (
+                    (where("uri") == uri)
+                    & (where("position_uuid") != position_uuid)
+                    & (where("reference") == result["reference"])
+                )
+                all_results.extend(self._tbl_references.search(query) or [])
+        return all_results
 
-        query = (where("uri") == uri) & (where(target_key).test(contains_ref))
-        return self._tbl_elements.search(query)
-
-    def query_references(
-        self, uri: str, targets: List[str], *, ref_key="refs_samedoc",
-    ):
-        def contains_targets(refs):
-            return True if set(refs).intersection(targets) else False
-
-        query = (where("uri") == uri) & (where(ref_key).test(contains_targets))
-        return self._tbl_elements.search(query)
+    def query_definitions(self, uri: str, position_uuid: str):
+        query = (where("uri") == uri) & (where("position_uuid") == position_uuid)
+        results = self._tbl_references.search(query) or []
+        all_results = []
+        for result in results:
+            if result.get("reference", None):
+                query = (where("uri") == uri) & (where("target") == result["reference"])
+                all_results.extend(self._tbl_references.search(query) or [])
+        return all_results

@@ -35,7 +35,7 @@
                             code1
                 
                 <LSPInline position="10 0 10 15" role="cite" type="role">
-                    <citation_reference citerefid="False" classes="bibtex" ids="id2" refname="citation">
+                    <citation_reference citerefid="True" classes="bibtex" ids="id2" refname="citation">
                         citation
                 
                 <problematic ids="id4" refid="id3">

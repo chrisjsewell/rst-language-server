@@ -148,70 +148,6 @@ items:
   insertTextFormat: 2
   kind: 3
   label: restructuredtext-unimplemented-role
-- detail: 'Module: docutils.parsers.rst.roles'
-  documentation: 'Generic interpreted text role, where the interpreted text is simply
-
-    wrapped with the provided node class.'
-  insertText: title:`$0`
-  insertTextFormat: 2
-  kind: 3
-  label: title
-- detail: 'Module: docutils.parsers.rst.roles'
-  documentation: 'Generic interpreted text role, where the interpreted text is simply
-
-    wrapped with the provided node class.'
-  insertText: ab:`$0`
-  insertTextFormat: 2
-  kind: 3
-  label: ab
-- detail: 'Module: docutils.parsers.rst.roles'
-  documentation: 'Generic interpreted text role, where the interpreted text is simply
-
-    wrapped with the provided node class.'
-  insertText: ac:`$0`
-  insertTextFormat: 2
-  kind: 3
-  label: ac
-- detail: 'Module: docutils.parsers.rst.roles'
-  documentation: 'Generic interpreted text role, where the interpreted text is simply
-
-    wrapped with the provided node class.'
-  insertText: sup:`$0`
-  insertTextFormat: 2
-  kind: 3
-  label: sup
-- detail: 'Module: docutils.parsers.rst.roles'
-  documentation: 'Generic interpreted text role, where the interpreted text is simply
-
-    wrapped with the provided node class.'
-  insertText: sub:`$0`
-  insertTextFormat: 2
-  kind: 3
-  label: sub
-- detail: 'Module: docutils.parsers.rst.roles'
-  documentation: Wrapper for custom interpreted text roles.
-  insertText: tex:`$0`
-  insertTextFormat: 2
-  kind: 3
-  label: tex
-- detail: 'Module: docutils.parsers.rst.roles'
-  documentation: Wrapper for custom interpreted text roles.
-  insertText: python:`$0`
-  insertTextFormat: 2
-  kind: 3
-  label: python
-- detail: 'Module: sphinx.roles'
-  documentation: ''
-  insertText: pep:`$0`
-  insertTextFormat: 2
-  kind: 3
-  label: pep
-- detail: 'Module: sphinx.roles'
-  documentation: ''
-  insertText: rfc:`$0`
-  insertTextFormat: 2
-  kind: 3
-  label: rfc
 - detail: 'Module: sphinx.domains.math'
   documentation: ''
   insertText: eq:`$0`
@@ -299,6 +235,18 @@ items:
   insertTextFormat: 2
   kind: 3
   label: any
+- detail: 'Module: sphinx.roles'
+  documentation: ''
+  insertText: pep:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: pep
+- detail: 'Module: sphinx.roles'
+  documentation: ''
+  insertText: rfc:`$0`
+  insertTextFormat: 2
+  kind: 3
+  label: rfc
 - detail: 'Module: sphinx.roles'
   documentation: ''
   insertText: guilabel:`$0`

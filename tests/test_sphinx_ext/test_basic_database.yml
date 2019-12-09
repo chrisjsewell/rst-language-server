@@ -1,11 +1,77 @@
+linting:
+- description: Unknown interpreted text role "sdf".
+  level: 3
+  line: 26
+  source: docutils
+  type: ERROR
+- description: "Unknown directive type \"dsfsdf\".\n\n.. dsfsdf::\n\n    import a\n"
+  level: 3
+  line: 32
+  source: docutils
+  type: ERROR
+- description: Unknown interpreted text role "sdf".
+  level: 3
+  line: 45
+  source: docutils
+  type: ERROR
+- description: Unknown interpreted text role "abcf".
+  level: 3
+  line: 45
+  source: docutils
+  type: ERROR
+- description: 'Substitution definition "REF4" empty or invalid.
+
+
+    .. |REF4| replace: bad syntax
+
+    '
+  level: 2
+  line: 56
+  source: docutils
+  type: WARNING
+- description: 'Undefined substitution referenced: "REF3".'
+  level: 2
+  line: 47
+  source: docutils
+  type: WARNING
+name_to_uuid:
+- name: REF1
+  type: substitution_definition
+  uuid: uuid_0
+- name: REF2
+  type: substitution_definition
+  uuid: uuid_1
+- name: headerlink
+  type: target
+  uuid: uuid_2
+- name: header 1
+  type: section
+  uuid: uuid_3
+- name: sub-title
+  type: section
+  uuid: uuid_4
+- name: http://www.python.org/
+  type: target
+  uuid: uuid_5
+- name: a link to python
+  type: target
+  uuid: uuid_6
+- name: header 2
+  type: section
+  uuid: uuid_7
+- name: ref3
+  type: target
+  uuid: uuid_8
+- name: fn1
+  type: footnote
+  uuid: uuid_9
+positions:
 - block: true
   endCharacter: 14
   endLine: 1
   parent_uuid: null
   startCharacter: 0
   startLine: 1
-  targets:
-  - uuid_2
   title: hyperlink_target
   type: hyperlink_target
   uuid: uuid_10
@@ -92,8 +158,6 @@
   parent_uuid: uuid_16
   startCharacter: 0
   startLine: 22
-  targets:
-  - uuid_5
   title: ref_phrase
   type: ref_phrase
   uuid: uuid_17
@@ -118,8 +182,6 @@
   parent_uuid: uuid_18
   startCharacter: 12
   startLine: 26
-  targets:
-  - uuid_6
   title: ref_phrase
   type: ref_phrase
   uuid: uuid_19
@@ -157,11 +219,6 @@
   endCharacter: 16
   endLine: 39
   parent_uuid: uuid_20
-  refs_multidoc:
-  - refdomain: std
-    refexplicit: false
-    reftarget: headerlink
-    reftype: ref
   rtype: ref
   startCharacter: 0
   startLine: 39
@@ -172,8 +229,6 @@
   endCharacter: 5
   endLine: 47
   parent_uuid: uuid_20
-  refs_samedoc:
-  - uuid_0
   startCharacter: 0
   startLine: 47
   title: ref_sub
@@ -183,8 +238,6 @@
   endCharacter: 19
   endLine: 47
   parent_uuid: uuid_20
-  refs_samedoc:
-  - uuid_1
   startCharacter: 14
   startLine: 47
   title: ref_sub
@@ -203,8 +256,6 @@
   endCharacter: 12
   endLine: 49
   parent_uuid: uuid_20
-  refs_samedoc:
-  - uuid_2
   startCharacter: 2
   startLine: 49
   title: ref_basic
@@ -225,8 +276,6 @@
   parent_uuid: uuid_20
   startCharacter: 0
   startLine: 53
-  targets:
-  - uuid_0
   title: substitution_def
   type: substitution_def
   uuid: uuid_29
@@ -236,8 +285,6 @@
   parent_uuid: uuid_20
   startCharacter: 0
   startLine: 54
-  targets:
-  - uuid_1
   title: substitution_def
   type: substitution_def
   uuid: uuid_30
@@ -247,8 +294,6 @@
   parent_uuid: uuid_20
   startCharacter: 0
   startLine: 55
-  targets:
-  - uuid_8
   title: hyperlink_target
   type: hyperlink_target
   uuid: uuid_31
@@ -267,8 +312,88 @@
   parent_uuid: uuid_20
   startCharacter: 0
   startLine: 58
-  targets:
-  - uuid_9
   title: footnote
   type: footnote
   uuid: uuid_33
+references:
+- classes: []
+  node: target
+  position_uuid: uuid_10
+  target: uuid_2
+- classes: []
+  node: section
+  position_uuid: uuid_11
+  target: uuid_3
+- classes: []
+  node: section
+  position_uuid: uuid_16
+  target: uuid_4
+- classes: []
+  node: target
+  position_uuid: uuid_17
+  target: uuid_5
+- classes: []
+  node: target
+  position_uuid: uuid_19
+  target: uuid_6
+- classes: []
+  node: section
+  position_uuid: uuid_20
+  target: uuid_7
+- classes:
+  - bibtex
+  node: citation_reference
+  position_uuid: uuid_21
+  reference: null
+  same_doc: false
+- classes:
+  - bibtex
+  node: citation_reference
+  position_uuid: uuid_22
+  reference: null
+  same_doc: false
+- classes: []
+  node: pending_xref
+  position_uuid: uuid_23
+  refdomain: std
+  refexplicit: false
+  reftarget: headerlink
+  reftype: ref
+  refwarn: true
+  same_doc: false
+- classes: []
+  node: substitution_reference
+  position_uuid: uuid_24
+  reference: uuid_0
+  same_doc: true
+- classes: []
+  node: substitution_reference
+  position_uuid: uuid_25
+  reference: uuid_1
+  same_doc: true
+- classes: []
+  node: substitution_reference
+  position_uuid: uuid_26
+  reference: null
+  same_doc: true
+- classes: []
+  node: reference
+  position_uuid: uuid_27
+  reference: uuid_2
+  same_doc: true
+- classes: []
+  node: substitution_definition
+  position_uuid: uuid_29
+  target: uuid_0
+- classes: []
+  node: substitution_definition
+  position_uuid: uuid_30
+  target: uuid_1
+- classes: []
+  node: target
+  position_uuid: uuid_31
+  target: uuid_8
+- classes: []
+  node: footnote
+  position_uuid: uuid_33
+  target: uuid_9

@@ -85,7 +85,11 @@ def test_sections(data_regression):
     transform = LSPTransform(document)
     transform.apply(source)
     data_regression.check(
-        {"db_entries": transform.db_entries, "doc_symbols": transform.document_symbols}
+        {
+            "db_positions": transform.db_positions,
+            "doc_symbols": transform.db_doc_symbols,
+            "db_references": transform.db_references,
+        }
     )
 
 
@@ -105,7 +109,11 @@ def test_target_refs(data_regression):
     transform = LSPTransform(document)
     transform.apply(source)
     data_regression.check(
-        {"db_entries": transform.db_entries, "doc_symbols": transform.document_symbols}
+        {
+            "db_positions": transform.db_positions,
+            "doc_symbols": transform.db_doc_symbols,
+            "db_references": transform.db_references,
+        }
     )
 
 
@@ -123,7 +131,11 @@ def test_directives(data_regression):
     transform = LSPTransform(document)
     transform.apply(source)
     data_regression.check(
-        {"db_entries": transform.db_entries, "doc_symbols": transform.document_symbols}
+        {
+            "db_positions": transform.db_positions,
+            "doc_symbols": transform.db_doc_symbols,
+            "db_references": transform.db_references,
+        }
     )
 
 
@@ -148,5 +160,9 @@ def test_mixed1(data_regression):
     transform = LSPTransform(document)
     transform.apply(source)
     data_regression.check(
-        {"db_entries": transform.db_entries, "doc_symbols": transform.document_symbols}
+        {
+            "db_positions": transform.db_positions,
+            "doc_symbols": transform.db_doc_symbols,
+            "db_references": transform.db_references,
+        }
     )

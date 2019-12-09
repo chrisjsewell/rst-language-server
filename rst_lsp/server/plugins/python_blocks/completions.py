@@ -52,49 +52,45 @@ def rst_completions(
     database = workspace.database
     uri = document.uri
 
-    results = (
-        database.query_elements(
-            etype="directive",
-            uri=uri,
-            dtype=("code", "code-block"),
-            arguments=["python"],
-        )
-        or []
+    result = database.query_at_position(
+        uri=uri,
+        line=position["line"],
+        character=position["character"],
+        type="directive",
+        dtype=("code", "code-block"),
+        arguments=["python"],
     )
+    if (
+        result is None
+        or (result["contentLine"] is None)
+        or (position["line"] < result["contentLine"])
+        or (position["character"] < result["contentIndent"])
+    ):
+        return None
 
-    for result in results:
-        if not (
-            position["line"] >= result["contentLine"]
-            and position["line"] <= result["endLine"]
-            and position["character"] >= result["contentIndent"]
-        ):
-            continue
+    lines = document.lines[result["contentLine"] : result["endLine"] + 1]
+    text = "\n".join([l[result["contentIndent"] :].rstrip() for l in lines])
+    # TODO add warning message, if jedi not installed
+    import jedi
 
-        lines = document.lines[result["contentLine"] : result["endLine"] + 1]
-        text = "\n".join([l[result["contentIndent"] :].rstrip() for l in lines])
-        # TODO add warning message, if jedi not installed
-        import jedi
-
-        definitions = jedi.Script(
-            source=text,
-            line=position["line"] - result["contentLine"] + 1,
-            column=position["character"] - result["contentIndent"],
-        ).completions()
-        if not definitions:
-            return None
-        return [
-            {
-                "label": _label(d),
-                "kind": _TYPE_MAP.get(d.type),
-                "detail": _detail(d),
-                "documentation": format_docstring(d.docstring()),
-                "sortText": _sort_text(d),
-                "insertText": d.name,
-            }
-            for d in definitions
-        ] or None
-
-    return None
+    definitions = jedi.Script(
+        source=text,
+        line=position["line"] - result["contentLine"] + 1,
+        column=position["character"] - result["contentIndent"],
+    ).completions()
+    if not definitions:
+        return None
+    return [
+        {
+            "label": _label(d),
+            "kind": _TYPE_MAP.get(d.type),
+            "detail": _detail(d),
+            "documentation": format_docstring(d.docstring()),
+            "sortText": _sort_text(d),
+            "insertText": d.name,
+        }
+        for d in definitions
+    ] or None
 
 
 def _label(definition):

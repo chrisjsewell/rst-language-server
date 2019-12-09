@@ -1,4 +1,4 @@
-db_entries:
+db_positions:
 - arguments:
   - python
   block: true
@@ -32,6 +32,7 @@ db_entries:
   title: image
   type: directive
   uuid: uuid_1
+db_references: []
 doc_symbols:
 - detail: 'type: directive'
   kind: 5

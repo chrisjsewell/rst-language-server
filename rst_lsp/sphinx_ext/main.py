@@ -181,7 +181,8 @@ def retrieve_namespace(app_env: SphinxAppEnv):
 @attr.s(kw_only=True)
 class SourceAssessResult:
     doctree: document = attr.ib()
-    elements: List[dict] = attr.ib()
+    positions: List[dict] = attr.ib()
+    references: List[dict] = attr.ib()
     name_to_target: List[dict] = attr.ib()
     doc_symbols: List[DocumentSymbol] = attr.ib()
     linting: List[dict] = attr.ib()
@@ -231,8 +232,9 @@ def assess_source(
 
     return SourceAssessResult(
         doctree=document,
-        elements=transform.db_entries,
+        positions=transform.db_positions,
+        references=transform.db_references,
         name_to_target=transform.name_to_uuid,
-        doc_symbols=transform.document_symbols,
+        doc_symbols=transform.db_doc_symbols,
         linting=reporter.log_capture,
     )

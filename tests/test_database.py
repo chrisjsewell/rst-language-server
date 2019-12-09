@@ -81,7 +81,7 @@ def test_update_doc_lint(tmp_path):
 
 def test_update_doc_elements(tmp_path):
     database = Database(str(tmp_path / "db.json"))
-    database._update_doc_elements(
+    database._update_doc_positions(
         "test.rst",
         [
             {
@@ -102,8 +102,8 @@ def test_update_doc_elements(tmp_path):
             },
         ],
     )
-    assert len(database._tbl_elements) == 2
-    database._update_doc_elements(
+    assert len(database._tbl_positions) == 2
+    database._update_doc_positions(
         "test.rst",
         [
             {
@@ -115,4 +115,4 @@ def test_update_doc_elements(tmp_path):
             },
         ],
     )
-    assert len(database._tbl_elements) == 1
+    assert len(database._tbl_positions) == 1

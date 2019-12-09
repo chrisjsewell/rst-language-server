@@ -15,51 +15,31 @@ def rst_references(
     # Include the declaration of the current symbol
     database = document.workspace.database
     uri = document.uri
-    results = (
-        database.query_elements(
-            uri=uri, startLine=position["line"], has_keys=["targets"]
-        )
-        or []
+    result = database.query_at_position(
+        uri=uri, line=position["line"], character=position["character"]
     )
-    results += (
-        database.query_elements(
-            uri=uri, startLine=position["line"], has_keys=["refs_samedoc"]
-        )
-        or []
-    )
-    # TODO handle specific roles/directives, e.g. :ref: and :cite:
-    found_result = False
-    for result in results or []:
-        if result["startCharacter"] <= position["character"] and (
-            result["endLine"] != position["line"]
-            or position["character"] <= result["endCharacter"]
-        ):
-            found_result = True
-            break
-    if not found_result:
+    if result is None:
         return []
+
+    # TODO handle specific roles/directives, e.g. :ref: and :cite:
+    elements = database.query_references(uri=uri, position_uuid=result["uuid"])
+
     locations = []
-    elements = (
-        database.query_references(
-            uri=uri, targets=result.get("refs_samedoc", []) + result.get("targets", [])
-        )
-        or []
-    )
-    # TODO also include targets
-    for element in elements + [
-        result
-    ]:  # ([] if exclude_declaration and  else [result]):
+    for element in elements:
+        position = database.query_position_uuid(uuid=element["position_uuid"])
+        if not position:
+            continue
         locations.append(
             {
-                "uri": element["uri"],
+                "uri": position["uri"],
                 "range": {
                     "start": {
-                        "line": element["startLine"],
-                        "character": element["startCharacter"],
+                        "line": position["startLine"],
+                        "character": position["startCharacter"],
                     },
                     "end": {
-                        "line": element["endLine"],
-                        "character": element["endCharacter"],
+                        "line": position["endLine"],
+                        "character": position["endCharacter"],
                     },
                 },
             }

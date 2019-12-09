@@ -17,7 +17,7 @@ def rst_code_lens(
     uri = document.uri
 
     results = (
-        database.query_elements(
+        database.query_positions(
             etype="directive",
             uri=uri,
             dtype=("code", "code-block"),

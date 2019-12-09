@@ -28,32 +28,46 @@ def test_basic_linting(get_test_file_content, data_regression):
     data_regression.check(results.linting)
 
 
-def test_basic_name_to_target(get_test_file_content, data_regression):
+def test_basic_database(get_test_file_content, data_regression):
     content = get_test_file_content("test_basic.rst")
     app_env = create_sphinx_app(confoverrides={"extensions": ["sphinxcontrib.bibtex"]})
     results = assess_source(content, app_env)
-    data_regression.check(results.name_to_target)
-
-
-def test_basic_elements(get_test_file_content, data_regression):
-    content = get_test_file_content("test_basic.rst")
-    app_env = create_sphinx_app(confoverrides={"extensions": ["sphinxcontrib.bibtex"]})
-    results = assess_source(content, app_env)
-    data_regression.check(results.elements)
+    data_regression.check(
+        {
+            "positions": results.positions,
+            "references": results.references,
+            "linting": results.linting,
+            "name_to_uuid": results.name_to_target,
+        }
+    )
 
 
 def test_lint_severe(get_test_file_content, data_regression):
     content = get_test_file_content("test_lint_severe.rst")
     app_env = create_sphinx_app()
     results = assess_source(content, app_env)
-    data_regression.check({"elements": results.elements, "linting": results.linting})
+    data_regression.check(
+        {
+            "positions": results.positions,
+            "references": results.references,
+            "linting": results.linting,
+            "name_to_uuid": results.name_to_target,
+        }
+    )
 
 
 def test_section_levels(get_test_file_content, data_regression):
     content = get_test_file_content("test_sections.rst")
     app_env = create_sphinx_app()
     results = assess_source(content, app_env)
-    data_regression.check({"elements": results.elements, "linting": results.linting})
+    data_regression.check(
+        {
+            "positions": results.positions,
+            "references": results.references,
+            "linting": results.linting,
+            "name_to_uuid": results.name_to_target,
+        }
+    )
 
 
 def test_sphinx_elements(file_regression, data_regression):
@@ -115,7 +129,8 @@ def test_sphinx_elements(file_regression, data_regression):
     data_regression.check(
         {
             "lints": results.linting,
-            "elements": results.elements,
+            "positions": results.positions,
+            "references": results.references,
             "name_to_uuid": results.name_to_target,
         }
     )

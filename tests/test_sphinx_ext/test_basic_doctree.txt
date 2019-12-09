@@ -63,11 +63,11 @@
                         import a
             <paragraph>
                 <LSPInline position="36 0 36 13" role="cite" type="role">
-                    <citation_reference citerefid="False" classes="bibtex" ids="id3" refname="sadasd">
+                    <citation_reference citerefid="True" classes="bibtex" ids="id3" refname="sadasd">
                         sadasd
                 
                 <LSPInline position="37 0 37 10" role="cite" type="role">
-                    <citation_reference citerefid="False" classes="bibtex" ids="id4" refname="asd">
+                    <citation_reference citerefid="True" classes="bibtex" ids="id4" refname="asd">
                         asd
             <paragraph>
                 <LSPInline position="39 0 39 16" role="ref" type="role">
@@ -109,7 +109,7 @@
                         REF2
                  sdf 
                 <LSPInline position="47 25 47 30" type="ref_sub">
-                    <substitution_reference refname="REF3" subrefid="False">
+                    <substitution_reference refname="REF3" subrefid="True">
                         REF3
             <paragraph>
                 a 

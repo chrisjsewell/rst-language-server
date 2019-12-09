@@ -1,12 +1,10 @@
-db_entries:
+db_positions:
 - block: true
   endCharacter: 10
   endLine: 0
   parent_uuid: null
   startCharacter: 0
   startLine: 0
-  targets:
-  - uuid_3
   title: hyperlink_target
   type: hyperlink_target
   uuid: uuid_4
@@ -14,8 +12,6 @@ db_entries:
   endCharacter: 3
   endLine: 2
   parent_uuid: null
-  refs_samedoc:
-  - uuid_2
   startCharacter: 0
   startLine: 2
   title: ref_foot
@@ -25,8 +21,6 @@ db_entries:
   endCharacter: 11
   endLine: 2
   parent_uuid: null
-  refs_samedoc:
-  - uuid_3
   startCharacter: 5
   startLine: 2
   title: ref_basic
@@ -36,8 +30,6 @@ db_entries:
   endCharacter: 20
   endLine: 2
   parent_uuid: null
-  refs_samedoc:
-  - uuid_0
   startCharacter: 13
   startLine: 2
   title: ref_sub
@@ -47,8 +39,6 @@ db_entries:
   endCharacter: 28
   endLine: 2
   parent_uuid: null
-  refs_samedoc:
-  - uuid_1
   startCharacter: 22
   startLine: 2
   title: ref_cite
@@ -60,8 +50,6 @@ db_entries:
   parent_uuid: null
   startCharacter: 0
   startLine: 4
-  targets:
-  - uuid_2
   title: footnote
   type: footnote
   uuid: uuid_9
@@ -71,8 +59,6 @@ db_entries:
   parent_uuid: null
   startCharacter: 0
   startLine: 5
-  targets:
-  - uuid_0
   title: substitution_def
   type: substitution_def
   uuid: uuid_10
@@ -82,11 +68,46 @@ db_entries:
   parent_uuid: null
   startCharacter: 0
   startLine: 6
-  targets:
-  - uuid_1
   title: citation
   type: citation
   uuid: uuid_11
+db_references:
+- classes: []
+  node: target
+  position_uuid: uuid_4
+  target: uuid_3
+- classes: []
+  node: footnote_reference
+  position_uuid: uuid_5
+  reference: uuid_2
+  same_doc: true
+- classes: []
+  node: reference
+  position_uuid: uuid_6
+  reference: uuid_3
+  same_doc: true
+- classes: []
+  node: substitution_reference
+  position_uuid: uuid_7
+  reference: uuid_0
+  same_doc: true
+- classes: []
+  node: citation_reference
+  position_uuid: uuid_8
+  reference: uuid_1
+  same_doc: true
+- classes: []
+  node: footnote
+  position_uuid: uuid_9
+  target: uuid_2
+- classes: []
+  node: substitution_definition
+  position_uuid: uuid_10
+  target: uuid_0
+- classes: []
+  node: citation
+  position_uuid: uuid_11
+  target: uuid_1
 doc_symbols:
 - detail: 'type: hyperlink_target'
   kind: 8

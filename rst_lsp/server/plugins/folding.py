@@ -13,7 +13,7 @@ def rst_folding_range(document: Document) -> List[FoldingRange]:
 
     database = document.workspace.database
     uri = document.uri
-    elements = database.query_elements(uri=uri, block=True) or []
+    elements = database.query_positions(uri=uri, block=True) or []
     # logger.debug(str(elements))
     results = [
         {
