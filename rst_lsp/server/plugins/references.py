@@ -13,36 +13,36 @@ def rst_references(
     document: Document, position: Position, exclude_declaration: bool = False
 ) -> List[Location]:
     # Include the declaration of the current symbol
-    database = document.workspace.database
-    uri = document.uri
-    result = database.query_at_position(
-        uri=uri, line=position["line"], character=position["character"]
-    )
-    if result is None:
-        return []
-
-    # TODO handle specific roles/directives, e.g. :ref: and :cite:
-    elements = database.query_references(uri=uri, position_uuid=result["uuid"])
-
-    locations = []
-    for element in elements:
-        position = database.query_position_uuid(uuid=element["position_uuid"])
-        if not position:
-            continue
-        locations.append(
-            {
-                "uri": position["uri"],
-                "range": {
-                    "start": {
-                        "line": position["startLine"],
-                        "character": position["startCharacter"],
-                    },
-                    "end": {
-                        "line": position["endLine"],
-                        "character": position["endCharacter"],
-                    },
-                },
-            }
+    with document.workspace.database as database:
+        uri = document.uri
+        result = database.query_at_position(
+            uri=uri, line=position["line"], character=position["character"]
         )
+        if result is None:
+            return []
+
+        # TODO handle specific roles/directives, e.g. :ref: and :cite:
+        elements = database.query_references(uri=uri, position_uuid=result["uuid"])
+
+        locations = []
+        for element in elements:
+            position = database.query_position_uuid(uuid=element["position_uuid"])
+            if not position:
+                continue
+            locations.append(
+                {
+                    "uri": position["uri"],
+                    "range": {
+                        "start": {
+                            "line": position["startLine"],
+                            "character": position["startCharacter"],
+                        },
+                        "end": {
+                            "line": position["endLine"],
+                            "character": position["endCharacter"],
+                        },
+                    },
+                }
+            )
 
     return locations

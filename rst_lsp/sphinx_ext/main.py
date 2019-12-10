@@ -13,6 +13,7 @@ import locale
 import os
 import shutil
 import tempfile
+import threading
 from typing import IO, List, Tuple
 
 import attr
@@ -150,32 +151,60 @@ def retrieve_namespace(app_env: SphinxAppEnv):
     # similarly in docutils.parsers.rst.directives.directive
     # TODO work out how to obtain the correct language mapping
     # from docutils.languages import get_language
-    with sphinx_env(app_env):
-        from docutils.parsers.rst.directives import _directives, _directive_registry
-        from docutils.parsers.rst.roles import _roles, _role_registry
 
-        all_roles = copy.copy(_role_registry)
-        all_roles.update(_roles)
-        all_directives = copy.copy(_directives)
-        for key, (modulename, classname) in _directive_registry.items():
-            if key not in all_directives:
-                try:
-                    module = import_module(
-                        f"docutils.parsers.rst.directives.{modulename}"
-                    )
-                    all_directives[key] = getattr(module, classname)
-                except (AttributeError, ModuleNotFoundError):
-                    pass
-        for domain_name in app_env.app.env.domains:
-            domain = app_env.app.env.get_domain(domain_name)
-            prefix = "" if domain.name == "std" else f"{domain.name}:"
-            # TODO 'default_domain' is also looked up by
-            # sphinx.util.docutils.sphinx_domains.lookup_domain_element
-            for role_name, role in domain.roles.items():
-                all_roles[f"{prefix}{role_name}"] = role
-            for direct_name, direct in domain.directives.items():
-                all_roles[f"{prefix}{direct_name}"] = direct
-    return all_roles, all_directives
+    # we use a threading lock to guard against the globals _directives and _roles
+    # being changed before they can be read.
+    with threading.Lock():
+        with sphinx_env(app_env):
+            from docutils.parsers.rst.directives import _directives, _directive_registry
+            from docutils.parsers.rst.roles import _roles, _role_registry
+
+            all_roles = copy.copy(_role_registry)
+            all_roles.update(_roles)
+            all_directives = copy.copy(_directives)
+            for key, (modulename, classname) in _directive_registry.items():
+                if key not in all_directives:
+                    try:
+                        module = import_module(
+                            f"docutils.parsers.rst.directives.{modulename}"
+                        )
+                        all_directives[key] = getattr(module, classname)
+                    except (AttributeError, ModuleNotFoundError):
+                        pass
+            for domain_name in app_env.app.env.domains:
+                domain = app_env.app.env.get_domain(domain_name)
+                prefix = "" if domain.name == "std" else f"{domain.name}:"
+                # TODO 'default_domain' is also looked up by
+                # sphinx.util.docutils.sphinx_domains.lookup_domain_element
+                for role_name, role in domain.roles.items():
+                    all_roles[f"{prefix}{role_name}"] = role
+                for direct_name, direct in domain.directives.items():
+                    all_roles[f"{prefix}{direct_name}"] = direct
+        return all_roles, all_directives
+
+
+def find_all_files(srcdir: str, exclude_patterns: List[str], suffixes=(".rst",)):
+    """Adapted from ``sphinx.environment.BuildEnvironment.find_files``"""
+    from sphinx.project import EXCLUDE_PATHS
+    from sphinx.util import get_matching_files
+    from sphinx.util.matching import compile_matchers
+
+    exclude_patterns.extend(EXCLUDE_PATHS)
+    excludes = compile_matchers(exclude_patterns)
+    docnames = set()
+    for filename in get_matching_files(srcdir, excludes):
+        if not any(filename.endswith(s) for s in suffixes):
+            continue
+        if os.access(os.path.join(srcdir, filename), os.R_OK):
+            filename = os.path.realpath(filename)
+            docnames.add(filename)
+            # modified_time = os.path.getmtime(filename)
+            # TODO add/update os.path.getmtime for files in DB when saved/closed
+            # Then we can test against the DB to check which files need to be re-read
+            # also remove files from db that are no longer required
+            # re-read all files in background (async tinydb?)
+            # send progress to client (will require next LSP version 3.15.0)
+    return docnames
 
 
 @attr.s(kw_only=True)
@@ -205,6 +234,8 @@ def assess_source(
     SourceAssessResult
 
     """
+    # TODO how can we guard against globals like _directives and _roles
+    # being changed by another thread, without thread locking the entire function?
     with sphinx_env(app_env):
 
         # TODO look at sphinx.io.read_doc function, that is used for sphinx parsing

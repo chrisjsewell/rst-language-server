@@ -1,6 +1,7 @@
 """TinyDB implementation of a backend database."""
 from datetime import datetime
 import logging
+import threading
 from typing import List, Optional, Union
 
 from tinydb import TinyDB, where
@@ -23,10 +24,32 @@ class NotSet:
     pass
 
 
+def synchronized(method):
+    """Thread lock a method."""
+
+    def new_method(self, *arg, **kws):
+        with self.thread_lock:
+            return method(self, *arg, **kws)
+
+    return new_method
+
+
 # TODO make abstract base class
-class Database:
+class SynchronizedDatabase:
     def __init__(self, path=None, in_memory=False, cache_writes=False):
         """A database for storing language-server data.
+
+        All ``update_`` and ``query__`` methods are thread locked,
+        to avoid any issues with concurrent read/write operations.
+
+        Also you can use as a context manager,
+        which will thread lock for the duration::
+
+            db = SynchronizedDatabase()
+            with db:
+                db.update_ ...
+                db.query_ ...
+
 
         Parameters
         ----------
@@ -49,6 +72,7 @@ class Database:
                 storage=CachingMiddleware(JSONStorage) if cache_writes else JSONStorage,
             )
         self._path = path
+        self.thread_lock = threading.RLock()
 
         # define tables
         # FYI can also set query sizes for tables
@@ -78,9 +102,18 @@ class Database:
     def path(self) -> str:
         return self._path
 
-    @property
-    def db(self) -> TinyDB:
-        return self._db
+    def __enter__(self):
+        self.thread_lock.acquire()
+        self._db.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._db.__exit__(*args)
+        self.thread_lock.release()
+
+    # @property
+    # def db(self) -> TinyDB:
+    #     return self._db
 
     @staticmethod
     def get_current_time():
@@ -99,6 +132,7 @@ class Database:
             ],
         )
 
+    @synchronized
     def update_conf_file(self, uri: Optional[str], roles: dict, directives: dict):
         # only one configuration file is allowed
         self._tbl_documents.remove(where("dtype") == "configuration")
@@ -112,14 +146,17 @@ class Database:
             )
         self._update_classes(roles, directives)
 
+    @synchronized
     def query_conf_file(self):
         return self._tbl_documents.get(where("dtype") == "configuration")
 
+    @synchronized
     def query_role(self, name: str) -> RoleInfo:
         return self._tbl_classes.get(
             (where("element") == "role") & (where("name") == name)
         )
 
+    @synchronized
     def query_roles(self, names: list = None) -> List[RoleInfo]:
         if names is None:
             return self._tbl_classes.search(where("element") == "role")
@@ -127,11 +164,13 @@ class Database:
             (where("element") == "role") & (where("name").one_of(names))
         )
 
+    @synchronized
     def query_directive(self, name: str) -> DirectiveInfo:
         return self._tbl_classes.get(
             (where("element") == "directive") & (where("name") == name)
         )
 
+    @synchronized
     def query_directives(self, names: list = None) -> List[DirectiveInfo]:
         if names is None:
             return self._tbl_classes.search(where("element") == "directive")
@@ -170,6 +209,7 @@ class Database:
         self._tbl_doc_symbols.remove(where("uri") == uri)
         self._tbl_doc_symbols.insert({"uri": uri, "doc_symbols": doc_symbols})
 
+    @synchronized
     def update_doc(
         self,
         uri: str,
@@ -187,11 +227,13 @@ class Database:
         self._update_doc_symbols(uri, doc_symbols)
         self._update_doc_lint(uri, lints)
 
+    @synchronized
     def query_doc(self, uri):
         return self._tbl_documents.get(
             (where("dtype") == "rst") & (where("uri") == uri)
         )
 
+    @synchronized
     def query_docs(self, uris: list = None):
         if uris is None:
             return self._tbl_documents.search(where("dtype") == "rst")
@@ -199,17 +241,21 @@ class Database:
             (where("dtype") == "rst") & (where("uri").one_of(uris))
         )
 
+    @synchronized
     def query_lint(self, uri: str):
         return self._tbl_linting.search(where("uri") == uri)
 
+    @synchronized
     def query_doc_symbols(self, uri: str):
         doc_symbols = self._tbl_doc_symbols.get(where("uri") == uri)
         if doc_symbols is not None:
             return doc_symbols["doc_symbols"]
 
+    @synchronized
     def query_position_uuid(self, uuid: str):
         return self._tbl_positions.get(where("uuid") == uuid)
 
+    @synchronized
     def query_at_position(self, uri: str, line: int, character: int, **kwargs):
         query = where("uri") == uri
         for key, value in kwargs.items():
@@ -237,6 +283,7 @@ class Database:
                 final_result = result
         return final_result
 
+    @synchronized
     def query_positions(
         self,
         *,
@@ -271,6 +318,7 @@ class Database:
             return self._tbl_positions.all()
         return self._tbl_positions.search(query)
 
+    @synchronized
     def query_references(self, uri: str, position_uuid: str):
         query = (where("uri") == uri) & (where("position_uuid") == position_uuid)
         results = self._tbl_references.search(query) or []
@@ -300,6 +348,7 @@ class Database:
                 all_results.extend(self._tbl_references.search(query) or [])
         return all_results
 
+    @synchronized
     def query_definitions(self, uri: str, position_uuid: str):
         query = (where("uri") == uri) & (where("position_uuid") == position_uuid)
         results = self._tbl_references.search(query) or []

@@ -396,7 +396,7 @@ class RstLanguageServer(MethodDispatcher):
         # Migrate documents that are on the root workspace and have a better match now
         doc_uris = list(self.workspace.documents.keys())
         for uri in doc_uris:
-            doc = self.workspace._docs.pop(uri)
+            doc = self.workspace._open_docs.pop(uri)
             new_workspace = self.match_uri_to_workspace(uri)
             new_workspace._docs[uri] = doc
 

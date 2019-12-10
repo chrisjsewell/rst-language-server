@@ -16,6 +16,18 @@ def mock_uuid():
         yield
 
 
+@pytest.fixture(scope="function", autouse=True)
+def wipe_docutils():
+    # TODO should probably not need to do this.
+    # However, without this, tests/test_server/test_requests.py::test_completions fails,
+    # if called after docutils tests
+    from docutils.parsers.rst.directives import _directives
+    from docutils.parsers.rst.roles import _roles
+
+    _directives.clear()
+    _roles.clear()
+
+
 @pytest.fixture()
 def get_test_file_path():
     def _get_test_file_path(name):

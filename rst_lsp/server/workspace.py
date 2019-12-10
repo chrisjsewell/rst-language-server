@@ -1,3 +1,4 @@
+# from concurrent.futures import Future
 import io
 import logging
 import os
@@ -5,10 +6,11 @@ import pathlib
 import re
 from typing import Dict, List
 
-from rst_lsp.database.tinydb import Database
+from rst_lsp.database.tinydb import SynchronizedDatabase
 from rst_lsp.sphinx_ext.main import (
     assess_source,
     create_sphinx_app,
+    # find_all_files,
     retrieve_namespace,
     SourceAssessResult,
     SphinxAppEnv,
@@ -91,14 +93,16 @@ class Workspace(object):
         self._server = server
         self._root_uri_scheme = uris.urlparse(self._root_uri)[0]
         self._root_path = uris.to_fs_path(self._root_uri)
-        self._docs = {}
+        self._open_docs = {}
         # TODO how to utilise persistent DB?
-        self._db = Database(in_memory=True)
+        self._db = SynchronizedDatabase(in_memory=True)
         self._update_env()
 
     def _update_env(self):
         """Update the sphinx application."""
         # TODO how to watch conf.py for changes? (or at least have command to update)
+        # TODO use self.source_roots to find conf path?
+        # TODO allow source directory to be different to conf path
         conf_path = self._config.settings.get("conf_path", None)
         logger.debug(f"Settings: {self._config.settings}")
         if conf_path and not os.path.exists(conf_path):
@@ -108,20 +112,23 @@ class Workspace(object):
             )
             conf_path = None
         elif conf_path:
-            conf_path = os.path.realpath(os.path.dirname(conf_path))
+            conf_path = os.path.realpath(conf_path)
         logger.debug(f"Using conf dir: {conf_path}")
         try:
-            self._app_env = create_sphinx_app(conf_path)
+            self._app_env = create_sphinx_app(
+                os.path.dirname(conf_path) if conf_path else None
+            )
         except Exception as err:
             self.server.show_message(
                 (
-                    f"An error occurred using `rst_lsp.conf_path`: {conf_path}.\n\n"
+                    "An error occurred creating a sphinx application from "
+                    f"`rst_lsp.conf_path`: {conf_path}.\n\n"
                     f"{err}"
                 ),
                 msg_type=MessageType.Error,
             )
             conf_path = None
-            self._app_env = create_sphinx_app(conf_path)
+            self._app_env = create_sphinx_app(None)
         roles, directives = retrieve_namespace(self._app_env)
         self._db.update_conf_file(conf_path, roles, directives)
 
@@ -130,17 +137,17 @@ class Workspace(object):
 
     @property
     def documents(self) -> dict:
-        return self._docs
+        return self._open_docs
 
     @property
-    def database(self) -> Database:
+    def database(self) -> SynchronizedDatabase:
         """Return the workspace database.
 
         If any document's source text hasn't been parsed/assessed, since its last change
         (or config update), then that will be done, and the database updated,
         before returning.
         """
-        for doc in self._docs.values():
+        for doc in self._open_docs.values():
             result = doc.get_assessment()  # type: SourceAssessResult
             self._db.update_doc(
                 doc.uri,
@@ -167,30 +174,29 @@ class Workspace(object):
     def server(self):
         return self._server
 
-    def is_local(self):
-        return (
-            self._root_uri_scheme == "" or self._root_uri_scheme == "file"
-        ) and os.path.exists(self._root_path)
+    @property
+    def config(self):
+        return self._config
 
     def get_document(self, doc_uri: str):
         """Return a managed document if-present, else create one pointing at disk.
 
         See https://github.com/Microsoft/language-server-protocol/issues/177
         """
-        doc = self._docs.get(doc_uri, None)
+        doc = self._open_docs.get(doc_uri, None)
         if doc is None:
             doc = self._create_document({"uri": doc_uri})
         return doc
 
     def put_document(self, document: TextDocument):
-        self._docs[document["uri"]] = self._create_document(document)
+        self._open_docs[document["uri"]] = self._create_document(document)
 
     def rm_document(self, doc_uri):
-        self._docs.pop(doc_uri)
+        self._open_docs.pop(doc_uri)
 
     def update_document(self, doc_uri, change: TextEdit, version=None):
-        self._docs[doc_uri].apply_change(change)
-        self._docs[doc_uri].version = version
+        self._open_docs[doc_uri].apply_change(change)
+        self._open_docs[doc_uri].version = version
 
     def update_config(self, config):
         self._config = config
@@ -198,8 +204,37 @@ class Workspace(object):
         for doc_uri in self.documents:
             self.get_document(doc_uri).update_config(config)
 
+    # TODO parse all files in background
+    #     conf_path = (self._db.query_conf_file() or {}).get("uri", None)
+    #     if not conf_path:
+    #         return
+    #     exclude_patterns = (
+    #         self.app_env.app.config.exclude_patterns
+    #         + self.app_env.app.config.templates_path
+    #     )
+    #     future = self._server._endpoint._executor_service.submit(
+    #         find_all_files,
+    #         srcdir=os.path.dirname(conf_path),
+    #         exclude_patterns=exclude_patterns,
+    #     )
+    #     future.add_done_callback(self.notify_files)
+
+    # def notify_files(self, future: Future):
+    #     if future.cancelled():
+    #         return
+    #     self._rst_files = future.result()
+
+    @property
+    def is_local(self):
+        """Test if the file is local (i.e. can be accessed by ``os``)."""
+        return (
+            self._root_uri_scheme == "" or self._root_uri_scheme == "file"
+        ) and os.path.exists(self._root_path)
+
     def source_roots(self, document_path: str, filename: str = "conf.py"):
         """Return the source roots for the given document."""
+        if not self.is_local:
+            return None
         files = find_parents(self._root_path, document_path, [filename]) or []
         return list(set((os.path.dirname(project_file) for project_file in files))) or [
             self._root_path
