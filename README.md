@@ -36,6 +36,10 @@
     - https://github.com/microsoft/vscode-textmate/issues/41
     - https://github.com/microsoft/vscode-textmate/issues/57
   - [LSP Semantic highlighting feature request](https://github.com/microsoft/language-server-protocol/issues/513)
+- Noted issues in the LSP repo
+  - [Get all Workspace documents](https://github.com/microsoft/language-server-protocol/issues/837)
+  - Progress indicators or coming in LSP version 3.15.0: [Work Done Progress](https://microsoft.github.io/langhttps://microsoft.github.io/language-server-protocol/specifications/specification-3-15/#workDoneProgress)
+    - [Discussion: LSP-server readiness indicator](https://github.com/microsoft/language-server-protocol/issues/511)
 
 ## Docutils Transforms
 

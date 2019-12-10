@@ -32,7 +32,7 @@ def rst_hover(document: Document, position: Position) -> Hover:
         return None
 
     lines = document.lines[result["contentLine"] : result["endLine"] + 1]
-    text = "\n".join([l[result["contentIndent"] :].rstrip() for l in lines])
+    text = "\n".join([l[result["contentIndent"] :].replace("\n", "") for l in lines])
     # TODO add warning message, if jedi not installed
     import jedi
 
