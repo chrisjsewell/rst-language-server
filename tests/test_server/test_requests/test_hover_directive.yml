@@ -1,0 +1,49 @@
+contents:
+- language: yaml
+  value: "class: docutils.parsers.rst.directives.admonitions.Note\nrequired arguments:\
+    \ 0\noptional arguments: 0\nhas_content: True\noptions:\n  class: class_option\n\
+    \  name: unchanged\n"
+- language: rst
+  value: "Base class for reStructuredText directives.\n\nThe following attributes\
+    \ may be set by subclasses.  They are\ninterpreted by the directive parser (which\
+    \ runs the directive\nclass):\n\n- `required_arguments`: The number of required\
+    \ arguments (default:\n  0).\n\n- `optional_arguments`: The number of optional\
+    \ arguments (default:\n  0).\n\n- `final_argument_whitespace`: A boolean, indicating\
+    \ if the final\n  argument may contain whitespace (default: False).\n\n- `option_spec`:\
+    \ A dictionary, mapping known option names to\n  conversion functions such as\
+    \ `int` or `float` (default: {}, no\n  options).  Several conversion functions\
+    \ are defined in the\n  directives/__init__.py module.\n\n  Option conversion\
+    \ functions take a single parameter, the option\n  argument (a string or ``None``),\
+    \ validate it and/or convert it\n  to the appropriate form.  Conversion functions\
+    \ may raise\n  `ValueError` and `TypeError` exceptions.\n\n- `has_content`: A\
+    \ boolean; True if content is allowed.  Client\n  code must handle the case where\
+    \ content is required but not\n  supplied (an empty content list will be supplied).\n\
+    \nArguments are normally single whitespace-separated words.  The\nfinal argument\
+    \ may contain whitespace and/or newlines if\n`final_argument_whitespace` is True.\n\
+    \nIf the form of the arguments is more complex, specify only one\nargument (either\
+    \ required or optional) and set\n`final_argument_whitespace` to True; the client\
+    \ code must do any\ncontext-sensitive parsing.\n\nWhen a directive implementation\
+    \ is being run, the directive class\nis instantiated, and the `run()` method is\
+    \ executed.  During\ninstantiation, the following instance variables are set:\n\
+    \n- ``name`` is the directive type or name (string).\n\n- ``arguments`` is the\
+    \ list of positional arguments (strings).\n\n- ``options`` is a dictionary mapping\
+    \ option names (strings) to\n  values (type depends on option conversion functions;\
+    \ see\n  `option_spec` above).\n\n- ``content`` is a list of strings, the directive\
+    \ content line by line.\n\n- ``lineno`` is the absolute line number of the first\
+    \ line\n  of the directive.\n\n- ``content_offset`` is the line offset of the\
+    \ first line of the content from\n  the beginning of the current input.  Used\
+    \ when initiating a nested parse.\n\n- ``block_text`` is a string containing the\
+    \ entire directive.\n\n- ``state`` is the state which called the directive function.\n\
+    \n- ``state_machine`` is the state machine which controls the state which called\n\
+    \  the directive function.\n\nDirective functions return a list of nodes which\
+    \ will be inserted\ninto the document tree at the point where the directive was\n\
+    encountered.  This can be an empty list if there is nothing to\ninsert.\n\nFor\
+    \ ordinary directives, the list must contain body elements or\nstructural elements.\
+    \  Some directives are intended specifically\nfor substitution definitions, and\
+    \ must return a list of `Text`\nnodes and/or inline elements (suitable for inline\
+    \ insertion, in\nplace of the substitution reference).  Such directives must verify\n\
+    substitution definition context, typically using code like this::\n\n    if not\
+    \ isinstance(state, states.SubstitutionDef):\n        error = state_machine.reporter.error(\n\
+    \            'Invalid context: the \"%s\" directive can only be used '\n     \
+    \       'within a substitution definition.' % (name),\n            nodes.literal_block(block_text,\
+    \ block_text), line=lineno)\n        return [error]"

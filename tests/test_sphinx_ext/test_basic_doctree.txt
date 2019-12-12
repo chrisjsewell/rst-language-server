@@ -1,0 +1,141 @@
+<document source="input.rst">
+    <LSPBlockTarget end_line="1" start_line="1" type="hyperlink_target">
+        <target ids="headerlink" names="headerlink" target_uuid="uuid_2">
+    <LSPSection end_line="27" level="1" start_line="3" title="header 1">
+        <section ids="header-1" names="header\ 1" target_uuid="uuid_3">
+            <title>
+                header 1
+            <LSPDirective arguments="html" content_indent="4" dtype="only" klass="sphinx.directives.other.Only" line_content="8" line_end="11" line_start="6" options="{}">
+                <only expr="html">
+                    <LSPDirective arguments="" content_indent="4" dtype="note" klass="docutils.parsers.rst.directives.admonitions.Note" line_content="10" line_end="10" line_start="8" options="{}">
+                        <note>
+                            <paragraph>
+                                <strong>
+                                    my note1
+            <LSPDirective arguments="python" content_indent="4" dtype="code-block" klass="sphinx.directives.code.CodeBlock" line_content="15" line_end="16" line_start="12" options="{'linenos': None}">
+                <literal_block force="False" highlight_args="{}" language="python" linenos="True" xml:space="preserve">
+                    import a
+            <paragraph>
+                <LSPInline position="17 0 17 8" type="ref_phrase">
+                    <reference name="sdf" refuri="sdf">
+                        sdf
+            <LSPSection end_line="27" level="2" start_line="19" title="sub-title">
+                <section ids="sub-title" names="sub-title" target_uuid="uuid_4">
+                    <title>
+                        sub-title
+                    <paragraph>
+                        <LSPInline position="22 0 22 26" type="ref_phrase">
+                            <reference name="http://www.python.org/" refuri="http://www.python.org/">
+                                http://www.python.org/
+                            <target ids="http-www-python-org" names="http://www.python.org/" refuri="http://www.python.org/" target_uuid="uuid_5">
+                    <LSPDirective arguments="" content_indent="4" dtype="note" klass="docutils.parsers.rst.directives.admonitions.Note" line_content="26" line_end="28" line_start="24" options="{}">
+                        <note>
+                            <paragraph>
+                                my note 
+                                <LSPInline position="26 12 26 47" type="ref_phrase">
+                                    <reference name="a link to python" refuri="www.python.org">
+                                        a link to python
+                                    <target ids="a-link-to-python" names="a\ link\ to\ python" refuri="www.python.org" target_uuid="uuid_6">
+                                
+                                <problematic ids="id2" refid="id1">
+                                    :sdf:`asdasx`
+                            <system_message level="1" line="27" source="input.rst" type="INFO">
+                                <paragraph>
+                                    No role entry for "sdf" in module "docutils.parsers.rst.languages.en".
+                                    Trying "sdf" as canonical role name.
+                            <system_message backrefs="id2" ids="id1" level="3" line="27" source="input.rst" type="ERROR">
+                                <paragraph>
+                                    Unknown interpreted text role "sdf".
+    <LSPSection end_line="59" level="1" start_line="29" title="header 2">
+        <section ids="header-2" names="header\ 2" target_uuid="uuid_7">
+            <title>
+                header 2
+            <system_message level="1" line="33" source="input.rst" type="INFO">
+                <paragraph>
+                    No directive entry for "dsfsdf" in module "docutils.parsers.rst.languages.en".
+                    Trying "dsfsdf" as canonical directive name.
+            <system_message level="3" line="33" source="input.rst" type="ERROR">
+                <paragraph>
+                    Unknown directive type "dsfsdf".
+                <literal_block xml:space="preserve">
+                    .. dsfsdf::
+                    
+                        import a
+            <paragraph>
+                <LSPInline position="36 0 36 13" role="cite" type="role">
+                    <citation_reference citerefid="True" classes="bibtex" ids="id3" refname="sadasd">
+                        sadasd
+                
+                <LSPInline position="37 0 37 10" role="cite" type="role">
+                    <citation_reference citerefid="True" classes="bibtex" ids="id4" refname="asd">
+                        asd
+            <paragraph>
+                <LSPInline position="39 0 39 16" role="ref" type="role">
+                    <pending_xref refdoc="input.rst" refdomain="std" refexplicit="False" reftarget="headerlink" reftype="ref" refwarn="True">
+                        <inline classes="xref std std-ref">
+                            headerlink
+            <paragraph>
+                @sadfaf
+            <paragraph>
+                <literal>
+                    a literal
+            <paragraph>
+                <problematic ids="id6" refid="id5">
+                    :sdf:`saasf`
+                  
+                <problematic ids="id8" refid="id7">
+                    :abcf:`saasf`
+            <system_message level="1" line="46" source="input.rst" type="INFO">
+                <paragraph>
+                    No role entry for "sdf" in module "docutils.parsers.rst.languages.en".
+                    Trying "sdf" as canonical role name.
+            <system_message backrefs="id6" ids="id5" level="3" line="46" source="input.rst" type="ERROR">
+                <paragraph>
+                    Unknown interpreted text role "sdf".
+            <system_message level="1" line="46" source="input.rst" type="INFO">
+                <paragraph>
+                    No role entry for "abcf" in module "docutils.parsers.rst.languages.en".
+                    Trying "abcf" as canonical role name.
+            <system_message backrefs="id8" ids="id7" level="3" line="46" source="input.rst" type="ERROR">
+                <paragraph>
+                    Unknown interpreted text role "abcf".
+            <paragraph>
+                <LSPInline position="47 0 47 5" type="ref_sub">
+                    <substitution_reference refname="REF1" subrefid="uuid_0">
+                        REF1
+                 lkjlkj 
+                <LSPInline position="47 14 47 19" type="ref_sub">
+                    <substitution_reference refname="REF2" subrefid="uuid_1">
+                        REF2
+                 sdf 
+                <LSPInline position="47 25 47 30" type="ref_sub">
+                    <substitution_reference refname="REF3" subrefid="True">
+                        REF3
+            <paragraph>
+                a 
+                <LSPInline position="49 2 49 12" type="ref_basic">
+                    <reference name="headerlink" refname="headerlink" targetrefid="uuid_2">
+                        headerlink
+            <paragraph>
+                a 
+                <LSPInline position="51 2 51 8" type="ref_foot">
+                    <footnote_reference auto="1" ids="id9" refname="fn1">
+                .
+            <LSPBlockTarget end_line="53" start_line="53" type="substitution_def">
+                <substitution_definition names="REF1" target_uuid="uuid_0">
+                    <image alt="REF1" uri="file.png">
+            <LSPBlockTarget end_line="54" start_line="54" type="substitution_def">
+                <substitution_definition names="REF2" target_uuid="uuid_1">
+                    MyText
+            <LSPBlockTarget end_line="55" start_line="55" type="hyperlink_target">
+                <target ids="ref3" names="ref3" refuri="http://sdfsdf/dsf" target_uuid="uuid_8">
+            <LSPBlockTarget end_line="57" start_line="56" type="substitution_def">
+                <system_message level="2" line="57" source="input.rst" type="WARNING">
+                    <paragraph>
+                        Substitution definition "REF4" empty or invalid.
+                    <literal_block xml:space="preserve">
+                        .. |REF4| replace: bad syntax
+            <LSPBlockTarget end_line="58" start_line="58" type="footnote">
+                <footnote auto="1" ids="fn1" names="fn1" target_uuid="uuid_9">
+                    <paragraph>
+                        A footnote.

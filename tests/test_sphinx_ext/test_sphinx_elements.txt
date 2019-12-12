@@ -1,0 +1,105 @@
+<document source="input.rst">
+    <LSPBlockTarget end_line="0" start_line="0" type="hyperlink_target">
+        <target ids="title" names="title" target_uuid="uuid_1">
+    <LSPSection end_line="46" level="1" start_line="2" title="Title">
+        <section dupnames="title" ids="id1">
+            <title>
+                Title
+            <system_message backrefs="id1" level="1" line="4" source="input.rst" type="INFO">
+                <paragraph>
+                    Duplicate implicit target name: "title".
+            <paragraph>
+                <LSPInline position="5 0 5 11" role="ref" type="role">
+                    <pending_xref refdoc="input.rst" refdomain="std" refexplicit="False" reftarget="title" reftype="ref" refwarn="True">
+                        <inline classes="xref std std-ref">
+                            title
+                
+                <LSPInline position="6 0 6 10" role="ref" type="role">
+                    <pending_xref refdoc="input.rst" refdomain="std" refexplicit="False" reftarget="fig1" reftype="ref" refwarn="True">
+                        <inline classes="xref std std-ref">
+                            fig1
+                
+                <LSPInline position="7 0 7 10" role="ref" type="role">
+                    <pending_xref refdoc="input.rst" refdomain="std" refexplicit="False" reftarget="tbl1" reftype="ref" refwarn="True">
+                        <inline classes="xref std std-ref">
+                            tbl1
+                
+                <LSPInline position="8 0 8 8" role="eq" type="role">
+                    <pending_xref refdoc="input.rst" refdomain="math" refexplicit="False" reftarget="eq1" reftype="eq" refwarn="True">
+                        <literal classes="xref eq">
+                            eq1
+                
+                <LSPInline position="9 0 9 14" role="numref" type="role">
+                    <pending_xref refdoc="input.rst" refdomain="std" refexplicit="False" reftarget="code1" reftype="numref" refwarn="True">
+                        <literal classes="xref std std-numref">
+                            code1
+                
+                <LSPInline position="10 0 10 15" role="cite" type="role">
+                    <citation_reference citerefid="True" classes="bibtex" ids="id2" refname="citation">
+                        citation
+                
+                <problematic ids="id4" refid="id3">
+                    :unknown:`abc`
+            <system_message level="1" line="6" source="input.rst" type="INFO">
+                <paragraph>
+                    No role entry for "unknown" in module "docutils.parsers.rst.languages.en".
+                    Trying "unknown" as canonical role name.
+            <system_message backrefs="id4" ids="id3" level="3" line="6" source="input.rst" type="ERROR">
+                <paragraph>
+                    Unknown interpreted text role "unknown".
+            <LSPDirective arguments="1.0" content_indent="4" dtype="versionadded" klass="sphinx.domains.changeset.VersionChange" line_content="15" line_end="16" line_start="13" options="{}">
+                <versionmodified type="versionadded" version="1.0">
+                    <paragraph translatable="False">
+                        <inline classes="versionmodified added">
+                            New in version 1.0: 
+                        <inline translatable="True">
+                            A note about 
+                            <LSPInline position="15 17 15 21" type="ref_sub">
+                                <substitution_reference refname="RST" subrefid="uuid_0">
+                                    RST
+            <LSPDirective arguments="abc.png" content_indent="True" dtype="figure" klass="sphinx.directives.patches.Figure" line_content="True" line_end="19" line_start="17" options="{'uri': 'abc.png'}">
+                <figure ids="fig1" names="fig1" target_uuid="uuid_2">
+                    <image uri="abc.png">
+            <LSPDirective arguments="Truth\ table\ for\ "not"" content_indent="4" dtype="table" klass="sphinx.directives.patches.RSTTable" line_content="24" line_end="30" line_start="20" options="{'widths': 'auto'}">
+                <table classes="colwidths-auto" ids="tbl1" names="tbl1" target_uuid="uuid_3">
+                    <title>
+                        Truth table for "not"
+                    <tgroup cols="2">
+                        <colspec colwidth="5">
+                        <colspec colwidth="5">
+                        <thead>
+                            <row>
+                                <entry>
+                                    <paragraph>
+                                        A
+                                <entry>
+                                    <paragraph>
+                                        not A
+                        <tbody>
+                            <row>
+                                <entry>
+                                    <paragraph>
+                                        False
+                                <entry>
+                                    <paragraph>
+                                        True
+                            <row>
+                                <entry>
+                                    <paragraph>
+                                        True
+                                <entry>
+                                    <paragraph>
+                                        False
+            <LSPDirective arguments="" content_indent="4" dtype="math" klass="sphinx.directives.patches.MathDirective" line_content="35" line_end="39" line_start="31" options="{'nowrap': None, 'label': 'eq1'}">
+                <target ids="equation-eq1" target_uuid="uuid_4">
+                <math_block docname="input.rst" label="eq1" nowrap="True" number="1" target_uuid="uuid_5" xml:space="preserve">
+                    \begin{eqnarray}
+                        y    & = & ax^2 + bx + c \\
+                        f(x) & = & x^2 + 2xy + y^2
+                    \end{eqnarray}
+            <LSPDirective arguments="python::" content_indent="4" dtype="code-block" klass="sphinx.directives.code.CodeBlock" line_content="43" line_end="44" line_start="40" options="{}">
+                <literal_block force="False" highlight_args="{}" ids="code1" language="python::" names="code1" target_uuid="uuid_6" xml:space="preserve">
+                    pass
+            <LSPBlockTarget end_line="45" start_line="45" type="substitution_def">
+                <substitution_definition names="RST" target_uuid="uuid_0">
+                    ReStructuredText

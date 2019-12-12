@@ -1,7 +1,6 @@
 from textwrap import dedent, indent
 from typing import Any, List, Optional
 
-from rst_lsp.docutils_ext.visitor import ElementType
 from rst_lsp.server.datatypes import CodeLens, WorkspaceEdit
 from rst_lsp.server.workspace import Config, Document, Workspace
 from rst_lsp.server.plugin_manager import hookimpl
@@ -18,37 +17,39 @@ def rst_code_lens(
     uri = document.uri
 
     results = (
-        database.query_elements(
-            name=ElementType.directive.value, uri=uri, type_name=["code", "code-block"]
+        database.query_positions(
+            etype="directive",
+            uri=uri,
+            dtype=("code", "code-block"),
+            arguments=["python"],
         )
         or []
     )
     edits = []
     for result in results:
-        if "python" in result["arguments"]:
-            edits.append(
-                {
-                    "range": {
-                        "start": {
-                            "line": result["lineno"],
-                            "character": result["start_char"],
-                        },
-                        "end": {
-                            "line": result["lineno"],
-                            "character": result["start_char"],
-                        },
+        edits.append(
+            {
+                "range": {
+                    "start": {
+                        "line": result["startLine"],
+                        "character": result["startCharacter"],
                     },
-                    "command": {
-                        "title": "format",
-                        "command": COMMAND_NAME,
-                        "arguments": [
-                            uri,
-                            result,
-                            document.lines[result["lineno"] : result["endline"] + 1],
-                        ],
+                    "end": {
+                        "line": result["startLine"],
+                        "character": result["startCharacter"],
                     },
-                }
-            )
+                },
+                "command": {
+                    "title": "format",
+                    "command": COMMAND_NAME,
+                    "arguments": [
+                        uri,
+                        result,
+                        document.lines[result["startLine"] : result["endLine"] + 1],
+                    ],
+                },
+            }
+        )
 
     return edits
 
@@ -89,10 +90,10 @@ def rst_execute_command(
                 {
                     "range": {
                         "start": {
-                            "line": result["lineno"] + start_line,
+                            "line": result["startLine"] + start_line,
                             "character": 0,
                         },
-                        "end": {"line": result["endline"], "character": len(lines[-1])},
+                        "end": {"line": result["endLine"], "character": len(lines[-1])},
                     },
                     "newText": indent(text, indent_spaces * " "),
                 }

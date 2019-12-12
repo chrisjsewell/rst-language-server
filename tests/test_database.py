@@ -1,9 +1,9 @@
-from rst_lsp.analyse.main import create_sphinx_app, retrieve_namespace
-from rst_lsp.database.tinydb import Database
+from rst_lsp.sphinx_ext.main import create_sphinx_app, retrieve_namespace
+from rst_lsp.database.tinydb import SynchronizedDatabase
 
 
 def test_update_conf_file(tmp_path):
-    database = Database(str(tmp_path / "db.json"))
+    database = SynchronizedDatabase(str(tmp_path / "db.json"))
     app_env = create_sphinx_app()
     roles, directives = retrieve_namespace(app_env)
     database.update_conf_file("conf.py", roles, directives)
@@ -43,7 +43,7 @@ def test_update_conf_file(tmp_path):
 
 
 def test_update_doc_lint(tmp_path):
-    database = Database(str(tmp_path / "db.json"))
+    database = SynchronizedDatabase(str(tmp_path / "db.json"))
     database._update_doc_lint(
         "test.rst",
         [
@@ -80,8 +80,8 @@ def test_update_doc_lint(tmp_path):
 
 
 def test_update_doc_elements(tmp_path):
-    database = Database(str(tmp_path / "db.json"))
-    database._update_doc_elements(
+    database = SynchronizedDatabase(str(tmp_path / "db.json"))
+    database._update_doc_positions(
         "test.rst",
         [
             {
@@ -102,8 +102,8 @@ def test_update_doc_elements(tmp_path):
             },
         ],
     )
-    assert len(database._tbl_elements) == 2
-    database._update_doc_elements(
+    assert len(database._tbl_positions) == 2
+    database._update_doc_positions(
         "test.rst",
         [
             {
@@ -115,4 +115,4 @@ def test_update_doc_elements(tmp_path):
             },
         ],
     )
-    assert len(database._tbl_elements) == 1
+    assert len(database._tbl_positions) == 1

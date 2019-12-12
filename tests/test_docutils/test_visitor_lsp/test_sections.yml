@@ -1,4 +1,4 @@
-db_entries:
+db_positions:
 - block: true
   endCharacter: 9
   endLine: 18
@@ -8,77 +8,77 @@ db_entries:
   startLine: 0
   title: title
   type: section
-  uuid: uuid_0
+  uuid: uuid_5
 - block: false
   endCharacter: 9
   endLine: 3
-  parent_uuid: uuid_0
+  parent_uuid: uuid_5
   rtype: title
   startCharacter: 0
   startLine: 3
   title: title
   type: role
-  uuid: uuid_1
+  uuid: uuid_6
 - block: true
   endCharacter: 9
   endLine: 8
   level: 2
-  parent_uuid: uuid_0
+  parent_uuid: uuid_5
   startCharacter: 0
   startLine: 5
   title: sub-title
   type: section
-  uuid: uuid_2
+  uuid: uuid_7
 - block: false
   endCharacter: 9
   endLine: 8
-  parent_uuid: uuid_2
+  parent_uuid: uuid_7
   rtype: title
   startCharacter: 0
   startLine: 8
   title: title
   type: role
-  uuid: uuid_3
+  uuid: uuid_8
 - block: true
   endCharacter: 9
   endLine: 18
   level: 2
-  parent_uuid: uuid_0
+  parent_uuid: uuid_5
   startCharacter: 0
   startLine: 10
   title: sub-title2
   type: section
-  uuid: uuid_4
+  uuid: uuid_9
 - block: false
   endCharacter: 9
   endLine: 13
-  parent_uuid: uuid_4
+  parent_uuid: uuid_9
   rtype: title
   startCharacter: 0
   startLine: 13
   title: title
   type: role
-  uuid: uuid_5
+  uuid: uuid_10
 - block: true
   endCharacter: 9
   endLine: 18
   level: 3
-  parent_uuid: uuid_4
+  parent_uuid: uuid_9
   startCharacter: 0
   startLine: 15
   title: sub-sub-title
   type: section
-  uuid: uuid_6
+  uuid: uuid_11
 - block: false
   endCharacter: 9
   endLine: 18
-  parent_uuid: uuid_6
+  parent_uuid: uuid_11
   rtype: title
   startCharacter: 0
   startLine: 18
   title: title
   type: role
-  uuid: uuid_7
+  uuid: uuid_12
 - block: true
   endCharacter: 9
   endLine: 23
@@ -88,20 +88,41 @@ db_entries:
   startLine: 20
   title: title2
   type: section
-  uuid: uuid_8
+  uuid: uuid_13
 - block: false
   endCharacter: 9
   endLine: 23
-  parent_uuid: uuid_8
+  parent_uuid: uuid_13
   rtype: title
   startCharacter: 0
   startLine: 23
   title: title
   type: role
-  uuid: uuid_9
+  uuid: uuid_14
+db_references:
+- classes: []
+  node: section
+  position_uuid: uuid_5
+  target: uuid_0
+- classes: []
+  node: section
+  position_uuid: uuid_7
+  target: uuid_1
+- classes: []
+  node: section
+  position_uuid: uuid_9
+  target: uuid_2
+- classes: []
+  node: section
+  position_uuid: uuid_11
+  target: uuid_3
+- classes: []
+  node: section
+  position_uuid: uuid_13
+  target: uuid_4
 doc_symbols:
 - children:
-  - detail: 'type: role, uuid: uuid_1'
+  - detail: 'type: role'
     kind: 12
     name: title
     range:
@@ -119,7 +140,7 @@ doc_symbols:
         character: 0
         line: 3
   - children:
-    - detail: 'type: role, uuid: uuid_3'
+    - detail: 'type: role'
       kind: 12
       name: title
       range:
@@ -136,7 +157,7 @@ doc_symbols:
         start:
           character: 0
           line: 8
-    detail: 'type: section, uuid: uuid_2'
+    detail: 'type: section'
     kind: 2
     name: sub-title
     range:
@@ -154,7 +175,7 @@ doc_symbols:
         character: 0
         line: 5
   - children:
-    - detail: 'type: role, uuid: uuid_5'
+    - detail: 'type: role'
       kind: 12
       name: title
       range:
@@ -172,7 +193,7 @@ doc_symbols:
           character: 0
           line: 13
     - children:
-      - detail: 'type: role, uuid: uuid_7'
+      - detail: 'type: role'
         kind: 12
         name: title
         range:
@@ -189,7 +210,7 @@ doc_symbols:
           start:
             character: 0
             line: 18
-      detail: 'type: section, uuid: uuid_6'
+      detail: 'type: section'
       kind: 2
       name: sub-sub-title
       range:
@@ -206,7 +227,7 @@ doc_symbols:
         start:
           character: 0
           line: 15
-    detail: 'type: section, uuid: uuid_4'
+    detail: 'type: section'
     kind: 2
     name: sub-title2
     range:
@@ -223,7 +244,7 @@ doc_symbols:
       start:
         character: 0
         line: 10
-  detail: 'type: section, uuid: uuid_0'
+  detail: 'type: section'
   kind: 2
   name: title
   range:
@@ -241,7 +262,7 @@ doc_symbols:
       character: 0
       line: 0
 - children:
-  - detail: 'type: role, uuid: uuid_9'
+  - detail: 'type: role'
     kind: 12
     name: title
     range:
@@ -258,7 +279,7 @@ doc_symbols:
       start:
         character: 0
         line: 23
-  detail: 'type: section, uuid: uuid_8'
+  detail: 'type: section'
   kind: 2
   name: title2
   range:

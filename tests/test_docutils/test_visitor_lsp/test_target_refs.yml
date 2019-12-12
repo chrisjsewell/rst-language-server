@@ -1,94 +1,115 @@
-db_entries:
+db_positions:
 - block: true
   endCharacter: 10
   endLine: 0
-  names:
-  - target
   parent_uuid: null
   startCharacter: 0
   startLine: 0
   title: hyperlink_target
   type: hyperlink_target
-  uuid: uuid_0
+  uuid: uuid_4
 - block: false
   endCharacter: 3
   endLine: 2
   parent_uuid: null
-  refnames:
-  - '1'
   startCharacter: 0
   startLine: 2
   title: ref_foot
   type: ref_foot
-  uuid: uuid_1
+  uuid: uuid_5
 - block: false
   endCharacter: 11
   endLine: 2
   parent_uuid: null
-  refnames:
-  - target
   startCharacter: 5
   startLine: 2
   title: ref_basic
   type: ref_basic
-  uuid: uuid_2
+  uuid: uuid_6
 - block: false
   endCharacter: 20
   endLine: 2
   parent_uuid: null
-  refnames:
-  - symbol
   startCharacter: 13
   startLine: 2
   title: ref_sub
   type: ref_sub
-  uuid: uuid_3
+  uuid: uuid_7
 - block: false
   endCharacter: 28
   endLine: 2
   parent_uuid: null
-  refnames:
-  - cite
   startCharacter: 22
   startLine: 2
   title: ref_cite
   type: ref_cite
-  uuid: uuid_4
+  uuid: uuid_8
 - block: true
   endCharacter: 25
   endLine: 4
-  names:
-  - '1'
   parent_uuid: null
   startCharacter: 0
   startLine: 4
   title: footnote
   type: footnote
-  uuid: uuid_5
+  uuid: uuid_9
 - block: true
   endCharacter: 29
   endLine: 5
-  names:
-  - symbol
   parent_uuid: null
   startCharacter: 0
   startLine: 5
   title: substitution_def
   type: substitution_def
-  uuid: uuid_6
+  uuid: uuid_10
 - block: true
   endCharacter: 28
   endLine: 6
-  names:
-  - cite
   parent_uuid: null
   startCharacter: 0
   startLine: 6
   title: citation
   type: citation
-  uuid: uuid_7
+  uuid: uuid_11
+db_references:
+- classes: []
+  node: target
+  position_uuid: uuid_4
+  target: uuid_3
+- classes: []
+  node: footnote_reference
+  position_uuid: uuid_5
+  reference: uuid_2
+  same_doc: true
+- classes: []
+  node: reference
+  position_uuid: uuid_6
+  reference: uuid_3
+  same_doc: true
+- classes: []
+  node: substitution_reference
+  position_uuid: uuid_7
+  reference: uuid_0
+  same_doc: true
+- classes: []
+  node: citation_reference
+  position_uuid: uuid_8
+  reference: uuid_1
+  same_doc: true
+- classes: []
+  node: footnote
+  position_uuid: uuid_9
+  target: uuid_2
+- classes: []
+  node: substitution_definition
+  position_uuid: uuid_10
+  target: uuid_0
+- classes: []
+  node: citation
+  position_uuid: uuid_11
+  target: uuid_1
 doc_symbols:
-- detail: 'type: hyperlink_target, uuid: uuid_0'
+- detail: 'type: hyperlink_target'
   kind: 8
   name: hyperlink_target
   range:
@@ -105,7 +126,7 @@ doc_symbols:
     start:
       character: 0
       line: 0
-- detail: 'type: ref_foot, uuid: uuid_1'
+- detail: 'type: ref_foot'
   kind: 7
   name: ref_foot
   range:
@@ -122,7 +143,7 @@ doc_symbols:
     start:
       character: 0
       line: 2
-- detail: 'type: ref_basic, uuid: uuid_2'
+- detail: 'type: ref_basic'
   kind: 7
   name: ref_basic
   range:
@@ -139,7 +160,7 @@ doc_symbols:
     start:
       character: 5
       line: 2
-- detail: 'type: ref_sub, uuid: uuid_3'
+- detail: 'type: ref_sub'
   kind: 7
   name: ref_sub
   range:
@@ -156,7 +177,7 @@ doc_symbols:
     start:
       character: 13
       line: 2
-- detail: 'type: ref_cite, uuid: uuid_4'
+- detail: 'type: ref_cite'
   kind: 7
   name: ref_cite
   range:
@@ -173,7 +194,7 @@ doc_symbols:
     start:
       character: 22
       line: 2
-- detail: 'type: footnote, uuid: uuid_5'
+- detail: 'type: footnote'
   kind: 8
   name: footnote
   range:
@@ -190,7 +211,7 @@ doc_symbols:
     start:
       character: 0
       line: 4
-- detail: 'type: substitution_def, uuid: uuid_6'
+- detail: 'type: substitution_def'
   kind: 8
   name: substitution_def
   range:
@@ -207,7 +228,7 @@ doc_symbols:
     start:
       character: 0
       line: 5
-- detail: 'type: citation, uuid: uuid_7'
+- detail: 'type: citation'
   kind: 8
   name: citation
   range:

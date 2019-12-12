@@ -6,6 +6,9 @@ sections:
       - 'sub-title'
       - '---------'
       - ''
+      - 'sub sub title'
+      - '~~~~~~~~~~~~~'
+      - ''
     out:
       - <document source="test data">
       - '    <section ids="title" names="title">'
@@ -14,6 +17,9 @@ sections:
       - '        <section ids="sub-title" names="sub-title">'
       - '            <title>'
       - '                sub-title'
+      - '            <section ids="sub-sub-title" names="sub\ sub\ title">'
+      - '                <title>'
+      - '                    sub sub title'
 targets:
   - in:
       - '.. _target:'

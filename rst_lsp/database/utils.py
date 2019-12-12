@@ -5,8 +5,6 @@ try:
 except ImportError:
     from typing_extensions import TypedDict
 
-import attr
-
 
 class RoleInfo(TypedDict):
     element: str
@@ -50,16 +48,3 @@ def get_directive_json(name, direct) -> DirectiveInfo:
         else {},
     }
     return data
-
-
-# TODO use TypedDict with undefined keys?
-def get_element_json(block_objects: list, inline_objects: list):
-    objs = []
-    for obj in block_objects:
-        dct = attr.asdict(obj)
-        dct.pop("parent", None)  # this is a docutils.doctree element
-        dct["type"] = "Block"
-        dct["element"] = obj.__class__.__name__
-        objs.append(dct)
-    objs.extend(inline_objects)
-    return objs

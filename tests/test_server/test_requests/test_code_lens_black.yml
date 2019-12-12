@@ -3,16 +3,19 @@
     - uri123
     - arguments:
       - python
-      element: directive
-      end_char: 7
-      endline: 2
+      block: true
+      contentIndent: 4
+      contentLine: 2
+      dtype: code-block
+      endCharacter: 8
+      endLine: 2
       klass: sphinx.directives.code.CodeBlock
-      lineno: 0
       options: {}
-      section_uuid: null
-      start_char: 0
-      type: Block
-      type_name: code-block
+      parent_uuid: null
+      startCharacter: 0
+      startLine: 0
+      title: code-block
+      type: directive
       uri: uri123
       uuid: uuid_0
     - - '.. code-block:: python
@@ -21,7 +24,7 @@
       - '
 
         '
-      - '    pass
+      - '    a=''b''
 
         '
     command: rst_format_python_cell

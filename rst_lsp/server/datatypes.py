@@ -33,6 +33,11 @@ class Range(TypedDict):
     end: Position
 
 
+class Location(TypedDict):
+    uri: str
+    range: Range
+
+
 class TextEdit(TypedDict):
     range: Range
     newText: str

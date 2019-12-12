@@ -7,7 +7,7 @@ import pytest
 import yaml
 
 from rst_lsp.docutils_ext.inliner_base import Inliner
-from rst_lsp.docutils_ext.inliner_lsp import PositionInliner
+from rst_lsp.docutils_ext.inliner_lsp import InlinerLSP
 
 
 def load_yaml(path):
@@ -82,4 +82,4 @@ def test_interpreted(name, number, case):
     ],
 )
 def test_doc_position(name, number, case):
-    run_parser(case, inliner=PositionInliner(doc_text="\n".join(case["in"])))
+    run_parser(case, inliner=InlinerLSP(doc_text="\n".join(case["in"])))

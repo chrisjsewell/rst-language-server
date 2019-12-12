@@ -1,8 +1,8 @@
-db_entries:
+db_positions:
 - arguments:
   - python
   block: true
-  contentCharacter: 3
+  contentIndent: 3
   contentLine: 2
   dtype: code
   endCharacter: 0
@@ -18,7 +18,7 @@ db_entries:
 - arguments:
   - abc.png
   block: true
-  contentCharacter: null
+  contentIndent: null
   contentLine: null
   dtype: image
   endCharacter: 17
@@ -32,8 +32,9 @@ db_entries:
   title: image
   type: directive
   uuid: uuid_1
+db_references: []
 doc_symbols:
-- detail: 'type: directive, uuid: uuid_0'
+- detail: 'type: directive'
   kind: 5
   name: code
   range:
@@ -50,7 +51,7 @@ doc_symbols:
     start:
       character: 0
       line: 0
-- detail: 'type: directive, uuid: uuid_1'
+- detail: 'type: directive'
   kind: 5
   name: image
   range:

@@ -3,13 +3,13 @@ from textwrap import dedent
 from docutils import frontend, utils
 from docutils.parsers import rst
 
-from rst_lsp.docutils_ext.inliner_lsp import PositionInliner
+from rst_lsp.docutils_ext.inliner_lsp import InlinerLSP
 from rst_lsp.docutils_ext.block_lsp import RSTParserCustom
-from rst_lsp.docutils_ext.visitor_lsp import VisitorLSP
+from rst_lsp.docutils_ext.visitor_lsp import VisitorRef2Target, LSPTransform
 
 
 def run_parser(source, parser_class):
-    inliner = PositionInliner(doc_text=source)
+    inliner = InlinerLSP(doc_text=source)
     parser = parser_class(inliner=inliner)
     option_parser = frontend.OptionParser(components=(rst.Parser,))
     settings = option_parser.get_default_values()
@@ -21,24 +21,35 @@ def run_parser(source, parser_class):
     return document
 
 
-def test_inline_mixed(data_regression):
+def test_ref2target(file_regression):
     source = dedent(
         """\
-    [citation]_ |sub| ref_ `embed <ref_>`_ :title:`a`
-    anonymous__
-    _`inline-target`
-    [1]_ [#]_ [*]_
+    .. _ref:
+
+    .. __: anonymous
+
+    ref_ `ref`_ `phrase <ref_>`_ ref2_ anonymous__ unknown_
+
+    _`ref2`
+
+    |symbol| |unknown|
+
+    [cite]_ [unknown]_
+
+    [1]_
+
+    .. |symbol| image:: symbol.png
+    .. [cite] This is a citation.
+    .. [1] This is a footnote.
+
     """
     )
     document = run_parser(source, parser_class=RSTParserCustom)
-    visitor = VisitorLSP(document, source)
-    document.walkabout(visitor)
-    data_regression.check(
-        {
-            "db_entries": visitor.db_entries,
-            "doc_symbols": visitor.nesting.document_symbols,
-        }
-    )
+    visitor = VisitorRef2Target(document)
+    document.walk(visitor)
+    file_regression.check(document.pformat())
+    assert len(visitor.anonymous_targets) == 1
+    assert len(visitor.anonymous_refs) == 1
 
 
 def test_sections(data_regression):
@@ -71,17 +82,18 @@ def test_sections(data_regression):
     """
     )
     document = run_parser(source, parser_class=RSTParserCustom)
-    visitor = VisitorLSP(document, source)
-    document.walkabout(visitor)
+    transform = LSPTransform(document)
+    transform.apply(source)
     data_regression.check(
         {
-            "db_entries": visitor.db_entries,
-            "doc_symbols": visitor.nesting.document_symbols,
+            "db_positions": transform.db_positions,
+            "doc_symbols": transform.db_doc_symbols,
+            "db_references": transform.db_references,
         }
     )
 
 
-def test_explicits(data_regression):
+def test_target_refs(data_regression):
     source = dedent(
         """\
     .. _target:
@@ -94,12 +106,13 @@ def test_explicits(data_regression):
     """
     )
     document = run_parser(source, parser_class=RSTParserCustom)
-    visitor = VisitorLSP(document, source)
-    document.walkabout(visitor)
+    transform = LSPTransform(document)
+    transform.apply(source)
     data_regression.check(
         {
-            "db_entries": visitor.db_entries,
-            "doc_symbols": visitor.nesting.document_symbols,
+            "db_positions": transform.db_positions,
+            "doc_symbols": transform.db_doc_symbols,
+            "db_references": transform.db_references,
         }
     )
 
@@ -115,12 +128,13 @@ def test_directives(data_regression):
     """
     )
     document = run_parser(source, parser_class=RSTParserCustom)
-    visitor = VisitorLSP(document, source)
-    document.walkabout(visitor)
+    transform = LSPTransform(document)
+    transform.apply(source)
     data_regression.check(
         {
-            "db_entries": visitor.db_entries,
-            "doc_symbols": visitor.nesting.document_symbols,
+            "db_positions": transform.db_positions,
+            "doc_symbols": transform.db_doc_symbols,
+            "db_references": transform.db_references,
         }
     )
 
@@ -143,11 +157,12 @@ def test_mixed1(data_regression):
     """
     )
     document = run_parser(source, parser_class=RSTParserCustom)
-    visitor = VisitorLSP(document, source)
-    document.walkabout(visitor)
+    transform = LSPTransform(document)
+    transform.apply(source)
     data_regression.check(
         {
-            "db_entries": visitor.db_entries,
-            "doc_symbols": visitor.nesting.document_symbols,
+            "db_positions": transform.db_positions,
+            "doc_symbols": transform.db_doc_symbols,
+            "db_references": transform.db_references,
         }
     )

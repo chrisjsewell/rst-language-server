@@ -70,8 +70,11 @@ class LSPSection(nodes.Element, nodes.Invisible):
         return self.attributes["title"]
 
 
-class LSPExplicit(nodes.Element, nodes.Invisible):
-    """A node which stores the source text position in the document, of its children."""
+class LSPBlockTarget(nodes.Element, nodes.Invisible):
+    """A node which stores the source text position in the document, of its children.
+
+    Children can be footnote, citation, hyperlink_target or substitution_def
+    """
 
     def __init__(self, *, etype, start_line, end_line, children):
         """Initialisation
@@ -199,7 +202,7 @@ class ExplicitMixin:
                         "substitution_def",
                     ]:
                         return (
-                            LSPExplicit(
+                            LSPBlockTarget(
                                 etype=method.__name__,
                                 start_line=lineno - 1,
                                 end_line=self.state_machine.abs_line_number() - 1,
@@ -253,7 +256,7 @@ class ExplicitMixin:
             arguments, options, content, content_offset = self.parse_directive_block(
                 indented, line_offset, directive, option_presets
             )
-        except nodes.MarkupError as detail:
+        except states.MarkupError as detail:
             error = self.reporter.error(
                 'Error in "%s" directive:\n%s.' % (type_name, " ".join(detail.args)),
                 nodes.literal_block(block_text, block_text),
@@ -325,7 +328,7 @@ class Explicit(ExplicitMixin, states.Explicit):
 
 class SubstitutionDef(states.SubstitutionDef):
     # TODO substitutions can embed directives
-    # note, in this case, that the LSPDirective should be inside the LSPExplicit
+    # note, in this case, the LSPDirective should be inside the LSPBlockTarget
     pass
 
 

@@ -37,6 +37,8 @@ header 2
 :cite:`sadasd`
 :cite:`asd`
 
+:ref:`headerlink`
+
 @sadfaf
 
 ``a literal``

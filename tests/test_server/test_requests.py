@@ -94,6 +94,8 @@ def test_document_symbols(client_server, data_regression):
 
 
 def test_completion(client_server, data_regression):
+    # TODO this is changing dependent on if it is called,
+    # when running all tests or just the test_request ones (removing roles)
     doc = open_test_doc(client_server, ":\n")
     response3 = client_server._endpoint.request(
         "text_document/completion",
@@ -102,19 +104,69 @@ def test_completion(client_server, data_regression):
     data_regression.check(response3)
 
 
-def test_hover(client_server, data_regression):
+def test_hover_role(client_server, data_regression):
     doc = open_test_doc(client_server, ":index:`abc`\n")
     response3 = client_server._endpoint.request(
         "text_document/hover",
+        {"textDocument": doc, "position": {"line": 0, "character": 4}},
+    ).result(timeout=CALL_TIMEOUT)
+    data_regression.check(response3)
+
+
+def test_hover_directive(client_server, data_regression):
+    doc = open_test_doc(client_server, ".. note::\n\n   Hi\n")
+    response3 = client_server._endpoint.request(
+        "text_document/hover",
+        {"textDocument": doc, "position": {"line": 0, "character": 4}},
+    ).result(timeout=CALL_TIMEOUT)
+    data_regression.check(response3)
+
+
+def test_definitions(client_server, data_regression):
+    doc = open_test_doc(client_server, "|sub|\n\n.. |sub| replace:: a")
+    response3 = client_server._endpoint.request(
+        "text_document/definition",
         {"textDocument": doc, "position": {"line": 0, "character": 1}},
     ).result(timeout=CALL_TIMEOUT)
     data_regression.check(response3)
 
 
+def test_references(client_server, data_regression):
+    doc = open_test_doc(client_server, "|sub|\n\n.. |sub| replace:: a")
+    response3 = client_server._endpoint.request(
+        "text_document/references",
+        {
+            "textDocument": doc,
+            "position": {"line": 2, "character": 1},
+            "context": {"includeDeclaration": True},
+        },
+    ).result(timeout=CALL_TIMEOUT)
+    data_regression.check(response3)
+
+
 def test_code_lens_black(client_server, data_regression):
-    doc = open_test_doc(client_server, ".. code-block:: python\n\n    pass\n")
+    doc = open_test_doc(client_server, ".. code-block:: python\n\n    a='b'\n")
     response3 = client_server._endpoint.request(
         "text_document/code_lens",
         {"textDocument": doc, "position": {"line": 0, "character": 1}},
+    ).result(timeout=CALL_TIMEOUT)
+    data_regression.check(response3)
+    # TODO test command
+
+
+def test_python_completion1(client_server, data_regression):
+    doc = open_test_doc(client_server, ".. code-block:: python\n\n    ab = 1\n    a\n")
+    response3 = client_server._endpoint.request(
+        "text_document/completion",
+        {"textDocument": doc, "position": {"line": 3, "character": 4}},
+    ).result(timeout=CALL_TIMEOUT)
+    data_regression.check(response3["items"][0])
+
+
+def test_python_hover(client_server, data_regression):
+    doc = open_test_doc(client_server, ".. code-block:: python\n\n    print('hallo')\n")
+    response3 = client_server._endpoint.request(
+        "text_document/hover",
+        {"textDocument": doc, "position": {"line": 2, "character": 5}},
     ).result(timeout=CALL_TIMEOUT)
     data_regression.check(response3)

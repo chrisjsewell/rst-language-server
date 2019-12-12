@@ -25,6 +25,7 @@ from .workspace import match_uri_to_workspace as uri2workspace
 from .datatypes import (
     CompletionList,
     DocumentSymbol,
+    Location,
     Position,
     TextDocument,
     TextEdit,
@@ -165,14 +166,14 @@ class RstLanguageServer(MethodDispatcher):
             # "documentHighlightProvider": True,
             # "documentRangeFormattingProvider": True,
             "documentSymbolProvider": True,
-            # "definitionProvider": True,
+            "definitionProvider": True,
             "executeCommandProvider": {
                 "commands": utils.flatten(
                     self.call_plugins(PluginTypes.rst_commands.value)
                 )
             },
             "hoverProvider": True,
-            # "referencesProvider": True,
+            "referencesProvider": True,
             # "renameProvider": True,
             "foldingRangeProvider": True,
             # "signatureHelpProvider": {"triggerCharacters": []},
@@ -395,7 +396,7 @@ class RstLanguageServer(MethodDispatcher):
         # Migrate documents that are on the root workspace and have a better match now
         doc_uris = list(self.workspace.documents.keys())
         for uri in doc_uris:
-            doc = self.workspace._docs.pop(uri)
+            doc = self.workspace._open_docs.pop(uri)
             new_workspace = self.match_uri_to_workspace(uri)
             new_workspace._docs[uri] = doc
 
@@ -427,9 +428,9 @@ class RstLanguageServer(MethodDispatcher):
     # FEATURES
     # --------
 
-    def m_text_document__folding_range(self, textDocument: TextDocument, **_kwargs):
-        return self.call_plugins(
-            PluginTypes.rst_folding_range.value, textDocument["uri"]
+    def m_text_document__code_lens(self, textDocument: TextDocument, **_kwargs):
+        return utils.flatten(
+            self.call_plugins(PluginTypes.rst_code_lens.value, textDocument["uri"])
         )
 
     def m_text_document__completion(
@@ -440,6 +441,18 @@ class RstLanguageServer(MethodDispatcher):
         )
         return {"isIncomplete": False, "items": utils.flatten(completions)}
 
+    def m_text_document__definition(
+        self, textDocument: TextDocument, position: Position, **_kwargs
+    ) -> List[Location]:
+        # TODO can also return LinkLocation
+        return utils.flatten(
+            self.call_plugins(
+                PluginTypes.rst_definitions.value,
+                textDocument["uri"],
+                position=position,
+            )
+        )
+
     def m_text_document__document_symbol(
         self, textDocument: TextDocument, **_kwargs
     ) -> List[DocumentSymbol]:
@@ -449,6 +462,11 @@ class RstLanguageServer(MethodDispatcher):
             )
         )
 
+    def m_text_document__folding_range(self, textDocument: TextDocument, **_kwargs):
+        return self.call_plugins(
+            PluginTypes.rst_folding_range.value, textDocument["uri"]
+        )
+
     def m_text_document__hover(
         self, textDocument: TextDocument, position: Position, **_kwargs
     ):
@@ -456,9 +474,17 @@ class RstLanguageServer(MethodDispatcher):
             PluginTypes.rst_hover.value, textDocument["uri"], position=position
         ) or {"contents": ""}
 
-    def m_text_document__code_lens(self, textDocument: TextDocument, **_kwargs):
+    def m_text_document__references(
+        self, textDocument: TextDocument, position: Position, context=None, **_kwargs
+    ) -> List[Location]:
         return utils.flatten(
-            self.call_plugins(PluginTypes.rst_code_lens.value, textDocument["uri"])
+            self.call_plugins(
+                PluginTypes.rst_references.value,
+                textDocument["uri"],
+                position=position,
+                # Include the declaration of the current symbol
+                exclude_declaration=not context["includeDeclaration"],
+            )
         )
 
     def m_workspace__execute_command(

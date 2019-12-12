@@ -1,15 +1,13 @@
-db_entries:
+db_positions:
 - block: true
   endCharacter: 10
   endLine: 0
-  names:
-  - target
   parent_uuid: null
   startCharacter: 0
   startLine: 0
   title: hyperlink_target
   type: hyperlink_target
-  uuid: uuid_0
+  uuid: uuid_5
 - block: true
   endCharacter: 28
   endLine: 11
@@ -19,101 +17,128 @@ db_entries:
   startLine: 2
   title: title
   type: section
-  uuid: uuid_1
+  uuid: uuid_6
 - arguments: []
   block: true
-  contentCharacter: 8
+  contentIndent: 3
   contentLine: 7
   dtype: note
   endCharacter: 0
   endLine: 8
   klass: docutils.parsers.rst.directives.admonitions.Note
   options: {}
-  parent_uuid: uuid_1
+  parent_uuid: uuid_6
   startCharacter: 0
   startLine: 5
   title: note
   type: directive
-  uuid: uuid_2
+  uuid: uuid_7
 - block: false
   endCharacter: 6
   endLine: 7
-  parent_uuid: uuid_2
-  refnames:
-  - '1'
+  parent_uuid: uuid_7
   startCharacter: 3
   startLine: 7
   title: ref_foot
   type: ref_foot
-  uuid: uuid_3
+  uuid: uuid_8
 - block: false
   endCharacter: 14
   endLine: 7
-  parent_uuid: uuid_2
-  refnames:
-  - target
+  parent_uuid: uuid_7
   startCharacter: 8
   startLine: 7
   title: ref_basic
   type: ref_basic
-  uuid: uuid_4
+  uuid: uuid_9
 - block: false
   endCharacter: 23
   endLine: 7
-  parent_uuid: uuid_2
-  refnames:
-  - symbol
+  parent_uuid: uuid_7
   startCharacter: 16
   startLine: 7
   title: ref_sub
   type: ref_sub
-  uuid: uuid_5
+  uuid: uuid_10
 - block: false
   endCharacter: 31
   endLine: 7
-  parent_uuid: uuid_2
-  refnames:
-  - cite
+  parent_uuid: uuid_7
   startCharacter: 25
   startLine: 7
   title: ref_cite
   type: ref_cite
-  uuid: uuid_6
+  uuid: uuid_11
 - block: true
   endCharacter: 25
   endLine: 9
-  names:
-  - '1'
-  parent_uuid: uuid_1
+  parent_uuid: uuid_6
   startCharacter: 0
   startLine: 9
   title: footnote
   type: footnote
-  uuid: uuid_7
+  uuid: uuid_12
 - block: true
   endCharacter: 29
   endLine: 10
-  names:
-  - symbol
-  parent_uuid: uuid_1
+  parent_uuid: uuid_6
   startCharacter: 0
   startLine: 10
   title: substitution_def
   type: substitution_def
-  uuid: uuid_8
+  uuid: uuid_13
 - block: true
   endCharacter: 28
   endLine: 11
-  names:
-  - cite
-  parent_uuid: uuid_1
+  parent_uuid: uuid_6
   startCharacter: 0
   startLine: 11
   title: citation
   type: citation
-  uuid: uuid_9
+  uuid: uuid_14
+db_references:
+- classes: []
+  node: target
+  position_uuid: uuid_5
+  target: uuid_3
+- classes: []
+  node: section
+  position_uuid: uuid_6
+  target: uuid_4
+- classes: []
+  node: footnote_reference
+  position_uuid: uuid_8
+  reference: uuid_2
+  same_doc: true
+- classes: []
+  node: reference
+  position_uuid: uuid_9
+  reference: uuid_3
+  same_doc: true
+- classes: []
+  node: substitution_reference
+  position_uuid: uuid_10
+  reference: uuid_0
+  same_doc: true
+- classes: []
+  node: citation_reference
+  position_uuid: uuid_11
+  reference: uuid_1
+  same_doc: true
+- classes: []
+  node: footnote
+  position_uuid: uuid_12
+  target: uuid_2
+- classes: []
+  node: substitution_definition
+  position_uuid: uuid_13
+  target: uuid_0
+- classes: []
+  node: citation
+  position_uuid: uuid_14
+  target: uuid_1
 doc_symbols:
-- detail: 'type: hyperlink_target, uuid: uuid_0'
+- detail: 'type: hyperlink_target'
   kind: 8
   name: hyperlink_target
   range:
@@ -132,7 +157,7 @@ doc_symbols:
       line: 0
 - children:
   - children:
-    - detail: 'type: ref_foot, uuid: uuid_3'
+    - detail: 'type: ref_foot'
       kind: 7
       name: ref_foot
       range:
@@ -149,7 +174,7 @@ doc_symbols:
         start:
           character: 3
           line: 7
-    - detail: 'type: ref_basic, uuid: uuid_4'
+    - detail: 'type: ref_basic'
       kind: 7
       name: ref_basic
       range:
@@ -166,7 +191,7 @@ doc_symbols:
         start:
           character: 8
           line: 7
-    - detail: 'type: ref_sub, uuid: uuid_5'
+    - detail: 'type: ref_sub'
       kind: 7
       name: ref_sub
       range:
@@ -183,7 +208,7 @@ doc_symbols:
         start:
           character: 16
           line: 7
-    - detail: 'type: ref_cite, uuid: uuid_6'
+    - detail: 'type: ref_cite'
       kind: 7
       name: ref_cite
       range:
@@ -200,7 +225,7 @@ doc_symbols:
         start:
           character: 25
           line: 7
-    detail: 'type: directive, uuid: uuid_2'
+    detail: 'type: directive'
     kind: 5
     name: note
     range:
@@ -217,7 +242,7 @@ doc_symbols:
       start:
         character: 0
         line: 5
-  - detail: 'type: footnote, uuid: uuid_7'
+  - detail: 'type: footnote'
     kind: 8
     name: footnote
     range:
@@ -234,7 +259,7 @@ doc_symbols:
       start:
         character: 0
         line: 9
-  - detail: 'type: substitution_def, uuid: uuid_8'
+  - detail: 'type: substitution_def'
     kind: 8
     name: substitution_def
     range:
@@ -251,7 +276,7 @@ doc_symbols:
       start:
         character: 0
         line: 10
-  - detail: 'type: citation, uuid: uuid_9'
+  - detail: 'type: citation'
     kind: 8
     name: citation
     range:
@@ -268,7 +293,7 @@ doc_symbols:
       start:
         character: 0
         line: 11
-  detail: 'type: section, uuid: uuid_1'
+  detail: 'type: section'
   kind: 2
   name: title
   range:

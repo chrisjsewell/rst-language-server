@@ -91,6 +91,10 @@
 				</dict>
 				<dict>
 					<key>include</key>
+					<string>#sub-definition</string>
+				</dict>
+				<dict>
+					<key>include</key>
 					<string>#tags</string>
 				</dict>
 				<dict>
@@ -103,11 +107,11 @@
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#comments</string>
+					<string>#substitution</string>
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#substitution</string>
+					<string>#comments</string>
 				</dict>
 			</array>
 		</dict>
@@ -853,6 +857,43 @@
 				</dict>
 			</array>
 		</dict>
+		<key>sub-definition</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.substitution.def.restructuredtext</string>
+						</dict>
+						<key>2</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.substitution.def.restructuredtext</string>
+						</dict>
+						<key>3</key>
+						<dict>
+							<key>name</key>
+							<string>string.other.substitution.def.restructuredtext</string>
+						</dict>
+						<key>4</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.substitution.def.restructuredtext</string>
+						</dict>
+					</dict>
+					<key>comment</key>
+					<string>replacement</string>
+					<key>match</key>
+					<string>^(\.\.)\s+(\|)([^\|]+)(|)</string>
+					<key>name</key>
+					<string>meta.link.substitution.def.restructuredtext</string>
+				</dict>
+			</array>
+		</dict>
 		<key>substitution</key>
 		<dict>
 			<key>patterns</key>
@@ -865,11 +906,21 @@
 							<key>name</key>
 							<string>punctuation.definition.substitution.restructuredtext</string>
 						</dict>
+						<key>2</key>
+						<dict>
+							<key>name</key>
+							<string>string.other.substitution.restructuredtext</string>
+						</dict>
+						<key>3</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.definition.substitution.restructuredtext</string>
+						</dict>
 					</dict>
 					<key>comment</key>
 					<string>substitution</string>
 					<key>match</key>
-					<string>(\|)[^| ]+[^|]*[^| ]*(\|_{0,2})</string>
+					<string>(\|)([^| ]+[^|]*[^| ]*)(\|_{0,2})</string>
 					<key>name</key>
 					<string>markup.underline.substitution.restructuredtext</string>
 				</dict>
