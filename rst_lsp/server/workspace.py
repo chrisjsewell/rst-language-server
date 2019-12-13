@@ -95,7 +95,7 @@ class Workspace(object):
         self._root_path = uris.to_fs_path(self._root_uri)
         self._open_docs = {}
         # TODO how to utilise persistent DB?
-        self._db = SynchronizedDatabase(in_memory=True)
+        self._db = SynchronizedDatabase()
         self._update_env()
 
     def _update_env(self):

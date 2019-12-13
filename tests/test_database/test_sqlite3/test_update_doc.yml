@@ -1,0 +1,37 @@
+directives: []
+doc_symbols:
+- data: '[{"children": []}]'
+  uri: test.rst
+documents:
+- dtype: rst
+  mtime: null
+  uri: test.rst
+linting:
+- description: Unknown interpreted text role "sdf".
+  level: 3
+  line: 20
+  source: docutils
+  type: ERROR
+  uri: test.rst
+positions:
+- arguments: null
+  block: 1
+  contentIndent: null
+  contentLine: null
+  dtype: null
+  endCharacter: 9
+  endLine: 0
+  klass: null
+  level: null
+  options: null
+  parent_uuid: null
+  rtype: null
+  startCharacter: 0
+  startLine: 0
+  title: hyperlink_target
+  type: hyperlink_target
+  uri: test.rst
+  uuid: uuid_7
+referencing: []
+roles: []
+targets: []

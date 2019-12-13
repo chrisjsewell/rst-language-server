@@ -1,4 +1,5 @@
 from inspect import getdoc  # , getmro
+import json
 
 try:
     from typing import TypedDict
@@ -42,9 +43,11 @@ def get_directive_json(name, direct) -> DirectiveInfo:
         "klass": f"{direct.__module__}.{direct.__name__}",
         "required_arguments": direct.required_arguments,
         "optional_arguments": direct.optional_arguments,
-        "has_content": direct.has_content,
-        "options": {k: str(v.__name__) for k, v in direct.option_spec.items()}
-        if direct.option_spec
-        else {},
+        "has_content": 1 if direct.has_content else 0,
+        "options": json.dumps(
+            {k: str(v.__name__) for k, v in direct.option_spec.items()}
+            if direct.option_spec
+            else {}
+        ),
     }
     return data

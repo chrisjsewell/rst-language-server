@@ -242,9 +242,6 @@ class DBElement(TypedDict):
     startCharacter: int
     endLine: int
     endCharacter: int
-    targets: Optional[List[str]]
-    # references that only apply to targets within the same document
-    refs_samedoc: Optional[List[str]]
     # then element specific data
     # TODO use TypedDict with undefined keys?
 

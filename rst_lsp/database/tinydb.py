@@ -64,7 +64,7 @@ class SynchronizedDatabase:
             (see https://tinydb.readthedocs.io/en/latest/usage.html#cachingmiddleware)
 
         """
-        if in_memory:
+        if path is None:
             self._db = TinyDB(storage=MemoryStorage,)
         else:
             self._db = TinyDB(
