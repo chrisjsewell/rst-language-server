@@ -2,7 +2,7 @@
 from collections import defaultdict
 import json
 import sqlite3
-from typing import Iterable, List, Optional
+from typing import Iterable, List, Optional, Union
 
 from rst_lsp.database.utils import (
     RoleInfo,
@@ -10,6 +10,16 @@ from rst_lsp.database.utils import (
     get_role_json,
     get_directive_json,
 )
+
+
+class NotSet:
+    pass
+
+
+def bool_to_int(value):
+    if isinstance(value, bool):
+        return 1 if value else 0
+    return value
 
 
 class Database:
@@ -308,6 +318,71 @@ class Database:
             result["block"] = True if result["block"] else False
         return result
 
-    def query_at_position(self, uri: str, line: int, character: int, **kwargs):
-        # TODO
-        pass
+    def query_positions(
+        self,
+        *,
+        uri: Optional[Union[str, tuple]] = NotSet(),
+        block: Optional[bool] = NotSet(),
+        etype: Optional[Union[str, tuple]] = NotSet(),
+        parent_uuid: Optional[Union[str, tuple]] = NotSet(),
+        uuid: Optional[Union[str, tuple]] = NotSet(),
+        **kwargs,
+    ) -> Iterable[dict]:
+        conditions = []
+        replacements = []
+        for value, key in [
+            (uri, "uri"),
+            (etype, "type"),
+            (block, "block"),
+            (parent_uuid, "parent_uuid"),
+            (uuid, "uuid"),
+        ] + [(v, k) for k, v in kwargs.items()]:
+            if isinstance(value, NotSet):
+                continue
+            if isinstance(value, tuple):
+                conditions.append(f"{key} IN ({','.join('?' for _ in value)})")
+                replacements.extend([bool_to_int(v) for v in value])
+            else:
+                conditions.append(f"{key}=?")
+                replacements.append(bool_to_int(value))
+
+        if conditions:
+            results = self.cursor.execute(
+                f"SELECT * FROM positions WHERE {' AND '.join(conditions)}",
+                replacements,
+            ).fetchall()
+        else:
+            results = self.cursor.execute("SELECT * FROM positions").fetchall()
+        for result in results:
+            result = dict(result)
+            result["block"] = True if result["block"] else False
+            yield result
+
+    def query_at_position(self, uri: str, line: int, character: int) -> dict:
+        results = self.cursor.execute(
+            "SELECT * FROM positions WHERE uri=? AND startLine<=? AND endLine>=?",
+            (uri, line, line),
+        ).fetchall()
+        # find the result that has the smallest line range
+        # TODO also smallest character range?
+        # TODO can this be achieved in query syntax
+        final_result = None
+        final_line_range = None
+        for result in results:
+            if line == result["startLine"] and character < result["startCharacter"]:
+                continue
+            if line == result["endLine"] and character > result["endCharacter"]:
+                continue
+            line_range = result["endLine"] - result["startLine"]
+            if final_result is None:
+                final_line_range = line_range
+                final_result = result
+                continue
+            if line_range < final_line_range:
+                final_line_range = line_range
+                final_result = result
+        if final_result is None:
+            return None
+        final_result = dict(final_result)
+        final_result["block"] = True if final_result["block"] else False
+        return final_result

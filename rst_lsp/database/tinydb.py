@@ -293,7 +293,6 @@ class SynchronizedDatabase:
         parent_uuid: Optional[Union[str, tuple]] = NotSet(),
         uuid: Optional[Union[str, tuple]] = NotSet(),
         **kwargs
-        # TODO match within range
     ):
         query = None
         for value, key in [

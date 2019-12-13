@@ -155,3 +155,114 @@ def test_query_position_uuid():
         "arguments": None,
         "options": None,
     }
+
+
+def test_query_positions():
+    db = Database()
+    db.update_doc(
+        uri="test.rst",
+        positions=[
+            {
+                "block": True,
+                "endCharacter": 9,
+                "endLine": 0,
+                "parent_uuid": None,
+                "startCharacter": 0,
+                "startLine": 0,
+                "title": "hyperlink_target",
+                "type": "hyperlink_target",
+                "uuid": "uuid_1",
+            },
+            {
+                "block": False,
+                "endCharacter": 9,
+                "endLine": 0,
+                "parent_uuid": None,
+                "startCharacter": 0,
+                "startLine": 0,
+                "title": "hyperlink_target",
+                "type": "hyperlink_target",
+                "uuid": "uuid_2",
+            },
+        ],
+        references=[],
+        doc_symbols=[],
+        lints=[],
+    )
+    assert list(db.query_positions(uri=("test.rst", "testx.rst"), block=True)) == [
+        {
+            "uuid": "uuid_1",
+            "uri": "test.rst",
+            "parent_uuid": None,
+            "block": True,
+            "type": "hyperlink_target",
+            "title": "hyperlink_target",
+            "startLine": 0,
+            "startCharacter": 0,
+            "endLine": 0,
+            "endCharacter": 9,
+            "level": None,
+            "rtype": None,
+            "dtype": None,
+            "contentLine": None,
+            "contentIndent": None,
+            "klass": None,
+            "arguments": None,
+            "options": None,
+        }
+    ]
+
+
+def test_query_at_position():
+    db = Database()
+    db.update_doc(
+        uri="test.rst",
+        positions=[
+            {
+                "block": False,
+                "endCharacter": 9,
+                "endLine": 0,
+                "parent_uuid": None,
+                "startCharacter": 0,
+                "startLine": 0,
+                "title": "hyperlink_target",
+                "type": "hyperlink_target",
+                "uuid": "uuid_2",
+            },
+            {
+                "block": True,
+                "endCharacter": 9,
+                "endLine": 3,
+                "parent_uuid": None,
+                "startCharacter": 5,
+                "startLine": 1,
+                "title": "hyperlink_target",
+                "type": "hyperlink_target",
+                "uuid": "uuid_1",
+            },
+        ],
+        references=[],
+        doc_symbols=[],
+        lints=[],
+    )
+    assert db.query_at_position(uri="test.rst", line=4, character=6) is None
+    assert db.query_at_position(uri="test.rst", line=2, character=6) == {
+        "uri": "test.rst",
+        "block": True,
+        "endCharacter": 9,
+        "endLine": 3,
+        "parent_uuid": None,
+        "startCharacter": 5,
+        "startLine": 1,
+        "title": "hyperlink_target",
+        "type": "hyperlink_target",
+        "uuid": "uuid_1",
+        "level": None,
+        "rtype": None,
+        "dtype": None,
+        "contentLine": None,
+        "contentIndent": None,
+        "klass": None,
+        "arguments": None,
+        "options": None,
+    }
