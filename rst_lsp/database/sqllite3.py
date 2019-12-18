@@ -16,10 +16,30 @@ class NotSet:
     pass
 
 
-def bool_to_int(value):
+def encode_value(value, to_json=False):
+    if to_json:
+        return json.dumps(value)
     if isinstance(value, bool):
         return 1 if value else 0
     return value
+
+
+def encode_values(values: dict, to_json=()):
+    return {
+        k: (1 if v else 0)
+        if isinstance(v, bool)
+        else (json.dumps(v) if k in to_json and v is not None else v)
+        for k, v in values.items()
+    }
+
+
+def decode_values(values: dict, to_bool=(), to_json=()):
+    return {
+        k: (True if v else False)
+        if k in to_bool
+        else (json.loads(v) if k in to_json and v is not None else v)
+        for k, v in dict(values).items()
+    }
 
 
 class Database:
@@ -27,8 +47,6 @@ class Database:
         self._path = path
         self._connection = None
         self._tbl_columns = {}
-        # TODO split self.open from init
-        self.open()
 
     @property
     def path(self) -> str:
@@ -37,7 +55,9 @@ class Database:
     @property
     def connection(self) -> sqlite3.Connection:
         if self._connection is None:
-            raise RuntimeError("connection is closed call open() first")
+            raise RuntimeError(
+                "connection is closed call open() first or use within context manager"
+            )
         return self._connection
 
     @property
@@ -51,10 +71,19 @@ class Database:
 
     def close(self):
         """Close the database."""
-        self._connection.close()
-        self._connection = None
+        if self._connection is not None:
+            self._connection.close()
+            self._connection = None
+
+    def __enter__(self):
+        self.open()
+        return self
+
+    def __exit__(self, *args):
+        self.close()
 
     def _create_tables(self):
+        # TODO check how to use FOREIGN KEY
         with self.connection:
             cursor = self.cursor
             cursor.execute(
@@ -69,8 +98,6 @@ class Database:
                 "options text"
                 ")"
             )
-            # TODO has_content is now an int not bool,
-            # and options is text (from json.dumps)
             cursor.execute(
                 "CREATE TABLE IF NOT EXISTS documents ("
                 "uri text PRIMARY KEY, dtype text, mtime text"
@@ -93,37 +120,36 @@ class Database:
                 "rtype text, "
                 # directives
                 "dtype text, contentLine int, contentIndent int, klass text, "
-                # TODO arguments and options now bytes
-                "arguments bytes, options bytes, "
+                "arguments text, options text, "
                 "FOREIGN KEY (uri) REFERENCES documents (uri), "
                 "FOREIGN KEY (parent_uuid) REFERENCES positions (uuid)"
                 ")"
             )
             # TODO split references table into referencing and targets
             cursor.execute(
-                "CREATE TABLE IF NOT EXISTS referencing ("
-                "reference text, "
-                "uri text, "
-                "position_uuid text, "
-                # TODO storing classes as bytes, and same_doc int not bool
-                "node text, same_doc int, classes bytes, "
-                "FOREIGN KEY (position_uuid) REFERENCES positions (uuid)"
-                ")"
-            )
-            cursor.execute(
                 "CREATE TABLE IF NOT EXISTS targets ("
                 "target text, "
                 "uri text, "
                 "position_uuid text, "
-                # TODO storing classes as bytes, and same_doc int not bool
-                "node text, same_doc int, classes bytes, "
+                "node text, classes text, "
+                "FOREIGN KEY (uri) REFERENCES documents (uri), "
                 "FOREIGN KEY (position_uuid) REFERENCES positions (uuid)"
+                ")"
+            )
+            cursor.execute(
+                "CREATE TABLE IF NOT EXISTS referencing ("
+                "reference text, "
+                "uri text, "
+                "position_uuid text, "
+                "node text, same_doc int, classes text, "
+                "FOREIGN KEY (uri) REFERENCES documents (uri), "
+                "FOREIGN KEY (position_uuid) REFERENCES positions (uuid), "
+                "FOREIGN KEY (reference) REFERENCES targets (target)"
                 ")"
             )
             cursor.execute(
                 "CREATE TABLE IF NOT EXISTS doc_symbols ("
                 "uri text PRIMARY KEY, "
-                # TODO storing whole blob as text, using json.dumps
                 "data text, "
                 "FOREIGN KEY (uri) REFERENCES documents (uri)"
                 ")"
@@ -208,9 +234,9 @@ class Database:
             "SELECT * FROM directives WHERE name=?", (name,)
         ).fetchone()
         if result is not None:
-            result = dict(result)
-            result["has_content"] = True if result["has_content"] else False
-            result["options"] = json.loads(result["options"])
+            result = decode_values(
+                result, to_bool=("has_content",), to_json=("options",)
+            )
         return result
 
     def query_directives(self, names: list = None) -> Iterable[DirectiveInfo]:
@@ -225,10 +251,7 @@ class Database:
         else:
             results = self.cursor.execute("SELECT * FROM directives",).fetchall()
         for result in results:
-            result = dict(result)
-            result["has_content"] = True if result["has_content"] else False
-            result["options"] = json.loads(result["options"])
-            yield result
+            yield decode_values(result, to_bool=("has_content",), to_json=("options",))
 
     @staticmethod
     def _add_uri_to_dicts(dicts, uri, use_default=False):
@@ -246,10 +269,12 @@ class Database:
         uri: str,
         positions: List[dict],
         references: List[dict],
+        targets: List[dict],
         doc_symbols: List[dict],
         lints: List[dict],
     ):
         # TODO pass mtime
+        # TODO pass pending_refs
         with self.connection:
             cursor = self.cursor
             cursor.execute(
@@ -269,13 +294,31 @@ class Database:
             cursor.execute("DELETE FROM targets WHERE uri=?", (uri,))
             cursor.executemany(
                 f"INSERT INTO positions VALUES {self.get_values_string('positions')}",
-                self._add_uri_to_dicts(positions, uri, use_default=True),
+                self._add_uri_to_dicts(
+                    [
+                        encode_values(v, to_json=("arguments", "options"))
+                        for v in positions
+                    ],
+                    uri,
+                    use_default=True,
+                ),
             )
             cursor.executemany(
                 f"INSERT INTO linting VALUES {self.get_values_string('linting')}",
                 self._add_uri_to_dicts(lints, uri),
             )
-            # TODO referencing and targets
+            cursor.executemany(
+                f"INSERT INTO referencing VALUES {self.get_values_string('referencing')}",
+                self._add_uri_to_dicts(
+                    [encode_values(v, to_json=("classes",)) for v in references], uri
+                ),
+            )
+            cursor.executemany(
+                f"INSERT INTO targets VALUES {self.get_values_string('targets')}",
+                self._add_uri_to_dicts(
+                    [encode_values(v, to_json=("classes",)) for v in targets], uri
+                ),
+            )
 
     def query_doc(self, uri: str) -> dict:
         result = self.cursor.execute(
@@ -314,8 +357,9 @@ class Database:
             "SELECT * FROM positions WHERE uuid=?", (uuid,)
         ).fetchone()
         if result is not None:
-            result = dict(result)
-            result["block"] = True if result["block"] else False
+            result = decode_values(
+                result, to_bool=("block",), to_json=("arguments", "options")
+            )
         return result
 
     def query_positions(
@@ -341,10 +385,10 @@ class Database:
                 continue
             if isinstance(value, tuple):
                 conditions.append(f"{key} IN ({','.join('?' for _ in value)})")
-                replacements.extend([bool_to_int(v) for v in value])
+                replacements.extend([encode_value(v) for v in value])
             else:
                 conditions.append(f"{key}=?")
-                replacements.append(bool_to_int(value))
+                replacements.append(encode_value(value))
 
         if conditions:
             results = self.cursor.execute(
@@ -354,15 +398,28 @@ class Database:
         else:
             results = self.cursor.execute("SELECT * FROM positions").fetchall()
         for result in results:
-            result = dict(result)
-            result["block"] = True if result["block"] else False
-            yield result
+            yield decode_values(
+                result, to_bool=("block",), to_json=("arguments", "options")
+            )
 
-    def query_at_position(self, uri: str, line: int, character: int) -> dict:
+    def query_at_position(self, uri: str, line: int, character: int, **kwargs) -> dict:
+        conditions = ["uri=?", "startLine<=?", "endLine>=?"]
+        replacements = [uri, line, line]
+        for key, value in kwargs.items():
+            if isinstance(value, tuple):
+                conditions.append(f"{key} IN ({','.join('?' for _ in value)})")
+                replacements.extend([encode_value(v) for v in value])
+            else:
+                conditions.append(f"{key}=?")
+                replacements.append(encode_value(value))
+
         results = self.cursor.execute(
-            "SELECT * FROM positions WHERE uri=? AND startLine<=? AND endLine>=?",
-            (uri, line, line),
+            f"SELECT * FROM positions WHERE {' AND '.join(conditions)}", replacements,
         ).fetchall()
+        # results = self.cursor.execute(
+        #     "SELECT * FROM positions WHERE uri=? AND startLine<=? AND endLine>=?",
+        #     (uri, line, line),
+        # ).fetchall()
         # find the result that has the smallest line range
         # TODO also smallest character range?
         # TODO can this be achieved in query syntax
@@ -383,6 +440,25 @@ class Database:
                 final_result = result
         if final_result is None:
             return None
-        final_result = dict(final_result)
-        final_result["block"] = True if final_result["block"] else False
-        return final_result
+        return decode_values(
+            final_result, to_bool=("block",), to_json=("arguments", "options")
+        )
+
+    def query_definitions(self, uri: str, position_uuid: str) -> Iterable[dict]:
+        """Iterate all targets that are referenced at this document position."""
+        # TODO this is currently for targets in same uri only
+        results = self.cursor.execute(
+            (
+                "SELECT t.* FROM referencing AS r "
+                "JOIN targets AS t ON (r.reference=t.target) "
+                "WHERE r.uri=? AND t.uri=? AND r.position_uuid=?"
+            ),
+            (uri, uri, position_uuid),
+        ).fetchall()
+        for result in results:
+            yield decode_values(result, to_bool=("same_doc",), to_json=("classes",))
+
+    def query_references(self, uri: str, position_uuid: str):
+        # TODO
+        pass
+

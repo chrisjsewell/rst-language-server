@@ -32,6 +32,17 @@ positions:
   type: hyperlink_target
   uri: test.rst
   uuid: uuid_7
-referencing: []
+referencing:
+- classes: '[]'
+  node: substitution_reference
+  position_uuid: uuid_1
+  reference: uuid_3
+  same_doc: 1
+  uri: test.rst
 roles: []
-targets: []
+targets:
+- classes: '[]'
+  node: substitution_definition
+  position_uuid: uuid_4
+  target: uuid_3
+  uri: test.rst
