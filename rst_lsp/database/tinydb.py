@@ -1,8 +1,8 @@
 """TinyDB implementation of a backend database."""
-from datetime import datetime
+# from datetime import datetime
 import logging
 import threading
-from typing import List, Optional, Union
+from typing import Iterable, List, Optional, Union
 
 from tinydb import TinyDB, where
 from tinydb.database import Table
@@ -88,6 +88,7 @@ class SynchronizedDatabase:
         # stores information references and targets,
         # linking back to uuids in the positions table
         self._tbl_references = self._db.table("references")  # type: Table
+        self._tbl_targets = self._db.table("targets")  # type: Table
         # stores the document symbols nested mapping for each document
         # TODO is there a better way to store this?
         self._tbl_doc_symbols = self._db.table("doc_symbols")  # type: Table
@@ -115,9 +116,9 @@ class SynchronizedDatabase:
     # def db(self) -> TinyDB:
     #     return self._db
 
-    @staticmethod
-    def get_current_time():
-        return datetime.utcnow().isoformat()
+    # @staticmethod
+    # def get_current_time():
+    #     return datetime.utcnow().isoformat()
 
     def _update_classes(self, roles: dict, directives: dict):
         self._tbl_classes.remove(where("element") == "role")
@@ -138,45 +139,46 @@ class SynchronizedDatabase:
         self._tbl_documents.remove(where("dtype") == "configuration")
         if uri is not None:
             self._tbl_documents.insert(
-                {
-                    "dtype": "configuration",
-                    "uri": uri,
-                    "modified": self.get_current_time(),
-                },
+                {"dtype": "configuration", "uri": uri, "mtime": None},
             )
         self._update_classes(roles, directives)
 
     @synchronized
-    def query_conf_file(self):
-        return self._tbl_documents.get(where("dtype") == "configuration")
+    def query_conf_file(self) -> dict:
+        entry = self._tbl_documents.get(where("dtype") == "configuration")
+        return dict(entry) if entry is not None else None
 
     @synchronized
     def query_role(self, name: str) -> RoleInfo:
-        return self._tbl_classes.get(
+        entry = self._tbl_classes.get(
             (where("element") == "role") & (where("name") == name)
         )
+        return dict(entry) if entry is not None else None
 
     @synchronized
-    def query_roles(self, names: list = None) -> List[RoleInfo]:
+    def query_roles(self, names: list = None) -> Iterable[RoleInfo]:
         if names is None:
-            return self._tbl_classes.search(where("element") == "role")
-        return self._tbl_classes.search(
-            (where("element") == "role") & (where("name").one_of(names))
-        )
+            query = where("element") == "role"
+        else:
+            query = (where("element") == "role") & (where("name").one_of(names))
+        for el in self._tbl_classes.search(query):
+            yield dict(el)
 
     @synchronized
     def query_directive(self, name: str) -> DirectiveInfo:
-        return self._tbl_classes.get(
+        entry = self._tbl_classes.get(
             (where("element") == "directive") & (where("name") == name)
         )
+        return dict(entry) if entry is not None else None
 
     @synchronized
-    def query_directives(self, names: list = None) -> List[DirectiveInfo]:
+    def query_directives(self, names: list = None) -> Iterable[DirectiveInfo]:
         if names is None:
-            return self._tbl_classes.search(where("element") == "directive")
-        return self._tbl_classes.search(
-            (where("element") == "directive") & (where("name").one_of(names))
-        )
+            query = where("element") == "directive"
+        else:
+            query = (where("element") == "directive") & (where("name").one_of(names))
+        for el in self._tbl_classes.search(query):
+            yield dict(el)
 
     def _update_doc_lint(self, uri: str, lints: List[dict]):
         self._tbl_linting.remove(where("uri") == uri)
@@ -205,6 +207,15 @@ class SynchronizedDatabase:
             db_docs.append(doc)
         self._tbl_references.insert_multiple(db_docs)
 
+    def _update_doc_targets(self, uri: str, targets: List[dict]):
+        self._tbl_targets.remove(where("uri") == uri)
+        db_docs = []
+        for element in targets:
+            doc = {"uri": uri}
+            doc.update(element)
+            db_docs.append(doc)
+        self._tbl_targets.insert_multiple(db_docs)
+
     def _update_doc_symbols(self, uri: str, doc_symbols: List[dict]):
         self._tbl_doc_symbols.remove(where("uri") == uri)
         self._tbl_doc_symbols.insert({"uri": uri, "doc_symbols": doc_symbols})
@@ -214,15 +225,17 @@ class SynchronizedDatabase:
         self,
         uri: str,
         positions: List[dict],
+        targets: List[dict],
         references: List[dict],
         doc_symbols: List[dict],
         lints: List[dict],
     ):
         self._tbl_documents.upsert(
-            {"dtype": "rst", "uri": uri, "modified": self.get_current_time()},
+            {"dtype": "rst", "uri": uri, "mtime": None},
             (where("dtype") == "rst") & (where("uri") == uri),
         )
         self._update_doc_positions(uri, positions)
+        self._update_doc_targets(uri, targets)
         self._update_doc_references(uri, references)
         self._update_doc_symbols(uri, doc_symbols)
         self._update_doc_lint(uri, lints)
@@ -319,41 +332,44 @@ class SynchronizedDatabase:
 
     @synchronized
     def query_references(self, uri: str, position_uuid: str):
-        query = (where("uri") == uri) & (where("position_uuid") == position_uuid)
-        results = self._tbl_references.search(query) or []
+        pos_query = (where("uri") == uri) & (where("position_uuid") == position_uuid)
         all_results = []
-        for result in results:
-            if result.get("target", None) or result.get("reference", None):
-                all_results.append(result)
-            if result.get("target", None):
-                query = (
-                    (where("uri") == uri)
-                    & (where("position_uuid") != position_uuid)
-                    & (where("reference") == result["target"])
-                )
-                all_results.extend(self._tbl_references.search(query) or [])
-            if result.get("reference", None):
-                query = (
-                    (where("uri") == uri)
-                    & (where("position_uuid") != position_uuid)
-                    & (where("target") == result["reference"])
-                )
-                all_results.extend(self._tbl_references.search(query) or [])
-                query = (
-                    (where("uri") == uri)
-                    & (where("position_uuid") != position_uuid)
-                    & (where("reference") == result["reference"])
-                )
-                all_results.extend(self._tbl_references.search(query) or [])
+
+        references = self._tbl_references.search(pos_query) or []
+        for reference in references:
+            all_results.append(reference)
+            query = (
+                (where("uri") == uri)
+                & (where("position_uuid") != position_uuid)
+                & (where("target") == reference["reference"])
+            )
+            all_results.extend(self._tbl_targets.search(query) or [])
+            query = (
+                (where("uri") == uri)
+                & (where("position_uuid") != position_uuid)
+                & (where("reference") == reference["reference"])
+            )
+            all_results.extend(self._tbl_references.search(query) or [])
+
+        targets = self._tbl_targets.search(pos_query) or []
+        for target in targets:
+            all_results.append(target)
+            query = (
+                (where("uri") == uri)
+                & (where("position_uuid") != position_uuid)
+                & (where("reference") == target["target"])
+            )
+            all_results.extend(self._tbl_references.search(query) or [])
+
         return all_results
 
     @synchronized
     def query_definitions(self, uri: str, position_uuid: str):
+        """Iterate all targets that are referenced at this document position."""
         query = (where("uri") == uri) & (where("position_uuid") == position_uuid)
         results = self._tbl_references.search(query) or []
         all_results = []
         for result in results:
-            if result.get("reference", None):
-                query = (where("uri") == uri) & (where("target") == result["reference"])
-                all_results.extend(self._tbl_references.search(query) or [])
+            query = (where("uri") == uri) & (where("target") == result["reference"])
+            all_results.extend(self._tbl_targets.search(query))
         return all_results

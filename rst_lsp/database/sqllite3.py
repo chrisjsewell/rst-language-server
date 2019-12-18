@@ -201,7 +201,7 @@ class Database:
             cursor.executemany(
                 f"REPLACE INTO directives VALUES {self.get_values_string('directives')}",
                 [
-                    get_directive_json(name, directive)
+                    get_directive_json(name, directive, encode=True)
                     for name, directive in directives.items()
                 ],
             )
@@ -461,4 +461,3 @@ class Database:
     def query_references(self, uri: str, position_uuid: str):
         # TODO
         pass
-

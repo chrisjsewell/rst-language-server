@@ -152,6 +152,7 @@ class Workspace(object):
             self._db.update_doc(
                 doc.uri,
                 positions=result.positions,
+                targets=result.targets,
                 references=result.references,
                 doc_symbols=result.doc_symbols,
                 lints=result.linting,

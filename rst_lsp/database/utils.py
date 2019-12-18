@@ -34,7 +34,12 @@ def get_role_json(name, role) -> RoleInfo:
     }
 
 
-def get_directive_json(name, direct) -> DirectiveInfo:
+def get_directive_json(name, direct, encode=False) -> DirectiveInfo:
+    options = (
+        {k: str(v.__name__) for k, v in direct.option_spec.items()}
+        if direct.option_spec
+        else {}
+    )
     data = {
         "element": "directive",
         "name": name,
@@ -43,11 +48,9 @@ def get_directive_json(name, direct) -> DirectiveInfo:
         "klass": f"{direct.__module__}.{direct.__name__}",
         "required_arguments": direct.required_arguments,
         "optional_arguments": direct.optional_arguments,
-        "has_content": 1 if direct.has_content else 0,
-        "options": json.dumps(
-            {k: str(v.__name__) for k, v in direct.option_spec.items()}
-            if direct.option_spec
-            else {}
-        ),
+        "has_content": (1 if direct.has_content else 0)
+        if encode
+        else direct.has_content,
+        "options": json.dumps(options) if encode else options,
     }
     return data
