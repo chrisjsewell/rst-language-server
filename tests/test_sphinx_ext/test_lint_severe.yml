@@ -111,27 +111,15 @@ positions:
   uuid: uuid_10
 references:
 - classes: []
-  node: section
-  position_uuid: uuid_4
-  target: uuid_0
-- classes: []
   node: substitution_reference
   position_uuid: uuid_5
   reference: null
   same_doc: true
 - classes: []
-  node: section
-  position_uuid: uuid_6
-  target: uuid_1
-- classes: []
   node: substitution_reference
   position_uuid: uuid_7
   reference: null
   same_doc: true
-- classes: []
-  node: section
-  position_uuid: uuid_8
-  target: uuid_2
 - classes: []
   node: substitution_reference
   position_uuid: uuid_9
@@ -142,3 +130,16 @@ references:
   position_uuid: uuid_10
   reference: null
   same_doc: true
+targets:
+- classes: []
+  node: section
+  position_uuid: uuid_4
+  target: uuid_0
+- classes: []
+  node: section
+  position_uuid: uuid_6
+  target: uuid_1
+- classes: []
+  node: section
+  position_uuid: uuid_8
+  target: uuid_2

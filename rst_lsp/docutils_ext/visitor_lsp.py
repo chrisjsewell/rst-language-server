@@ -60,6 +60,12 @@ class LSPTransform(Transform):
         return self._visitor_lsp.db_references
 
     @property
+    def db_targets(self):
+        if self._visitor_lsp is None:
+            raise AttributeError("must call `apply` first")
+        return self._visitor_lsp.db_targets
+
+    @property
     def db_doc_symbols(self):
         if self._visitor_lsp is None:
             raise AttributeError("must call `apply` first")
@@ -337,6 +343,8 @@ class VisitorLSP(nodes.GenericNodeVisitor):
         self.source_lines = source.splitlines()
         self.db_positions = []
         self.db_references = []
+        self.db_pending_refs = []
+        self.db_targets = []
         self.nesting = NestedElements()
         self.current_inline = None
         # TODO add option to remove LSP nodes
@@ -468,7 +476,6 @@ class VisitorLSP(nodes.GenericNodeVisitor):
                 "position_uuid": parent_uuid,
                 "node": node.__class__.__name__,
                 "classes": node.get("classes", []),
-                "same_doc": False,
             }
             for name in (
                 "refdomain",
@@ -479,7 +486,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             ):
                 data[name] = node[name]
 
-            self.db_references.append(data)
+            self.db_pending_refs.append(data)
 
     def default_visit(self, node):
         parent_uuid = None
@@ -489,7 +496,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             parent_uuid = self.nesting.parent_uuid
         if parent_uuid is not None:
             if "target_uuid" in node and node["target_uuid"]:
-                self.db_references.append(
+                self.db_targets.append(
                     {
                         "position_uuid": parent_uuid,
                         "node": node.__class__.__name__,

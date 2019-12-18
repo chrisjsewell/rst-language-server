@@ -205,55 +205,6 @@ positions:
   type: substitution_def
   uuid: uuid_21
 references:
-- classes: []
-  node: target
-  position_uuid: uuid_7
-  target: uuid_1
-- classes: []
-  node: pending_xref
-  position_uuid: uuid_9
-  refdomain: std
-  refexplicit: false
-  reftarget: title
-  reftype: ref
-  refwarn: true
-  same_doc: false
-- classes: []
-  node: pending_xref
-  position_uuid: uuid_10
-  refdomain: std
-  refexplicit: false
-  reftarget: fig1
-  reftype: ref
-  refwarn: true
-  same_doc: false
-- classes: []
-  node: pending_xref
-  position_uuid: uuid_11
-  refdomain: std
-  refexplicit: false
-  reftarget: tbl1
-  reftype: ref
-  refwarn: true
-  same_doc: false
-- classes: []
-  node: pending_xref
-  position_uuid: uuid_12
-  refdomain: math
-  refexplicit: false
-  reftarget: eq1
-  reftype: eq
-  refwarn: true
-  same_doc: false
-- classes: []
-  node: pending_xref
-  position_uuid: uuid_13
-  refdomain: std
-  refexplicit: false
-  reftarget: code1
-  reftype: numref
-  refwarn: true
-  same_doc: false
 - classes:
   - bibtex
   node: citation_reference
@@ -265,6 +216,11 @@ references:
   position_uuid: uuid_16
   reference: uuid_0
   same_doc: true
+targets:
+- classes: []
+  node: target
+  position_uuid: uuid_7
+  target: uuid_1
 - classes: []
   node: figure
   position_uuid: uuid_17

@@ -316,6 +316,39 @@ positions:
   type: footnote
   uuid: uuid_33
 references:
+- classes:
+  - bibtex
+  node: citation_reference
+  position_uuid: uuid_21
+  reference: null
+  same_doc: false
+- classes:
+  - bibtex
+  node: citation_reference
+  position_uuid: uuid_22
+  reference: null
+  same_doc: false
+- classes: []
+  node: substitution_reference
+  position_uuid: uuid_24
+  reference: uuid_0
+  same_doc: true
+- classes: []
+  node: substitution_reference
+  position_uuid: uuid_25
+  reference: uuid_1
+  same_doc: true
+- classes: []
+  node: substitution_reference
+  position_uuid: uuid_26
+  reference: null
+  same_doc: true
+- classes: []
+  node: reference
+  position_uuid: uuid_27
+  reference: uuid_2
+  same_doc: true
+targets:
 - classes: []
   node: target
   position_uuid: uuid_10
@@ -340,47 +373,6 @@ references:
   node: section
   position_uuid: uuid_20
   target: uuid_7
-- classes:
-  - bibtex
-  node: citation_reference
-  position_uuid: uuid_21
-  reference: null
-  same_doc: false
-- classes:
-  - bibtex
-  node: citation_reference
-  position_uuid: uuid_22
-  reference: null
-  same_doc: false
-- classes: []
-  node: pending_xref
-  position_uuid: uuid_23
-  refdomain: std
-  refexplicit: false
-  reftarget: headerlink
-  reftype: ref
-  refwarn: true
-  same_doc: false
-- classes: []
-  node: substitution_reference
-  position_uuid: uuid_24
-  reference: uuid_0
-  same_doc: true
-- classes: []
-  node: substitution_reference
-  position_uuid: uuid_25
-  reference: uuid_1
-  same_doc: true
-- classes: []
-  node: substitution_reference
-  position_uuid: uuid_26
-  reference: null
-  same_doc: true
-- classes: []
-  node: reference
-  position_uuid: uuid_27
-  reference: uuid_2
-  same_doc: true
 - classes: []
   node: substitution_definition
   position_uuid: uuid_29
