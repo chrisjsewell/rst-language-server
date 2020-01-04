@@ -242,7 +242,7 @@ class DBElement(TypedDict):
     uuid: str
     parent_uuid: Optional[str]
     block: bool
-    type: str
+    category: str
     title: str
     startLine: int
     startCharacter: int
@@ -306,8 +306,8 @@ class NestedElements:
         current_parent.append(
             {
                 "name": data["title"],
-                "detail": f'type: {data["type"]}',
-                "kind": ELEMENT2KIND.get(data["type"], SymbolKind.Constant),
+                "detail": f'type: {data["category"]}',
+                "kind": ELEMENT2KIND.get(data["category"], SymbolKind.Constant),
                 "range": {
                     "start": {
                         "line": data["startLine"],
@@ -375,12 +375,12 @@ class VisitorLSP(nodes.GenericNodeVisitor):
                 "title": node.title,
                 "parent_uuid": self.nesting.parent_uuid,
                 "block": True,
-                "type": "section",
+                "category": "section",
                 "startLine": start_indx,
                 "startCharacter": start_column,
                 "endLine": end_indx,
                 "endCharacter": end_column,
-                "level": node.level,
+                "section_level": node.level,
             }
             self.db_positions.append(data)
             self.nesting.enter_block(node, data)
@@ -395,19 +395,21 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             "title": node.dname,
             "parent_uuid": self.nesting.parent_uuid,
             "block": True,
-            "type": "directive",
+            "category": "directive",
             "startLine": start_indx,
             "startCharacter": start_column,
             "endLine": end_indx,
             "endCharacter": end_column,
-            "dtype": node.dname,
-            "contentLine": node.line_content,
-            "contentIndent": node.content_indent + start_column
-            if node.content_indent
-            else None,
-            "arguments": node.arguments,
-            "options": node.options,
-            "klass": node.klass,
+            "directive_name": node.dname,
+            "directive_data": {
+                "contentLine": node.line_content,
+                "contentIndent": node.content_indent + start_column
+                if node.content_indent
+                else None,
+                "arguments": node.arguments,
+                "options": node.options,
+                "klass": node.klass,
+            },
         }
         self.db_positions.append(data)
         self.nesting.enter_block(node, data)
@@ -422,7 +424,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             "title": node.etype,
             "parent_uuid": self.nesting.parent_uuid,
             "block": True,
-            "type": node.etype,
+            "category": node.etype,
             "startLine": start_indx,
             "startCharacter": start_column,
             "endLine": end_indx,
@@ -438,7 +440,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             "title": node.attributes["type"],
             "parent_uuid": self.nesting.parent_uuid,
             "block": False,
-            "type": node.attributes["type"],
+            "category": node.attributes["type"],
             "startLine": sline,
             "startCharacter": scol,
             "endLine": eline,
@@ -446,7 +448,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
         }
         if "role" in node.attributes:
             data["title"] = node.attributes["role"]
-            data["rtype"] = node.attributes["role"]
+            data["role_name"] = node.attributes["role"]
         self.current_inline = data["uuid"]
         self.db_positions.append(data)
         self.nesting.add_inline(data)
@@ -474,7 +476,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
         if parent_uuid is not None:
             data = {
                 "position_uuid": parent_uuid,
-                "node": node.__class__.__name__,
+                "node_type": node.__class__.__name__,
                 "classes": node.get("classes", []),
             }
             for name in (
@@ -499,9 +501,9 @@ class VisitorLSP(nodes.GenericNodeVisitor):
                 self.db_targets.append(
                     {
                         "position_uuid": parent_uuid,
-                        "node": node.__class__.__name__,
+                        "node_type": node.__class__.__name__,
                         "classes": node.get("classes", []),
-                        "target": node["target_uuid"],
+                        "uuid": node["target_uuid"],
                     }
                 )
             for ref_attr in ("footrefid", "citerefid", "targetrefid", "subrefid"):
@@ -509,12 +511,12 @@ class VisitorLSP(nodes.GenericNodeVisitor):
                     self.db_references.append(
                         {
                             "position_uuid": parent_uuid,
-                            "node": node.__class__.__name__,
+                            "node_type": node.__class__.__name__,
                             "classes": node.get("classes", []),
-                            "same_doc": True
-                            if not node.get("classes", False)
-                            else False,
-                            "reference": node[ref_attr],
+                            # "same_doc": True
+                            # if not node.get("classes", False)
+                            # else False,
+                            "target_uuid": node[ref_attr],
                         }
                     )
 

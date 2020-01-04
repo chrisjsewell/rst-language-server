@@ -1,5 +1,6 @@
 linting:
-- description: 'Title level inconsistent:
+- category: SEVERE
+  description: 'Title level inconsistent:
 
 
     title 5
@@ -8,27 +9,26 @@ linting:
   level: 4
   line: 21
   source: docutils
-  type: SEVERE
-- description: 'Undefined substitution referenced: "REF1".'
+- category: WARNING
+  description: 'Undefined substitution referenced: "REF1".'
   level: 2
   line: 3
   source: docutils
-  type: WARNING
-- description: 'Undefined substitution referenced: "REF2".'
+- category: WARNING
+  description: 'Undefined substitution referenced: "REF2".'
   level: 2
   line: 8
   source: docutils
-  type: WARNING
-- description: 'Undefined substitution referenced: "REF3".'
+- category: WARNING
+  description: 'Undefined substitution referenced: "REF3".'
   level: 2
   line: 13
   source: docutils
-  type: WARNING
-- description: 'Undefined substitution referenced: "REF4".'
+- category: WARNING
+  description: 'Undefined substitution referenced: "REF4".'
   level: 2
   line: 19
   source: docutils
-  type: WARNING
 name_to_uuid:
 - name: title 1
   type: section
@@ -44,102 +44,98 @@ name_to_uuid:
   uuid: uuid_3
 positions:
 - block: true
+  category: section
   endCharacter: 0
   endLine: 14
-  level: 1
   parent_uuid: null
+  section_level: 1
   startCharacter: 0
   startLine: 0
   title: title 1
-  type: section
   uuid: uuid_4
 - block: false
+  category: ref_sub
   endCharacter: 5
   endLine: 3
   parent_uuid: uuid_4
   startCharacter: 0
   startLine: 3
   title: ref_sub
-  type: ref_sub
   uuid: uuid_5
 - block: true
+  category: section
   endCharacter: 0
   endLine: 14
-  level: 2
   parent_uuid: uuid_4
+  section_level: 2
   startCharacter: 0
   startLine: 5
   title: title 2
-  type: section
   uuid: uuid_6
 - block: false
+  category: ref_sub
   endCharacter: 5
   endLine: 8
   parent_uuid: uuid_6
   startCharacter: 0
   startLine: 8
   title: ref_sub
-  type: ref_sub
   uuid: uuid_7
 - block: true
+  category: section
   endCharacter: 0
   endLine: 14
-  level: 3
   parent_uuid: uuid_6
+  section_level: 3
   startCharacter: 0
   startLine: 10
   title: title 3
-  type: section
   uuid: uuid_8
 - block: false
+  category: ref_sub
   endCharacter: 5
   endLine: 13
   parent_uuid: uuid_8
   startCharacter: 0
   startLine: 13
   title: ref_sub
-  type: ref_sub
   uuid: uuid_9
 - block: false
+  category: ref_sub
   endCharacter: 5
   endLine: 19
   parent_uuid: null
   startCharacter: 0
   startLine: 19
   title: ref_sub
-  type: ref_sub
   uuid: uuid_10
 references:
 - classes: []
-  node: substitution_reference
+  node_type: substitution_reference
   position_uuid: uuid_5
-  reference: null
-  same_doc: true
+  target_uuid: null
 - classes: []
-  node: substitution_reference
+  node_type: substitution_reference
   position_uuid: uuid_7
-  reference: null
-  same_doc: true
+  target_uuid: null
 - classes: []
-  node: substitution_reference
+  node_type: substitution_reference
   position_uuid: uuid_9
-  reference: null
-  same_doc: true
+  target_uuid: null
 - classes: []
-  node: substitution_reference
+  node_type: substitution_reference
   position_uuid: uuid_10
-  reference: null
-  same_doc: true
+  target_uuid: null
 targets:
 - classes: []
-  node: section
+  node_type: section
   position_uuid: uuid_4
-  target: uuid_0
+  uuid: uuid_0
 - classes: []
-  node: section
+  node_type: section
   position_uuid: uuid_6
-  target: uuid_1
+  uuid: uuid_1
 - classes: []
-  node: section
+  node_type: section
   position_uuid: uuid_8
-  target: uuid_2
+  uuid: uuid_2

@@ -1,21 +1,25 @@
 - command:
     arguments:
     - uri123
-    - arguments:
-      - python
-      block: true
-      contentIndent: 4
-      contentLine: 2
-      dtype: code-block
+    - block: true
+      category: directive
+      directive_data:
+        arguments:
+        - python
+        contentIndent: 4
+        contentLine: 2
+        klass: sphinx.directives.code.CodeBlock
+        options: {}
+      directive_name: code-block
       endCharacter: 8
       endLine: 2
-      klass: sphinx.directives.code.CodeBlock
-      options: {}
       parent_uuid: null
+      pk: 1
+      role_name: null
+      section_level: null
       startCharacter: 0
       startLine: 0
       title: code-block
-      type: directive
       uri: uri123
       uuid: uuid_0
     - - '.. code-block:: python

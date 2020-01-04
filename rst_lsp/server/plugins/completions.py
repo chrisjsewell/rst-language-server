@@ -20,11 +20,11 @@ def rst_completions(
     if re.match("^[a-z]*:", before_rev):
         items = [
             {
-                "label": r["name"],
-                "insertText": f"{r['name']}:`$0`",  # TODO replace with textEdit
+                "label": r.name,
+                "insertText": f"{r.name}:`$0`",  # TODO replace with textEdit
                 "kind": CompletionItemKind.Function,
-                "detail": f"Module: {r['module']}",
-                "documentation": r["description"],
+                "detail": f"Module: {r.module}",
+                "documentation": r.description,
                 "insertTextFormat": 2,
             }
             for r in workspace.database.query_roles()
@@ -32,18 +32,18 @@ def rst_completions(
     if re.match(r"^\s?\.\.", before_rev):
         items = [
             {
-                "label": d["name"],
-                "insertText": f"{d['name']}:: $0"
+                "label": d.name,
+                "insertText": f"{d.name}:: $0"
                 if before_rev.startswith(" ")
-                else f" {d['name']}:: $0",  # TODO replace with textEdit
+                else f" {d.name}:: $0",  # TODO replace with textEdit
                 "kind": CompletionItemKind.Class,
                 "detail": (
-                    f"Class: {d['klass']}"
-                    f"\nRequired Args: {d['required_arguments']}"
-                    f"\nOptional Args: {d['optional_arguments']}"
-                    f"\nHas Content: {d['has_content']}"
+                    f"Class: {d.klass}"
+                    f"\nRequired Args: {d.required_arguments}"
+                    f"\nOptional Args: {d.optional_arguments}"
+                    f"\nHas Content: {d.has_content}"
                 ),
-                "documentation": d["description"],
+                "documentation": d.description,
                 "insertTextFormat": 2,
             }
             for d in workspace.database.query_directives()

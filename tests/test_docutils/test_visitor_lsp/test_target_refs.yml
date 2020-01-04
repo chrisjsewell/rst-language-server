@@ -1,113 +1,110 @@
 db_positions:
 - block: true
+  category: hyperlink_target
   endCharacter: 10
   endLine: 0
   parent_uuid: null
   startCharacter: 0
   startLine: 0
   title: hyperlink_target
-  type: hyperlink_target
   uuid: uuid_4
 - block: false
+  category: ref_foot
   endCharacter: 3
   endLine: 2
   parent_uuid: null
   startCharacter: 0
   startLine: 2
   title: ref_foot
-  type: ref_foot
   uuid: uuid_5
 - block: false
+  category: ref_basic
   endCharacter: 11
   endLine: 2
   parent_uuid: null
   startCharacter: 5
   startLine: 2
   title: ref_basic
-  type: ref_basic
   uuid: uuid_6
 - block: false
+  category: ref_sub
   endCharacter: 20
   endLine: 2
   parent_uuid: null
   startCharacter: 13
   startLine: 2
   title: ref_sub
-  type: ref_sub
   uuid: uuid_7
 - block: false
+  category: ref_cite
   endCharacter: 28
   endLine: 2
   parent_uuid: null
   startCharacter: 22
   startLine: 2
   title: ref_cite
-  type: ref_cite
   uuid: uuid_8
 - block: true
+  category: footnote
   endCharacter: 25
   endLine: 4
   parent_uuid: null
   startCharacter: 0
   startLine: 4
   title: footnote
-  type: footnote
   uuid: uuid_9
 - block: true
+  category: substitution_def
   endCharacter: 29
   endLine: 5
   parent_uuid: null
   startCharacter: 0
   startLine: 5
   title: substitution_def
-  type: substitution_def
   uuid: uuid_10
 - block: true
+  category: citation
   endCharacter: 28
   endLine: 6
   parent_uuid: null
   startCharacter: 0
   startLine: 6
   title: citation
-  type: citation
   uuid: uuid_11
 db_references:
 - classes: []
-  node: target
-  position_uuid: uuid_4
-  target: uuid_3
-- classes: []
-  node: footnote_reference
+  node_type: footnote_reference
   position_uuid: uuid_5
-  reference: uuid_2
-  same_doc: true
+  target_uuid: uuid_2
 - classes: []
-  node: reference
+  node_type: reference
   position_uuid: uuid_6
-  reference: uuid_3
-  same_doc: true
+  target_uuid: uuid_3
 - classes: []
-  node: substitution_reference
+  node_type: substitution_reference
   position_uuid: uuid_7
-  reference: uuid_0
-  same_doc: true
+  target_uuid: uuid_0
 - classes: []
-  node: citation_reference
+  node_type: citation_reference
   position_uuid: uuid_8
-  reference: uuid_1
-  same_doc: true
+  target_uuid: uuid_1
+db_targets:
 - classes: []
-  node: footnote
+  node_type: target
+  position_uuid: uuid_4
+  uuid: uuid_3
+- classes: []
+  node_type: footnote
   position_uuid: uuid_9
-  target: uuid_2
+  uuid: uuid_2
 - classes: []
-  node: substitution_definition
+  node_type: substitution_definition
   position_uuid: uuid_10
-  target: uuid_0
+  uuid: uuid_0
 - classes: []
-  node: citation
+  node_type: citation
   position_uuid: uuid_11
-  target: uuid_1
+  uuid: uuid_1
 doc_symbols:
 - detail: 'type: hyperlink_target'
   kind: 8

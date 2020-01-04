@@ -1,4 +1,5 @@
 # from concurrent.futures import Future
+import datetime
 import io
 import logging
 import os
@@ -6,7 +7,7 @@ import pathlib
 import re
 from typing import Dict, List
 
-from rst_lsp.database.tinydb import SynchronizedDatabase
+from rst_lsp.database.main import DocutilsCache
 from rst_lsp.sphinx_ext.main import (
     assess_source,
     create_sphinx_app,
@@ -94,8 +95,8 @@ class Workspace(object):
         self._root_uri_scheme = uris.urlparse(self._root_uri)[0]
         self._root_path = uris.to_fs_path(self._root_uri)
         self._open_docs = {}
-        # TODO how to utilise persistent DB?
-        self._db = SynchronizedDatabase()
+        # TODO where best to store database?  persistent or temporary?
+        self._db = DocutilsCache(self._root_path, echo=False)
         self._update_env()
 
     def _update_env(self):
@@ -130,17 +131,21 @@ class Workspace(object):
             conf_path = None
             self._app_env = create_sphinx_app(None)
         roles, directives = retrieve_namespace(self._app_env)
-        self._db.update_conf_file(conf_path, roles, directives)
+        self._db.update_conf_file(
+            conf_path, datetime.datetime.utcnow(), roles, directives
+        )
+        # TODO when to remove roles and directives with 'removed' status?
 
     def close(self):
-        self._db.close()
+        # TODO persist database?
+        os.remove(self._db.db_path)
 
     @property
     def documents(self) -> dict:
         return self._open_docs
 
     @property
-    def database(self) -> SynchronizedDatabase:
+    def database(self) -> DocutilsCache:
         """Return the workspace database.
 
         If any document's source text hasn't been parsed/assessed, since its last change
@@ -151,10 +156,11 @@ class Workspace(object):
             result = doc.get_assessment()  # type: SourceAssessResult
             self._db.update_doc(
                 doc.uri,
+                doc.mtime,
+                doc_symbols=result.doc_symbols,
                 positions=result.positions,
                 targets=result.targets,
                 references=result.references,
-                doc_symbols=result.doc_symbols,
                 lints=result.linting,
             )
         return self._db
@@ -193,6 +199,7 @@ class Workspace(object):
         self._open_docs[document["uri"]] = self._create_document(document)
 
     def rm_document(self, doc_uri):
+        # TODO remove from database?
         self._open_docs.pop(doc_uri)
 
     def update_document(self, doc_uri, change: TextEdit, version=None):
@@ -275,6 +282,7 @@ class Document:
         self._local = local
         self._source = source
         self._assessment = None
+        self._mtime = datetime.datetime.utcnow()
 
     @property
     def workspace(self) -> Workspace:
@@ -282,6 +290,10 @@ class Document:
 
     def __str__(self):
         return str(self.uri)
+
+    @property
+    def mtime(self) -> datetime.datetime:
+        return self._mtime
 
     @property
     def lines(self) -> List[str]:
@@ -300,6 +312,7 @@ class Document:
             self._assessment = assess_source(
                 self.source, self.workspace.app_env, doc_uri=self.uri
             )
+            self._mtime = datetime.datetime.utcnow()
         return self._assessment
 
     def update_config(self, config: Config):

@@ -18,25 +18,28 @@ def rst_code_lens(
 
     results = (
         database.query_positions(
-            etype="directive",
             uri=uri,
-            dtype=("code", "code-block"),
-            arguments=["python"],
+            filters_equal={"category": "directive"},
+            filters_in={"directive_name": ("code", "code-block")},
         )
         or []
     )
     edits = []
     for result in results:
+        if result.directive_data is None or "python" not in result.directive_data.get(
+            "arguments", []
+        ):
+            continue
         edits.append(
             {
                 "range": {
                     "start": {
-                        "line": result["startLine"],
-                        "character": result["startCharacter"],
+                        "line": result.startLine,
+                        "character": result.startCharacter,
                     },
                     "end": {
-                        "line": result["startLine"],
-                        "character": result["startCharacter"],
+                        "line": result.startLine,
+                        "character": result.startCharacter,
                     },
                 },
                 "command": {
@@ -44,8 +47,8 @@ def rst_code_lens(
                     "command": COMMAND_NAME,
                     "arguments": [
                         uri,
-                        result,
-                        document.lines[result["startLine"] : result["endLine"] + 1],
+                        result._asdict(),
+                        document.lines[result.startLine : result.endLine + 1],
                     ],
                 },
             }

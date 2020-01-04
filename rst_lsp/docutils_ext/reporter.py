@@ -29,7 +29,7 @@ class JSONReporter(Reporter):
                 {
                     "source": "docutils",
                     "line": line,
-                    "type": sys_message["type"],
+                    "category": sys_message["type"],
                     "level": sys_message["level"],
                     "description": nodes.Element.astext(sys_message),
                 }

@@ -12,37 +12,54 @@ logger = logging.getLogger(__name__)
 def rst_references(
     document: Document, position: Position, exclude_declaration: bool = False
 ) -> List[Location]:
-    # Include the declaration of the current symbol
-    with document.workspace.database as database:
-        uri = document.uri
-        result = database.query_at_position(
-            uri=uri, line=position["line"], character=position["character"]
-        )
-        if result is None:
-            return []
+    # exclude the declaration of the current symbol
 
-        # TODO handle specific roles/directives, e.g. :ref: and :cite:
-        elements = database.query_references(uri=uri, position_uuid=result["uuid"])
+    database = document.workspace.database
+    uri = document.uri
+    result = database.query_at_position(
+        uri=uri,
+        line=position["line"],
+        character=position["character"],
+        load_references=True,
+    )
 
-        locations = []
-        for element in elements:
-            position = database.query_position_uuid(uuid=element["position_uuid"])
-            if not position:
-                continue
-            locations.append(
-                {
-                    "uri": position["uri"],
-                    "range": {
-                        "start": {
-                            "line": position["startLine"],
-                            "character": position["startCharacter"],
-                        },
-                        "end": {
-                            "line": position["endLine"],
-                            "character": position["endCharacter"],
-                        },
-                    },
-                }
-            )
+    if result is None:
+        return []
+
+    # TODO handle specific roles/directives, e.g. :ref: and :cite:
+
+    # capture:
+    # target
+    # target -> reference
+    # reference
+    # reference -> target
+    # reference -> target -> reference
+
+    locations = []
+    for target in result.targets:
+        if not exclude_declaration:
+            locations.append(_get_position_dict(target.position))
+        for reference in target.references:
+            locations.append(_get_position_dict(reference.position))
+    for reference in result.references:
+        if not exclude_declaration:
+            locations.append(_get_position_dict(reference.position))
+        if reference.target:
+            locations.append(_get_position_dict(reference.target.position))
+            for reference in reference.target.references:
+                locations.append(_get_position_dict(reference.position))
 
     return locations
+
+
+def _get_position_dict(position):
+    return {
+        "uri": position.uri,
+        "range": {
+            "start": {
+                "line": position.startLine,
+                "character": position.startCharacter,
+            },
+            "end": {"line": position.endLine, "character": position.endCharacter},
+        },
+    }

@@ -89,6 +89,7 @@ def test_sections(data_regression):
             "db_positions": transform.db_positions,
             "doc_symbols": transform.db_doc_symbols,
             "db_references": transform.db_references,
+            "db_targets": transform.db_targets,
         }
     )
 
@@ -113,6 +114,7 @@ def test_target_refs(data_regression):
             "db_positions": transform.db_positions,
             "doc_symbols": transform.db_doc_symbols,
             "db_references": transform.db_references,
+            "db_targets": transform.db_targets,
         }
     )
 
@@ -135,6 +137,7 @@ def test_directives(data_regression):
             "db_positions": transform.db_positions,
             "doc_symbols": transform.db_doc_symbols,
             "db_references": transform.db_references,
+            "db_targets": transform.db_targets,
         }
     )
 
@@ -164,5 +167,6 @@ def test_mixed1(data_regression):
             "db_positions": transform.db_positions,
             "doc_symbols": transform.db_doc_symbols,
             "db_references": transform.db_references,
+            "db_targets": transform.db_targets,
         }
     )

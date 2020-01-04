@@ -12,4 +12,4 @@ def rst_document_symbols(
 
     database = workspace.database
     uri = document.uri
-    return database.query_doc_symbols(uri=uri) or []
+    return database.query_doc(uri=uri).symbols or []
