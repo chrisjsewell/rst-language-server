@@ -1,5 +1,6 @@
 # from concurrent.futures import Future
 import datetime
+import hashlib
 import io
 import logging
 import os
@@ -17,6 +18,11 @@ from rst_lsp.sphinx_ext.main import (
     SphinxAppEnv,
 )
 from . import uri_utils as uris
+from .cache import (
+    get_default_cache_path,
+    create_default_cache_path,
+    remove_default_cache_path,
+)
 from .constants import MessageType
 from .utils import find_parents
 from .datatypes import Position, TextDocument, TextEdit
@@ -95,8 +101,15 @@ class Workspace(object):
         self._root_uri_scheme = uris.urlparse(self._root_uri)[0]
         self._root_path = uris.to_fs_path(self._root_uri)
         self._open_docs = {}
-        # TODO where best to store database?  persistent or temporary?
-        self._db = DocutilsCache(self._root_path, echo=False)
+
+        self._root_uri_hash = hashlib.md5(root_uri.encode("utf-8")).hexdigest()
+        # TODO persist cache?
+        remove_default_cache_path(self._root_uri_hash)
+        create_default_cache_path(self._root_uri_hash)
+        self._db = DocutilsCache(
+            get_default_cache_path(self._root_uri_hash), echo=False
+        )
+
         self._update_env()
 
     def _update_env(self):
@@ -134,11 +147,12 @@ class Workspace(object):
         self._db.update_conf_file(
             conf_path, datetime.datetime.utcnow(), roles, directives
         )
+        # TODO if local, use os.path.getmtime?
         # TODO when to remove roles and directives with 'removed' status?
 
     def close(self):
-        # TODO persist database?
-        os.remove(self._db.db_path)
+        # TODO persist cache?
+        remove_default_cache_path(self._root_uri_hash)
 
     @property
     def documents(self) -> dict:
@@ -312,6 +326,7 @@ class Document:
             self._assessment = assess_source(
                 self.source, self.workspace.app_env, doc_uri=self.uri
             )
+            # TODO if local, use os.path.getmtime?
             self._mtime = datetime.datetime.utcnow()
         return self._assessment
 

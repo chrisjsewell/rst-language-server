@@ -283,6 +283,7 @@ class RstLanguageServer(MethodDispatcher):
         # the client's Shutdown request, and wait for the client's Exit notification.
         for workspace in self.workspaces.values():
             workspace.close()
+        # TODO remove root cache?
         self._endpoint.shutdown()
         self._jsonrpc_stream_reader.close()
         self._jsonrpc_stream_writer.close()
