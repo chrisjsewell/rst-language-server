@@ -307,10 +307,7 @@ class ExplicitMixin:
             klass=f"{directive.__module__}.{directive.__name__}",
             children=result,
         )
-        return (
-            position,
-            blank_finish or self.state_machine.is_next_line_blank(),
-        )
+        return (position, blank_finish or self.state_machine.is_next_line_blank())
 
 
 class Body(SectionMixin, ExplicitMixin, states.Body):

@@ -95,9 +95,7 @@ class LSPTransform(Transform):
         finally:
             for name in remove:
                 delattr(nodes.GenericNodeVisitor, "visit_" + name)
-                delattr(
-                    nodes.GenericNodeVisitor, "depart_" + name,
-                )
+                delattr(nodes.GenericNodeVisitor, "depart_" + name)
 
 
 class VisitorRef2Target(nodes.GenericNodeVisitor):
@@ -479,13 +477,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
                 "node_type": node.__class__.__name__,
                 "classes": node.get("classes", []),
             }
-            for name in (
-                "refdomain",
-                "refexplicit",
-                "reftarget",
-                "reftype",
-                "refwarn",
-            ):
+            for name in ("refdomain", "refexplicit", "reftarget", "reftype", "refwarn"):
                 data[name] = node[name]
 
             self.db_pending_refs.append(data)

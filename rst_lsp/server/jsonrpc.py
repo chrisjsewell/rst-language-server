@@ -156,7 +156,7 @@ class RstLanguageServer(MethodDispatcher):
             # "codeActionProvider": True,
             "codeLensProvider": {
                 # Code lens has a resolve provider as well
-                "resolveProvider": False,
+                "resolveProvider": False
             },
             "completionProvider": {
                 "resolveProvider": False,
@@ -242,7 +242,7 @@ class RstLanguageServer(MethodDispatcher):
             e.g. [{"section": "rst_lsp"}]
         """
         return self._endpoint.request(
-            "workspace/configuration", params={"items": items},
+            "workspace/configuration", params={"items": items}
         )
 
     def publish_diagnostics(self, doc_uri: str, diagnostics: List[dict]):
@@ -254,7 +254,7 @@ class RstLanguageServer(MethodDispatcher):
 
     def apply_workspace_edit(self, edit: WorkspaceEdit):
         """Request to modify resource on the client side."""
-        return self._endpoint.request("workspace/applyEdit", params={"edit": edit},)
+        return self._endpoint.request("workspace/applyEdit", params={"edit": edit})
 
     def __getitem__(self, item):
         """Override getitem to fallback through multiple dispatchers."""

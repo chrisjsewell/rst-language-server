@@ -171,11 +171,11 @@ class Regexes:
         self.initial = build_regexp(parts)
 
         self.emphasis = re.compile(
-            non_whitespace_escape_before + r"(\*)" + end_string_suffix, re.UNICODE,
+            non_whitespace_escape_before + r"(\*)" + end_string_suffix, re.UNICODE
         )
 
         self.strong = re.compile(
-            non_whitespace_escape_before + r"(\*\*)" + end_string_suffix, re.UNICODE,
+            non_whitespace_escape_before + r"(\*\*)" + end_string_suffix, re.UNICODE
         )
 
         self.interpreted_or_phrase_ref = re.compile(
@@ -213,12 +213,11 @@ class Regexes:
         )
 
         self.target = re.compile(
-            non_whitespace_escape_before + r"(`)" + end_string_suffix, re.UNICODE,
+            non_whitespace_escape_before + r"(`)" + end_string_suffix, re.UNICODE
         )
 
         self.substitution_ref = re.compile(
-            non_whitespace_escape_before + r"(\|_{0,2})" + end_string_suffix,
-            re.UNICODE,
+            non_whitespace_escape_before + r"(\|_{0,2})" + end_string_suffix, re.UNICODE
         )
         self.email = re.compile(email_pattern + "$", re.VERBOSE | re.UNICODE)
 
@@ -332,8 +331,7 @@ class Inliner:
             )
 
         self.patterns = self.regex_class(
-            start_string_prefix=start_string_prefix,
-            end_string_suffix=end_string_suffix,
+            start_string_prefix=start_string_prefix, end_string_suffix=end_string_suffix
         )
 
         self.implicit_dispatch.append((self.patterns.uri, self.standalone_uri))

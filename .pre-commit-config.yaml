@@ -1,0 +1,22 @@
+exclude: >-
+  (?x)^(
+    _archive/.*|
+    .vscode/.*\.json|
+    tests/.*\.txt
+  )$
+
+repos:
+
+  - repo: git://github.com/pre-commit/pre-commit-hooks
+    sha: v2.2.3
+    hooks:
+    - id: check-json
+    - id: check-yaml
+    - id: end-of-file-fixer
+    - id: trailing-whitespace
+    - id: flake8
+
+  - repo: https://github.com/psf/black
+    rev: 19.3b0
+    hooks:
+    - id: black

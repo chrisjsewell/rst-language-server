@@ -56,10 +56,7 @@ def _get_position_dict(position):
     return {
         "uri": position.uri,
         "range": {
-            "start": {
-                "line": position.startLine,
-                "character": position.startCharacter,
-            },
+            "start": {"line": position.startLine, "character": position.startCharacter},
             "end": {"line": position.endLine, "character": position.endCharacter},
         },
     }

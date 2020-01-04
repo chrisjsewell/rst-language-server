@@ -82,7 +82,7 @@ def test_update_doc(tmp_path, data_regression):
                 "node_type": "substitution_reference",
                 "classes": [],
                 # "same_doc": True,
-            },
+            }
         ],
     )
     data_regression.check(cache.to_dict())

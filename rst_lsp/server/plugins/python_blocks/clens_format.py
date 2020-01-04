@@ -64,7 +64,7 @@ def rst_commands(config: Config, workspace: Workspace):
 
 @hookimpl
 def rst_execute_command(
-    config: Config, workspace: Workspace, command: str, arguments: Optional[List[Any]],
+    config: Config, workspace: Workspace, command: str, arguments: Optional[List[Any]]
 ) -> WorkspaceEdit:
     if command != COMMAND_NAME:
         return None

@@ -173,11 +173,11 @@ class DocutilsCache:
                     )
                 if updated_names:
                     session.bulk_update_mappings(
-                        orm_class, [kwargs_func(n, new_dict[n]) for n in updated_names],
+                        orm_class, [kwargs_func(n, new_dict[n]) for n in updated_names]
                     )
                 if added_names:
                     session.bulk_insert_mappings(
-                        orm_class, [kwargs_func(n, new_dict[n]) for n in added_names],
+                        orm_class, [kwargs_func(n, new_dict[n]) for n in added_names]
                     )
 
     def query_role(self, name: str, allow_removed=False) -> Optional[OrmRole]:

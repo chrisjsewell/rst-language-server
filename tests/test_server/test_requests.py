@@ -11,7 +11,7 @@ def open_test_doc(tmp_path):
     def _open_func(client_server, content, uri="uri123", initialize=True):
         if initialize:
             response = client_server._endpoint.request(
-                "initialize", {"rootPath": str(tmp_path), "initializationOptions": {}},
+                "initialize", {"rootPath": str(tmp_path), "initializationOptions": {}}
             ).result(timeout=CALL_TIMEOUT)
             assert "capabilities" in response
         client_server._endpoint.request(
@@ -37,7 +37,7 @@ def test_missing_message(client_server):  # pylint: disable=redefined-outer-name
 
 def test_initialize(client_server, tmp_path, data_regression):
     future = client_server._endpoint.request(
-        "initialize", {"rootPath": str(tmp_path), "initializationOptions": {}},
+        "initialize", {"rootPath": str(tmp_path), "initializationOptions": {}}
     )
     response = future.result(timeout=CALL_TIMEOUT)
     data_regression.check(response)
@@ -62,7 +62,7 @@ def test_folding_provider(client_server, open_test_doc, data_regression):
     )
     doc = open_test_doc(client_server, content)
     response3 = client_server._endpoint.request(
-        "text_document/folding_range", {"textDocument": doc},
+        "text_document/folding_range", {"textDocument": doc}
     ).result(timeout=CALL_TIMEOUT)
     data_regression.check(response3)
 
@@ -89,7 +89,7 @@ def test_document_symbols(client_server, open_test_doc, data_regression):
     )
     doc = open_test_doc(client_server, content)
     response3 = client_server._endpoint.request(
-        "text_document/document_symbol", {"textDocument": doc},
+        "text_document/document_symbol", {"textDocument": doc}
     ).result(timeout=CALL_TIMEOUT)
     data_regression.check(response3)
 

@@ -219,7 +219,7 @@ class SourceAssessResult:
 
 
 def assess_source(
-    content: str, app_env: SphinxAppEnv, doc_uri: str = "input.rst",
+    content: str, app_env: SphinxAppEnv, doc_uri: str = "input.rst"
 ) -> SourceAssessResult:
     """Assess the content of an file.
 

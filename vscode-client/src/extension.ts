@@ -46,7 +46,7 @@ export function activate(context: ExtensionContext) {
 	// TODO use python.pythonPath setting to specify where executable is?
 	// TODO launch command to install from pip/conda if executable missing
 	const executable = workspace.getConfiguration("rst_lsp").get<string>("executable");
-	let selector: DocumentSelector = [{ 
+	let selector: DocumentSelector = [{
 		language: "restructuredtext",
 		scheme: "file",
 	}];
@@ -54,4 +54,3 @@ export function activate(context: ExtensionContext) {
 	// For TCP server needs to be started separately
 	// context.subscriptions.push(startLangServerTCP(2088, ["restructuredtext"]));
 }
-

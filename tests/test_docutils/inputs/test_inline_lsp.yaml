@@ -33,7 +33,7 @@ interpreted:
       - ':title:`abc` `abc`:title:'
       - ''
       - '`abc`'
-    out: 
+    out:
       - <document source="test data">
       - '    <paragraph>'
       - '        <LSPInline position="0 0 0 11" role="title" type="role">'
@@ -50,7 +50,7 @@ interpreted:
 substitution_ref:
   - in:
       - '|abc| text |xyz|'
-    out: 
+    out:
       - <document source="test data">
       - '    <paragraph>'
       - '        <LSPInline position="0 0 0 4" type="ref_sub">'

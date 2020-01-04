@@ -270,7 +270,7 @@ class Document:
     """
 
     def __init__(
-        self, uri, source=None, version=None, local=True, config=None, workspace=None,
+        self, uri, source=None, version=None, local=True, config=None, workspace=None
     ):
         self.uri = uri
         self.version = version
