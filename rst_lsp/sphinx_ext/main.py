@@ -30,6 +30,7 @@ from sphinx.util.console import nocolor, color_terminal, terminal_safe  # noqa
 from sphinx.util.docutils import docutils_namespace, patch_docutils
 from sphinx.util.docutils import sphinx_domains
 
+from rst_lsp.docutils_ext import patch_globals  # noqa: F401
 from rst_lsp.docutils_ext.block_lsp import RSTParserCustom
 from rst_lsp.docutils_ext.inliner_lsp import InlinerLSP
 from rst_lsp.docutils_ext.reporter import new_document
@@ -123,45 +124,58 @@ def create_sphinx_app(
 
 @contextmanager
 def sphinx_env(app_env: SphinxAppEnv):
-    with patch_docutils(app_env.app.confdir), docutils_namespace():
-        from docutils.parsers.rst.directives import _directives
-        from docutils.parsers.rst.roles import _roles
+    """This context enters the standard sphinx contexts,
+    then registers the roles, directives and nodes saved in the app_env.
+
+    The standard sphinx contexts:
+
+    - Patch docutils.languages.get_language(), to suppress reporter warnings
+    - Temporarily sets `os.environ['DOCUTILSCONFIG']` to the sphinx confdir
+    - Saves copies of roles._roles and directives._directives & resets them on exit
+    - Un-registers additional nodes (set via `register_node`) on exit
+      (by deleting `GenericNodeVisitor` visit/depart methods)
+    - Patches roles.roles and directives.directives funcs to also look in domains
+    """
+    with patch_docutils(app_env.app.confdir), docutils_namespace(), sphinx_domains(
+        app_env.app.env
+    ):
+        from docutils.parsers.rst import directives, roles
         from sphinx.util.docutils import register_node
 
         if app_env.roles:
-            _roles.update(app_env.roles)
+            roles._roles.update(app_env.roles)
         if app_env.directives:
-            _directives.update(app_env.directives)
+            directives._directives.update(app_env.directives)
         for node in app_env.additional_nodes:
             register_node(node)
+        # TODO how to make `unregister_node` thread safe
 
-        with sphinx_domains(app_env.app.env):
-            yield
+        yield
 
 
 def retrieve_namespace(app_env: SphinxAppEnv):
-    """Retrieve all available roles, directives and additional nodes."""
-    # regarding the ``_roles`` and ``_directives`` mapping;
-    # sphinx presumably checks loads all roles/directives,
-    # when it loads its internal and conf specified extensions,
-    # however, docutils loads them on a lazy basis, when they are required
-    # the _role_registry contains all docutils roles by their 'canonical' names,
-    # but these are also mapped to language-dependent dependant names
-    # in docutils.parsers.rst.roles.role and
-    # similarly in docutils.parsers.rst.directives.directive
-    # TODO work out how to obtain the correct language mapping
-    # from docutils.languages import get_language
+    """Retrieve all available roles, directives and additional nodes.
 
-    # we use a threading lock to guard against the globals _directives and _roles
-    # being changed before they can be read.
+    Regarding the ``_roles`` and ``_directives`` mapping;
+    sphinx presumably checks loads all roles/directives,
+    when it loads its internal and conf specified extensions,
+    however, docutils loads them on a lazy basis, when they are required
+    the _role_registry contains all docutils roles by their 'canonical' names,
+    but these are also mapped to language-dependent dependant names
+    in docutils.parsers.rst.roles.role and
+    similarly in docutils.parsers.rst.directives.directive
+    """
+    # TODO obtain the correct language mapping from docutils.languages.get_language
     with threading.Lock():
         with sphinx_env(app_env):
             from docutils.parsers.rst.directives import _directives, _directive_registry
             from docutils.parsers.rst.roles import _roles, _role_registry
 
-            all_roles = copy.copy(_role_registry)
+            all_roles = {}
+            all_directives = {}
+            all_roles.update(_role_registry)
             all_roles.update(_roles)
-            all_directives = copy.copy(_directives)
+            all_directives.update(_directives)
             for key, (modulename, classname) in _directive_registry.items():
                 if key not in all_directives:
                     try:
@@ -180,7 +194,7 @@ def retrieve_namespace(app_env: SphinxAppEnv):
                     all_roles[f"{prefix}{role_name}"] = role
                 for direct_name, direct in domain.directives.items():
                     all_roles[f"{prefix}{direct_name}"] = direct
-        return all_roles, all_directives
+    return all_roles, all_directives
 
 
 def find_all_files(srcdir: str, exclude_patterns: List[str], suffixes=(".rst",)):
@@ -235,8 +249,6 @@ def assess_source(
     SourceAssessResult
 
     """
-    # TODO how can we guard against globals like _directives and _roles
-    # being changed by another thread, without thread locking the entire function?
     with sphinx_env(app_env):
 
         # TODO look at sphinx.io.read_doc function, that is used for sphinx parsing
