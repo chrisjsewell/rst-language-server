@@ -18,6 +18,9 @@ from typing import IO, List, Tuple
 
 import attr
 
+from rst_lsp.docutils_ext import patch_globals as dpg  # noqa: F401
+from rst_lsp.sphinx_ext import patch_globals as spg  # noqa: F401
+
 from docutils.nodes import document
 from docutils.frontend import OptionParser
 from docutils.parsers.rst import Parser as RSTParser
@@ -30,7 +33,6 @@ from sphinx.util.console import nocolor, color_terminal, terminal_safe  # noqa
 from sphinx.util.docutils import docutils_namespace, patch_docutils
 from sphinx.util.docutils import sphinx_domains
 
-from rst_lsp.docutils_ext import patch_globals  # noqa: F401
 from rst_lsp.docutils_ext.block_lsp import RSTParserCustom
 from rst_lsp.docutils_ext.inliner_lsp import InlinerLSP
 from rst_lsp.docutils_ext.reporter import new_document
@@ -134,7 +136,7 @@ def sphinx_env(app_env: SphinxAppEnv):
     - Saves copies of roles._roles and directives._directives & resets them on exit
     - Un-registers additional nodes (set via `register_node`) on exit
       (by deleting `GenericNodeVisitor` visit/depart methods)
-    - Patches roles.roles and directives.directives funcs to also look in domains
+    - Patches roles.roles and directives.directives functions to also look in domains
     """
     with patch_docutils(app_env.app.confdir), docutils_namespace(), sphinx_domains(
         app_env.app.env
@@ -216,7 +218,7 @@ def find_all_files(srcdir: str, exclude_patterns: List[str], suffixes=(".rst",))
             # TODO add/update os.path.getmtime for files in DB when saved/closed
             # Then we can test against the DB to check which files need to be re-read
             # also remove files from db that are no longer required
-            # re-read all files in background (async tinydb?)
+            # re-read all files in background
             # send progress to client (will require next LSP version 3.15.0)
     return docnames
 
