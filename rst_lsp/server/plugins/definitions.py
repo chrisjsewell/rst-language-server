@@ -29,7 +29,7 @@ def rst_definitions(
 
     locations = []
     for reference in result.references:
-        if not reference.target:
+        if (not reference.target) or reference.classes:
             continue
         position = reference.target.position
         locations.append(

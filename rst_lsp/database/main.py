@@ -213,7 +213,7 @@ class DocutilsCache:
         with self.context_session() as session:  # type: Session
             result = (
                 session.query(
-                    *[getattr(OrmDirective, n) for n in OrmRole.column_names()]
+                    *[getattr(OrmDirective, n) for n in OrmDirective.column_names()]
                 )
                 .order_by(OrmDirective.name)
                 .all()
