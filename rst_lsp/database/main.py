@@ -233,11 +233,14 @@ class DocutilsCache:
         references: List[dict],
         targets: List[dict],
         assert_dict_keys=True,
+        update_outdated=False,
     ):
         with self.context_session() as session:  # type: Session
             doc = session.query(OrmDocument).filter_by(uri=uri).first()
             if not doc:
                 session.add(OrmDocument(uri=uri, mtime=mtime, symbols=doc_symbols))
+            elif doc.mtime >= mtime and not update_outdated:
+                return
             else:
                 doc.mtime = mtime
                 doc.symbols = doc_symbols
