@@ -51,7 +51,11 @@ class SphinxAppEnv:
 
 
 def create_sphinx_app(
-    confdir=None, confoverrides=None, source_dir=None, output_dir=None
+    conf_dir=None,
+    confoverrides=None,
+    source_dir=None,
+    output_dir=None,
+    doctree_dir=None,
 ) -> Tuple[Sphinx, dict, dict]:
     """Yield a Sphinx Application, within a context.
 
@@ -60,7 +64,7 @@ def create_sphinx_app(
 
     Parameters
     ----------
-    confdir : str or None
+    conf_dir : str or None
         path where configuration file (conf.py) is located
     confoverrides : dict or None
         dictionary containing parameters that will update those set from conf.py
@@ -73,36 +77,41 @@ def create_sphinx_app(
     sphinx.locale.init_console(os.path.join(package_dir, "locale"), "sphinx")
 
     # below is adapted from sphinx.cmd.build.build_main
-    confdir = confdir
     confoverrides = confoverrides or {}
 
     builder = "html"
-    # TODO this is not efficient, to create temp directories on every call
+
     # these are not needed before build, but there existence is checked in ``Sphinx```
-    sourcedir = source_dir or tempfile.mkdtemp()  # path to documentation source files
-    # path for the cached environment and doctree
-    # note source directory and destination directory cannot be identical
-    doctreedir = outputdir = output_dir or tempfile.mkdtemp()
+    # note source directory and output directory cannot be identical
+    _source_temp = _out_temp = None
+    if source_dir is None:
+        source_dir = _source_temp = tempfile.mkdtemp()
+    if output_dir is None and doctree_dir is None:
+        doctree_dir = output_dir = _out_temp = tempfile.mkdtemp()
+    elif doctree_dir is None:
+        doctree_dir = _out_temp = tempfile.mkdtemp()
+    elif output_dir is None:
+        output_dir = _out_temp = tempfile.mkdtemp()
 
     app = None
     try:
         log_stream_status = StringIO()
         log_stream_warning = StringIO()
-        with patch_docutils(confdir), docutils_namespace():
+        with patch_docutils(conf_dir), docutils_namespace():
             from docutils.parsers.rst.directives import _directives
             from docutils.parsers.rst.roles import _roles
             from sphinx.util.docutils import additional_nodes
 
             app = Sphinx(
-                sourcedir,
-                confdir,
-                outputdir,
-                doctreedir,
+                source_dir,
+                conf_dir,
+                output_dir,
+                doctree_dir,
                 builder,
                 confoverrides=confoverrides,
                 status=log_stream_status,
                 warning=log_stream_warning,
-                # originally parsed
+                # also originally parsed
                 # args.freshenv, args.warningiserror,
                 # args.tags, args.verbosity, args.jobs, args.keep_going
             )
@@ -114,10 +123,10 @@ def create_sphinx_app(
         # handle_exception(app, args, exc, error)
         raise exc
     finally:
-        if not source_dir:
-            shutil.rmtree(sourcedir, ignore_errors=True)
-        if not output_dir:
-            shutil.rmtree(outputdir, ignore_errors=True)
+        if _source_temp:
+            shutil.rmtree(_source_temp, ignore_errors=True)
+        if _out_temp:
+            shutil.rmtree(_out_temp, ignore_errors=True)
 
     return SphinxAppEnv(
         app, roles, directives, additional_nodes, log_stream_status, log_stream_warning
@@ -214,12 +223,6 @@ def find_all_files(srcdir: str, exclude_patterns: List[str], suffixes=(".rst",))
         if os.access(os.path.join(srcdir, filename), os.R_OK):
             filename = os.path.realpath(filename)
             docnames.add(filename)
-            # modified_time = os.path.getmtime(filename)
-            # TODO add/update os.path.getmtime for files in DB when saved/closed
-            # Then we can test against the DB to check which files need to be re-read
-            # also remove files from db that are no longer required
-            # re-read all files in background
-            # send progress to client (will require next LSP version 3.15.0)
     return docnames
 
 

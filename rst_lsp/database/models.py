@@ -227,8 +227,6 @@ class OrmReference(OrmBase):
     # note ideally this would be array, but only supported by postgres
     classes = Column(sqla.JSON)
 
-    # TODO same_doc, have separate table? how to constrain?
-
     target_uuid = Column(
         sqla.String(36),
         sqla.ForeignKey("targets.uuid", ondelete="RESTRICT"),

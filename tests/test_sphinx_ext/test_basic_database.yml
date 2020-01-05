@@ -320,16 +320,6 @@ positions:
   title: footnote
   uuid: uuid_33
 references:
-- classes:
-  - bibtex
-  node_type: citation_reference
-  position_uuid: uuid_21
-  target_uuid: null
-- classes:
-  - bibtex
-  node_type: citation_reference
-  position_uuid: uuid_22
-  target_uuid: null
 - classes: []
   node_type: substitution_reference
   position_uuid: uuid_24

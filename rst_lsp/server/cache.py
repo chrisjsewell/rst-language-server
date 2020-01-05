@@ -1,5 +1,6 @@
 from functools import lru_cache
 import os
+import pathlib
 import platform
 import shutil
 
@@ -28,19 +29,20 @@ def _get_default_cache_path():
     return os.path.expanduser(dir_)
 
 
-def get_default_cache_path(subfolder=None):
+def get_default_cache_path(*subfolders) -> pathlib.Path:
     path = _get_default_cache_path()
-    if subfolder is not None:
-        path = os.path.join(path, subfolder)
+    if subfolders:
+        path = os.path.join(path, *subfolders)
+    return pathlib.Path(path)
+
+
+def create_default_cache_path(*subfolders, exist_ok: bool = True) -> pathlib.Path:
+    path = get_default_cache_path(*subfolders)
+    path.mkdir(parents=True, exist_ok=exist_ok)
     return path
 
 
-def create_default_cache_path(subfolder=None, exist_ok=True):
-    path = get_default_cache_path(subfolder=subfolder)
-    os.makedirs(path, exist_ok=True)
-
-
-def remove_default_cache_path(subfolder=None, ignore_errors=False):
-    path = get_default_cache_path(subfolder=subfolder)
-    if os.path.exists(path):
-        shutil.rmtree(path, ignore_errors=ignore_errors)
+def remove_default_cache_path(*subfolders, ignore_errors: bool = False):
+    path = get_default_cache_path(*subfolders)
+    if path.exists():
+        shutil.rmtree(str(path), ignore_errors=ignore_errors)

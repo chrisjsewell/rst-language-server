@@ -25,6 +25,7 @@ from .workspace import match_uri_to_workspace as uri2workspace
 from .datatypes import (
     CompletionList,
     DocumentSymbol,
+    FileEvent,
     Location,
     Position,
     TextDocument,
@@ -377,6 +378,7 @@ class RstLanguageServer(MethodDispatcher):
         self.config.update((settings or {}).get(CONFIG_NAMESPACE, {}))
         for workspace_uri in self.workspaces:
             workspace = self.workspaces[workspace_uri]
+            # TODO debounce update_config (since requires read of all files)
             workspace.update_config(self.config)
             for doc_uri in workspace.documents:
                 self.lint(doc_uri, is_saved=False)
@@ -401,8 +403,12 @@ class RstLanguageServer(MethodDispatcher):
             new_workspace = self.match_uri_to_workspace(uri)
             new_workspace._docs[uri] = doc
 
-    def m_workspace__did_change_watched_files(self, changes=None, **_kwargs):
-        pass  # TODO
+    def m_workspace__did_change_watched_files(
+        self, changes: List[FileEvent], **_kwargs
+    ):
+        self.log_message(f"didChangeWatchedFile {changes}")
+        # TODO use to remove deleted files from the database?
+        # not working at moment, need to watch RST on client?
 
     def m_text_document__did_open(self, textDocument: TextDocument, **_kwargs):
         workspace = self.match_uri_to_workspace(textDocument["uri"])

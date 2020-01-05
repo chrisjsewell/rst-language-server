@@ -180,6 +180,13 @@ class DocutilsCache:
                         orm_class, [kwargs_func(n, new_dict[n]) for n in added_names]
                     )
 
+    def query_conf_file(self) -> Optional[OrmConfigurationFile]:
+        with self.context_session() as session:  # type: Session
+            orm = session.query(OrmConfigurationFile).first()
+            if orm:
+                session.expunge(orm)
+        return orm
+
     def query_role(self, name: str, allow_removed=False) -> Optional[OrmRole]:
         with self.context_session() as session:  # type: Session
             filters = [OrmRole.name == name]

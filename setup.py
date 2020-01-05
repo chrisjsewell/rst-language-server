@@ -13,7 +13,7 @@ setup(
         "sphinx>=2.2,<3",
         "docutils>=0.15.2,<0.16",
         "pyyaml",
-        "tinydb>=3.15,<4",
+        "sqlalchemy>=1.3,<2",
         'typing-extensions; python_version<"3.8"',
     ],
     extras_require={

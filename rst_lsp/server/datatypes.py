@@ -23,6 +23,11 @@ class VersionedTextDocumentIdentifier(TypedDict):
     version: Optional[int]
 
 
+class FileEvent(TypedDict):
+    uri: str
+    type: int  # created/changed/deleted, 1/2/3, see .constants.FileChangeType
+
+
 class Position(TypedDict):
     line: int
     character: int

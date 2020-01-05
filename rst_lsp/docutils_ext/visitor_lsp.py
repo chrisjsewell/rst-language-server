@@ -499,15 +499,16 @@ class VisitorLSP(nodes.GenericNodeVisitor):
                     }
                 )
             for ref_attr in ("footrefid", "citerefid", "targetrefid", "subrefid"):
-                if ref_attr in node:  # and node[ref_attr]:
+
+                if ref_attr in node and not node.get("classes", []):
+                    # bibtex/glossary extension identify themselves with classes,
+                    # so we will ignore them.
+                    # TODO record bibtex/glossary references separately
                     self.db_references.append(
                         {
                             "position_uuid": parent_uuid,
                             "node_type": node.__class__.__name__,
                             "classes": node.get("classes", []),
-                            # "same_doc": True
-                            # if not node.get("classes", False)
-                            # else False,
                             "target_uuid": node[ref_attr],
                         }
                     )

@@ -153,10 +153,4 @@ class ThreadLocalMeta(type):
                 f"Deletion of existing attribute '{name}' "
                 f"is prohibited on type object '{cls}'"
             )
-        try:
-            cls._thread_local_attrs.value.pop(name)
-        except (AttributeError, KeyError):
-            raise AssertionError(
-                f"The attribute '{name}' is prohibited from deletion "
-                f"on type object '{cls}'"
-            )
+        cls._thread_local_attrs.value.pop(name)

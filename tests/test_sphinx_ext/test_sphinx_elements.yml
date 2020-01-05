@@ -210,11 +210,6 @@ positions:
   title: substitution_def
   uuid: uuid_21
 references:
-- classes:
-  - bibtex
-  node_type: citation_reference
-  position_uuid: uuid_14
-  target_uuid: null
 - classes: []
   node_type: substitution_reference
   position_uuid: uuid_16
