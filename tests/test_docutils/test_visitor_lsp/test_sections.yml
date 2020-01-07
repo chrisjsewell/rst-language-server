@@ -102,22 +102,32 @@ db_positions:
 db_references: []
 db_targets:
 - classes: []
+  names:
+  - title
   node_type: section
   position_uuid: uuid_5
   uuid: uuid_0
 - classes: []
+  names:
+  - sub-title
   node_type: section
   position_uuid: uuid_7
   uuid: uuid_1
 - classes: []
+  names:
+  - sub-title2
   node_type: section
   position_uuid: uuid_9
   uuid: uuid_2
 - classes: []
+  names:
+  - sub-sub-title
   node_type: section
   position_uuid: uuid_11
   uuid: uuid_3
 - classes: []
+  names:
+  - title2
   node_type: section
   position_uuid: uuid_13
   uuid: uuid_4

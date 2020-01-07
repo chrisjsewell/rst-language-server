@@ -116,22 +116,32 @@ db_references:
   target_uuid: uuid_1
 db_targets:
 - classes: []
+  names:
+  - target
   node_type: target
   position_uuid: uuid_5
   uuid: uuid_3
 - classes: []
+  names:
+  - title
   node_type: section
   position_uuid: uuid_6
   uuid: uuid_4
 - classes: []
+  names:
+  - '1'
   node_type: footnote
   position_uuid: uuid_12
   uuid: uuid_2
 - classes: []
+  names:
+  - symbol
   node_type: substitution_definition
   position_uuid: uuid_13
   uuid: uuid_0
 - classes: []
+  names:
+  - cite
   node_type: citation
   position_uuid: uuid_14
   uuid: uuid_1

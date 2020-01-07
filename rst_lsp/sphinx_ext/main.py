@@ -231,8 +231,8 @@ class SourceAssessResult:
     doctree: document = attr.ib()
     positions: List[dict] = attr.ib()
     references: List[dict] = attr.ib()
+    pending_xrefs: List[dict] = attr.ib()
     targets: List[dict] = attr.ib()
-    name_to_target: List[dict] = attr.ib()
     doc_symbols: List[DocumentSymbol] = attr.ib()
     linting: List[dict] = attr.ib()
 
@@ -283,8 +283,8 @@ def assess_source(
         doctree=document,
         positions=transform.db_positions,
         references=transform.db_references,
+        pending_xrefs=transform.db_pending_xrefs,
         targets=transform.db_targets,
-        name_to_target=transform.name_to_uuid,
         doc_symbols=transform.db_doc_symbols,
         linting=reporter.log_capture,
     )

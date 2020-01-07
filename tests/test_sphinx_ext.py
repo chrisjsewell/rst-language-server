@@ -38,7 +38,6 @@ def test_basic_database(get_test_file_content, data_regression):
             "references": results.references,
             "targets": results.targets,
             "linting": results.linting,
-            "name_to_uuid": results.name_to_target,
         }
     )
 
@@ -53,7 +52,6 @@ def test_lint_severe(get_test_file_content, data_regression):
             "references": results.references,
             "targets": results.targets,
             "linting": results.linting,
-            "name_to_uuid": results.name_to_target,
         }
     )
 
@@ -68,7 +66,6 @@ def test_section_levels(get_test_file_content, data_regression):
             "references": results.references,
             "targets": results.targets,
             "linting": results.linting,
-            "name_to_uuid": results.name_to_target,
         }
     )
 
@@ -134,7 +131,7 @@ def test_sphinx_elements(file_regression, data_regression):
             "lints": results.linting,
             "positions": results.positions,
             "references": results.references,
+            "pending_xrefs": results.pending_xrefs,
             "targets": results.targets,
-            "name_to_uuid": results.name_to_target,
         }
     )

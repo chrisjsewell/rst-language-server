@@ -40,19 +40,13 @@ def rst_references(
         if not exclude_declaration:
             locations.append(_get_position_dict(target.position))
         for reference in target.references:
-            if reference.classes:
-                continue
             locations.append(_get_position_dict(reference.position))
     for reference in result.references:
-        if reference.classes:
-            continue
         if not exclude_declaration:
             locations.append(_get_position_dict(reference.position))
         if reference.target:
             locations.append(_get_position_dict(reference.target.position))
             for reference in reference.target.references:
-                if reference.classes:
-                    continue
                 locations.append(_get_position_dict(reference.position))
 
     return locations

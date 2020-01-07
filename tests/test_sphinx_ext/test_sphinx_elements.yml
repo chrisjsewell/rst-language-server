@@ -4,25 +4,47 @@ lints:
   level: 3
   line: 5
   source: docutils
-name_to_uuid:
-- name: RST
-  type: substitution_definition
-  uuid: uuid_0
-- name: title
-  type: target
-  uuid: uuid_1
-- name: fig1
-  type: figure
-  uuid: uuid_2
-- name: tbl1
-  type: table
-  uuid: uuid_3
-- name: eq1
-  type: math_block
-  uuid: uuid_5
-- name: code1
-  type: literal_block
-  uuid: uuid_6
+pending_xrefs:
+- classes: []
+  node_type: pending_xref
+  position_uuid: uuid_8
+  refdomain: std
+  refexplicit: false
+  reftarget: title
+  reftype: ref
+  refwarn: true
+- classes: []
+  node_type: pending_xref
+  position_uuid: uuid_9
+  refdomain: std
+  refexplicit: false
+  reftarget: fig1
+  reftype: ref
+  refwarn: true
+- classes: []
+  node_type: pending_xref
+  position_uuid: uuid_10
+  refdomain: std
+  refexplicit: false
+  reftarget: tbl1
+  reftype: ref
+  refwarn: true
+- classes: []
+  node_type: pending_xref
+  position_uuid: uuid_11
+  refdomain: math
+  refexplicit: false
+  reftarget: eq1
+  reftype: eq
+  refwarn: true
+- classes: []
+  node_type: pending_xref
+  position_uuid: uuid_12
+  refdomain: std
+  refexplicit: false
+  reftarget: code1
+  reftype: numref
+  refwarn: true
 positions:
 - block: true
   category: hyperlink_target
@@ -32,7 +54,7 @@ positions:
   startCharacter: 0
   startLine: 0
   title: hyperlink_target
-  uuid: uuid_7
+  uuid: uuid_6
 - block: true
   category: section
   endCharacter: 34
@@ -42,67 +64,67 @@ positions:
   startCharacter: 0
   startLine: 2
   title: Title
-  uuid: uuid_8
+  uuid: uuid_7
 - block: false
   category: role
   endCharacter: 11
   endLine: 5
-  parent_uuid: uuid_8
+  parent_uuid: uuid_7
   role_name: ref
   startCharacter: 0
   startLine: 5
+  title: ref
+  uuid: uuid_8
+- block: false
+  category: role
+  endCharacter: 10
+  endLine: 6
+  parent_uuid: uuid_7
+  role_name: ref
+  startCharacter: 0
+  startLine: 6
   title: ref
   uuid: uuid_9
 - block: false
   category: role
   endCharacter: 10
-  endLine: 6
-  parent_uuid: uuid_8
-  role_name: ref
-  startCharacter: 0
-  startLine: 6
-  title: ref
-  uuid: uuid_10
-- block: false
-  category: role
-  endCharacter: 10
   endLine: 7
-  parent_uuid: uuid_8
+  parent_uuid: uuid_7
   role_name: ref
   startCharacter: 0
   startLine: 7
   title: ref
-  uuid: uuid_11
+  uuid: uuid_10
 - block: false
   category: role
   endCharacter: 8
   endLine: 8
-  parent_uuid: uuid_8
+  parent_uuid: uuid_7
   role_name: eq
   startCharacter: 0
   startLine: 8
   title: eq
-  uuid: uuid_12
+  uuid: uuid_11
 - block: false
   category: role
   endCharacter: 14
   endLine: 9
-  parent_uuid: uuid_8
+  parent_uuid: uuid_7
   role_name: numref
   startCharacter: 0
   startLine: 9
   title: numref
-  uuid: uuid_13
+  uuid: uuid_12
 - block: false
   category: role
   endCharacter: 15
   endLine: 10
-  parent_uuid: uuid_8
+  parent_uuid: uuid_7
   role_name: cite
   startCharacter: 0
   startLine: 10
   title: cite
-  uuid: uuid_14
+  uuid: uuid_13
 - block: true
   category: directive
   directive_data:
@@ -115,20 +137,20 @@ positions:
   directive_name: versionadded
   endCharacter: 0
   endLine: 16
-  parent_uuid: uuid_8
+  parent_uuid: uuid_7
   startCharacter: 0
   startLine: 13
   title: versionadded
-  uuid: uuid_15
+  uuid: uuid_14
 - block: false
   category: ref_sub
   endCharacter: 21
   endLine: 15
-  parent_uuid: uuid_15
+  parent_uuid: uuid_14
   startCharacter: 17
   startLine: 15
   title: ref_sub
-  uuid: uuid_16
+  uuid: uuid_15
 - block: true
   category: directive
   directive_data:
@@ -142,11 +164,11 @@ positions:
   directive_name: figure
   endCharacter: 0
   endLine: 19
-  parent_uuid: uuid_8
+  parent_uuid: uuid_7
   startCharacter: 0
   startLine: 17
   title: figure
-  uuid: uuid_17
+  uuid: uuid_16
 - block: true
   category: directive
   directive_data:
@@ -160,11 +182,11 @@ positions:
   directive_name: table
   endCharacter: 0
   endLine: 30
-  parent_uuid: uuid_8
+  parent_uuid: uuid_7
   startCharacter: 0
   startLine: 20
   title: table
-  uuid: uuid_18
+  uuid: uuid_17
 - block: true
   category: directive
   directive_data:
@@ -178,11 +200,11 @@ positions:
   directive_name: math
   endCharacter: 0
   endLine: 39
-  parent_uuid: uuid_8
+  parent_uuid: uuid_7
   startCharacter: 0
   startLine: 31
   title: math
-  uuid: uuid_19
+  uuid: uuid_18
 - block: true
   category: directive
   directive_data:
@@ -195,52 +217,59 @@ positions:
   directive_name: code-block
   endCharacter: 0
   endLine: 44
-  parent_uuid: uuid_8
+  parent_uuid: uuid_7
   startCharacter: 0
   startLine: 40
   title: code-block
-  uuid: uuid_20
+  uuid: uuid_19
 - block: true
   category: substitution_def
   endCharacter: 34
   endLine: 45
-  parent_uuid: uuid_8
+  parent_uuid: uuid_7
   startCharacter: 0
   startLine: 45
   title: substitution_def
-  uuid: uuid_21
+  uuid: uuid_20
 references:
 - classes: []
   node_type: substitution_reference
-  position_uuid: uuid_16
+  position_uuid: uuid_15
   target_uuid: uuid_0
 targets:
 - classes: []
+  names:
+  - title
   node_type: target
-  position_uuid: uuid_7
+  position_uuid: uuid_6
   uuid: uuid_1
 - classes: []
+  names:
+  - fig1
   node_type: figure
-  position_uuid: uuid_17
+  position_uuid: uuid_16
   uuid: uuid_2
 - classes:
   - colwidths-auto
+  names:
+  - tbl1
   node_type: table
-  position_uuid: uuid_18
+  position_uuid: uuid_17
   uuid: uuid_3
 - classes: []
+  names: []
   node_type: target
-  position_uuid: uuid_19
+  position_uuid: uuid_18
   uuid: uuid_4
 - classes: []
-  node_type: math_block
+  names:
+  - code1
+  node_type: literal_block
   position_uuid: uuid_19
   uuid: uuid_5
 - classes: []
-  node_type: literal_block
-  position_uuid: uuid_20
-  uuid: uuid_6
-- classes: []
+  names:
+  - RST
   node_type: substitution_definition
-  position_uuid: uuid_21
+  position_uuid: uuid_20
   uuid: uuid_0

@@ -158,20 +158,16 @@ External links:
 <paragraph>
     <reference refname="indirect external">
         indirect external
-<target id="id1" name="direct external"
-    refuri="http://indirect">
-<target id="id2" name="indirect external"
-    refname="direct external">
+<target id="id1" name="direct external" refuri="http://indirect">
+<target id="id2" name="indirect external" refname="direct external">
 ```
 
 ```xml
 <paragraph>
     <reference refname="indirect external">
         indirect external
-<target id="id1" name="direct external"
-    refuri="http://indirect">
-<target id="id2" name="indirect external"
-    refuri="http://indirect">
+<target id="id1" name="direct external" refuri="http://indirect">
+<target id="id2" name="indirect external" refuri="http://indirect">
 ```
 
 Internal links:
@@ -181,10 +177,8 @@ Internal links:
 <paragraph>
     <reference refname="indirect internal">
         indirect internal
-<target id="id2" name="indirect internal 2"
-    refname="final target">
-<target id="id3" name="indirect internal"
-    refname="indirect internal 2">
+<target id="id2" name="indirect internal 2" refname="final target">
+<target id="id3" name="indirect internal" refname="indirect internal 2">
 ```
 
 ```xml

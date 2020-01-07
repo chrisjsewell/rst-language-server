@@ -29,19 +29,6 @@ linting:
   level: 2
   line: 19
   source: docutils
-name_to_uuid:
-- name: title 1
-  type: section
-  uuid: uuid_0
-- name: title 2
-  type: section
-  uuid: uuid_1
-- name: title 3
-  type: section
-  uuid: uuid_2
-- name: title 4
-  type: section
-  uuid: uuid_3
 positions:
 - block: true
   category: section
@@ -128,14 +115,20 @@ references:
   target_uuid: null
 targets:
 - classes: []
+  names:
+  - title 1
   node_type: section
   position_uuid: uuid_4
   uuid: uuid_0
 - classes: []
+  names:
+  - title 2
   node_type: section
   position_uuid: uuid_6
   uuid: uuid_1
 - classes: []
+  names:
+  - title 3
   node_type: section
   position_uuid: uuid_8
   uuid: uuid_2

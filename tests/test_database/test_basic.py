@@ -73,6 +73,7 @@ def test_update_doc(tmp_path, data_regression):
                 "position_uuid": "uuid_1",
                 "node_type": "substitution_definition",
                 "classes": [],
+                "names": [],
             }
         ],
         references=[
@@ -81,7 +82,6 @@ def test_update_doc(tmp_path, data_regression):
                 "target_uuid": "uuid_2",
                 "node_type": "substitution_reference",
                 "classes": [],
-                # "same_doc": True,
             }
         ],
     )

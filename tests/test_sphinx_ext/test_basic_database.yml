@@ -34,37 +34,6 @@ linting:
   level: 2
   line: 47
   source: docutils
-name_to_uuid:
-- name: REF1
-  type: substitution_definition
-  uuid: uuid_0
-- name: REF2
-  type: substitution_definition
-  uuid: uuid_1
-- name: headerlink
-  type: target
-  uuid: uuid_2
-- name: header 1
-  type: section
-  uuid: uuid_3
-- name: sub-title
-  type: section
-  uuid: uuid_4
-- name: http://www.python.org/
-  type: target
-  uuid: uuid_5
-- name: a link to python
-  type: target
-  uuid: uuid_6
-- name: header 2
-  type: section
-  uuid: uuid_7
-- name: ref3
-  type: target
-  uuid: uuid_8
-- name: fn1
-  type: footnote
-  uuid: uuid_9
 positions:
 - block: true
   category: hyperlink_target
@@ -338,42 +307,62 @@ references:
   target_uuid: uuid_2
 targets:
 - classes: []
+  names:
+  - headerlink
   node_type: target
   position_uuid: uuid_10
   uuid: uuid_2
 - classes: []
+  names:
+  - header 1
   node_type: section
   position_uuid: uuid_11
   uuid: uuid_3
 - classes: []
+  names:
+  - sub-title
   node_type: section
   position_uuid: uuid_16
   uuid: uuid_4
 - classes: []
+  names:
+  - http://www.python.org/
   node_type: target
   position_uuid: uuid_17
   uuid: uuid_5
 - classes: []
+  names:
+  - a link to python
   node_type: target
   position_uuid: uuid_19
   uuid: uuid_6
 - classes: []
+  names:
+  - header 2
   node_type: section
   position_uuid: uuid_20
   uuid: uuid_7
 - classes: []
+  names:
+  - REF1
   node_type: substitution_definition
   position_uuid: uuid_29
   uuid: uuid_0
 - classes: []
+  names:
+  - REF2
   node_type: substitution_definition
   position_uuid: uuid_30
   uuid: uuid_1
 - classes: []
+  names:
+  - ref3
   node_type: target
   position_uuid: uuid_31
   uuid: uuid_8
 - classes: []
+  names:
+  - fn1
   node_type: footnote
   position_uuid: uuid_33
   uuid: uuid_9

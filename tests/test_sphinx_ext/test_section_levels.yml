@@ -64,34 +64,6 @@ linting:
   level: 2
   line: 43
   source: docutils
-name_to_uuid:
-- name: title 1
-  type: section
-  uuid: uuid_0
-- name: title 2
-  type: section
-  uuid: uuid_1
-- name: title 3
-  type: section
-  uuid: uuid_2
-- name: title 4
-  type: section
-  uuid: uuid_3
-- name: title 5
-  type: section
-  uuid: uuid_4
-- name: title 7
-  type: section
-  uuid: uuid_5
-- name: title 8
-  type: section
-  uuid: uuid_6
-- name: title 9
-  type: section
-  uuid: uuid_7
-- name: title 10
-  type: section
-  uuid: uuid_8
 positions:
 - block: true
   category: section
@@ -303,38 +275,56 @@ references:
   target_uuid: null
 targets:
 - classes: []
+  names:
+  - title 1
   node_type: section
   position_uuid: uuid_9
   uuid: uuid_0
 - classes: []
+  names:
+  - title 2
   node_type: section
   position_uuid: uuid_11
   uuid: uuid_1
 - classes: []
+  names:
+  - title 3
   node_type: section
   position_uuid: uuid_13
   uuid: uuid_2
 - classes: []
+  names:
+  - title 4
   node_type: section
   position_uuid: uuid_15
   uuid: uuid_3
 - classes: []
+  names:
+  - title 5
   node_type: section
   position_uuid: uuid_17
   uuid: uuid_4
 - classes: []
+  names:
+  - title 7
   node_type: section
   position_uuid: uuid_19
   uuid: uuid_5
 - classes: []
+  names:
+  - title 8
   node_type: section
   position_uuid: uuid_21
   uuid: uuid_6
 - classes: []
+  names:
+  - title 9
   node_type: section
   position_uuid: uuid_23
   uuid: uuid_7
 - classes: []
+  names:
+  - title 10
   node_type: section
   position_uuid: uuid_25
   uuid: uuid_8

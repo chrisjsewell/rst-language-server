@@ -227,6 +227,8 @@ class Workspace(object):
         for doc_uri in self.documents:
             self.get_document(doc_uri).update_config(config)
 
+        # TODO configuration option, whether to read all files
+
         conf_file = self._db.query_conf_file()
         if not conf_file or not os.path.exists(conf_file.uri):
             return

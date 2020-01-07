@@ -24,6 +24,11 @@ OrmBase = declarative_base(cls=Base)  # type: Type[Union[Base, DeclarativeMeta]]
 
 
 class OrmRole(OrmBase):
+    """Stores all interpreted roles available for the project.
+
+    This is determined given the sphinx configuration, before any files have been read.
+    """
+
     __tablename__ = "roles"
 
     name = Column(sqla.String(36), primary_key=True)
@@ -38,6 +43,11 @@ class OrmRole(OrmBase):
 
 
 class OrmDirective(OrmBase):
+    """Stores all directives available for the project.
+
+    This is determined given the sphinx configuration, before any files have been read.
+    """
+
     __tablename__ = "directives"
 
     name = Column(sqla.String(36), primary_key=True)
@@ -56,6 +66,8 @@ class OrmDirective(OrmBase):
 
 
 class OrmConfigurationFile(OrmBase):
+    """Stores all configuration files of the project. Principally the ``conf.py``"""
+
     __tablename__ = "conf_file"
 
     pk = Column(sqla.Integer, primary_key=True)
@@ -71,6 +83,8 @@ class OrmConfigurationFile(OrmBase):
 
 
 class OrmDocument(OrmBase):
+    """Stores documents that can/have been parsed to a doctree (e.g. RST files)."""
+
     __tablename__ = "documents"
 
     pk = Column(sqla.Integer, primary_key=True)
@@ -105,6 +119,8 @@ class OrmDocument(OrmBase):
 
 
 class OrmDocLint(OrmBase):
+    """Stores issues identified in a document."""
+
     __tablename__ = "doc_linting"
 
     pk = Column(sqla.Integer, primary_key=True)
@@ -124,6 +140,11 @@ class OrmDocLint(OrmBase):
 
 
 class OrmPosition(OrmBase):
+    """Stores line/character ranges in the document,
+    that are associated with one or more document elements,
+    e.g. roles, directives, targets and references.
+    """
+
     __tablename__ = "doc_positions"
 
     pk = Column(sqla.Integer, primary_key=True)
@@ -186,6 +207,12 @@ class OrmPosition(OrmBase):
 
 
 class OrmTarget(OrmBase):
+    """Stores reference targets, generally defined at a single position in a document
+
+    Related to `docutils.nodes` classes like:
+    `target`, `citation`, `footnote` and `substitution_definition`.
+    """
+
     __tablename__ = "targets"
 
     pk = Column(sqla.Integer, primary_key=True)
@@ -201,6 +228,7 @@ class OrmTarget(OrmBase):
     node_type = Column(sqla.String(225))
     # note ideally this would be array, but only supported by postgres
     classes = Column(sqla.JSON)
+    names = Column(sqla.JSON)
 
     references = sqla.orm.relationship(
         "OrmReference",
@@ -212,6 +240,8 @@ class OrmTarget(OrmBase):
 
 
 class OrmReference(OrmBase):
+    """Stores references to targets."""
+
     __tablename__ = "references"
 
     pk = Column(sqla.Integer, primary_key=True)
@@ -230,6 +260,6 @@ class OrmReference(OrmBase):
     target_uuid = Column(
         sqla.String(36),
         sqla.ForeignKey("targets.uuid", ondelete="RESTRICT"),
-        nullable=True,  # for pending references
+        nullable=True,
     )
     target = sqla.orm.relationship("OrmTarget", back_populates="references")
