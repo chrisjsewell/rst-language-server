@@ -12,46 +12,48 @@ logger = logging.getLogger(__name__)
 @hookimpl
 def rst_hover(document: Document, position: Position) -> Hover:
 
-    with document.workspace.database as database:
-        uri = document.uri
-        result = database.query_at_position(
-            uri=uri,
-            line=position["line"],
-            character=position["character"],
-            type=("role", "directive"),
-        )
+    database = document.workspace.database
 
-        if result is None:
-            return None
+    uri = document.uri
+    result = database.query_at_position(
+        uri=uri,
+        line=position["line"],
+        character=position["character"],
+        filters_in={"category": ("role", "directive")},
+        load_role=True,
+        load_directive=True,
+    )
 
-        if result["type"] == "role":
-            role_data = database.query_role(result["rtype"])
-            if role_data is None:
-                return {"contents": "Unknown role"}
-            return {
-                "contents": [
-                    {"language": "yaml", "value": (f"module: {role_data['module']}")},
-                    {"language": "rst", "value": (f"{role_data['description']}")},
-                ]
-            }
-        elif result["startLine"] == position["line"]:
-            dir_data = database.query_directive(result["dtype"])
-            if dir_data is None:
-                return {"contents": "Unknown directive"}
-            options = yaml.safe_dump({"options": dir_data["options"]})
-            return {
-                "contents": [
-                    {
-                        "language": "yaml",
-                        "value": (
-                            f"class: {dir_data['klass']}\n"
-                            f"required arguments: {dir_data['required_arguments']}\n"
-                            f"optional arguments: {dir_data['optional_arguments']}\n"
-                            f"has_content: {dir_data['has_content']}\n"
-                            f"{options}"
-                        ),
-                    },
-                    {"language": "rst", "value": f"{dir_data['description']}"},
-                ]
-            }
+    if result is None:
+        return None
+
+    if result.category == "role":
+        if result.role is None:
+            return {"contents": "Unknown role"}
+        return {
+            "contents": [
+                {"language": "yaml", "value": (f"module: {result.role.module}")},
+                {"language": "rst", "value": (f"{result.role.description}")},
+            ]
+        }
+    elif result.startLine == position["line"]:
+        if result.directive is None:
+            return {"contents": "Unknown directive"}
+        dir_data = result.directive.column_dict()
+        options = yaml.safe_dump({"options": dir_data["options"]})
+        return {
+            "contents": [
+                {
+                    "language": "yaml",
+                    "value": (
+                        f"class: {dir_data['klass']}\n"
+                        f"required arguments: {dir_data['required_arguments']}\n"
+                        f"optional arguments: {dir_data['optional_arguments']}\n"
+                        f"has_content: {dir_data['has_content']}\n"
+                        f"{options}"
+                    ),
+                },
+                {"language": "rst", "value": f"{dir_data['description']}"},
+            ]
+        }
     return None

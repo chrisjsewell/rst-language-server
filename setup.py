@@ -13,14 +13,14 @@ setup(
         "sphinx>=2.2,<3",
         "docutils>=0.15.2,<0.16",
         "pyyaml",
-        "tinydb>=3.15,<4",
+        "sqlalchemy>=1.3,<2",
         'typing-extensions; python_version<"3.8"',
     ],
     extras_require={
-        "jsonrpc": ["python-jsonrpc-server>0.3,<0.4", "pluggy"],
-        "python_plugins": ["jedi>=0.15", "black"],
-        "testing": ["pytest", "pytest-regressions", "sphinxcontrib-bibtex>=1.0.0"],
-        "code_style": ["black", "flake8"],
+        "jsonrpc": ["python-jsonrpc-server>0.3,<0.4", "pluggy>=0.13,<0.14"],
+        "python_plugins": ["jedi>=0.15", "black>=19,<20"],
+        "testing": ["pytest>5,<6", "pytest-regressions", "sphinxcontrib-bibtex>=1.0.0"],
+        "code_style": ["black==19.3b0", "pre-commit==1.17.0", "flake8<3.8.0,>=3.7.0"],
     },
     entry_points={
         "console_scripts": [

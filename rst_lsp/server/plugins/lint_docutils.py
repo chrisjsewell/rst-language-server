@@ -17,17 +17,17 @@ def rst_lint(config: Config, document: Document, is_saved: bool) -> List[Diagnos
     database = document.workspace.database
     uri = document.uri
     results = []
-    for lint in database.query_lint(uri):
+    for lint in database.query_doc(uri, load_lints=True).lints:
         results.append(
             {
                 "source": "docutils",
-                "code": f"D00{lint['level']}",  # TODO better diagnostic codes
+                "code": f"D00{lint.level}",  # TODO better diagnostic codes
                 "range": {
-                    "start": {"line": lint["line"], "character": 0},
-                    "end": {"line": lint["line"], "character": 0},
+                    "start": {"line": lint.line, "character": 0},
+                    "end": {"line": lint.line, "character": 0},
                 },
-                "message": lint["description"],
-                "severity": SEVERITY_MAP.get(lint["level"], DiagnosticSeverity.Hint),
+                "message": lint.description,
+                "severity": SEVERITY_MAP.get(lint.level, DiagnosticSeverity.Hint),
             }
         )
     return results

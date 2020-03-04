@@ -9,6 +9,13 @@ from rst_lsp.server.jsonrpc import start_io_lang_server, RstLanguageServer
 CALL_TIMEOUT = 10
 
 
+@pytest.fixture(autouse=True)
+def mock_env_cache_dir(tmp_path):
+    os.environ["RST_LSP_CACHE_DIR"] = str(tmp_path / "lsp_cache")
+    yield
+    os.environ.pop("RST_LSP_CACHE_DIR")
+
+
 def start_client(client):
     client.start()
 

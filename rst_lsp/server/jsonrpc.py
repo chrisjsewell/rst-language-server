@@ -25,6 +25,7 @@ from .workspace import match_uri_to_workspace as uri2workspace
 from .datatypes import (
     CompletionList,
     DocumentSymbol,
+    FileEvent,
     Location,
     Position,
     TextDocument,
@@ -156,7 +157,7 @@ class RstLanguageServer(MethodDispatcher):
             # "codeActionProvider": True,
             "codeLensProvider": {
                 # Code lens has a resolve provider as well
-                "resolveProvider": False,
+                "resolveProvider": False
             },
             "completionProvider": {
                 "resolveProvider": False,
@@ -242,7 +243,7 @@ class RstLanguageServer(MethodDispatcher):
             e.g. [{"section": "rst_lsp"}]
         """
         return self._endpoint.request(
-            "workspace/configuration", params={"items": items},
+            "workspace/configuration", params={"items": items}
         )
 
     def publish_diagnostics(self, doc_uri: str, diagnostics: List[dict]):
@@ -254,7 +255,7 @@ class RstLanguageServer(MethodDispatcher):
 
     def apply_workspace_edit(self, edit: WorkspaceEdit):
         """Request to modify resource on the client side."""
-        return self._endpoint.request("workspace/applyEdit", params={"edit": edit},)
+        return self._endpoint.request("workspace/applyEdit", params={"edit": edit})
 
     def __getitem__(self, item):
         """Override getitem to fallback through multiple dispatchers."""
@@ -283,6 +284,7 @@ class RstLanguageServer(MethodDispatcher):
         # the client's Shutdown request, and wait for the client's Exit notification.
         for workspace in self.workspaces.values():
             workspace.close()
+        # TODO remove root cache?
         self._endpoint.shutdown()
         self._jsonrpc_stream_reader.close()
         self._jsonrpc_stream_writer.close()
@@ -376,6 +378,7 @@ class RstLanguageServer(MethodDispatcher):
         self.config.update((settings or {}).get(CONFIG_NAMESPACE, {}))
         for workspace_uri in self.workspaces:
             workspace = self.workspaces[workspace_uri]
+            # TODO debounce update_config (since requires read of all files)
             workspace.update_config(self.config)
             for doc_uri in workspace.documents:
                 self.lint(doc_uri, is_saved=False)
@@ -400,8 +403,12 @@ class RstLanguageServer(MethodDispatcher):
             new_workspace = self.match_uri_to_workspace(uri)
             new_workspace._docs[uri] = doc
 
-    def m_workspace__did_change_watched_files(self, changes=None, **_kwargs):
-        pass  # TODO
+    def m_workspace__did_change_watched_files(
+        self, changes: List[FileEvent], **_kwargs
+    ):
+        self.log_message(f"didChangeWatchedFile {changes}")
+        # TODO use to remove deleted files from the database?
+        # not working at moment, need to watch RST on client?
 
     def m_text_document__did_open(self, textDocument: TextDocument, **_kwargs):
         workspace = self.match_uri_to_workspace(textDocument["uri"])

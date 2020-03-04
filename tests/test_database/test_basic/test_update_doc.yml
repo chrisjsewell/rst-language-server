@@ -1,0 +1,46 @@
+conf_file: []
+directives: []
+doc_linting:
+- category: ERROR
+  description: Unknown interpreted text role "sdf".
+  level: 3
+  line: 20
+  pk: 1
+  source: docutils
+  uri: test.rst
+doc_positions:
+- block: true
+  category: hyperlink_target
+  directive_data: null
+  directive_name: null
+  endCharacter: 9
+  endLine: 0
+  parent_uuid: null
+  pk: 1
+  role_name: null
+  section_level: null
+  startCharacter: 0
+  startLine: 0
+  title: hyperlink_target
+  uri: test.rst
+  uuid: uuid_1
+documents:
+- mtime: 2019-12-30 00:00:01
+  pk: 1
+  symbols:
+  - children: []
+  uri: test.rst
+references:
+- classes: []
+  node_type: substitution_reference
+  pk: 1
+  position_uuid: uuid_1
+  target_uuid: uuid_2
+roles: []
+targets:
+- classes: []
+  names: []
+  node_type: substitution_definition
+  pk: 1
+  position_uuid: uuid_1
+  uuid: uuid_2

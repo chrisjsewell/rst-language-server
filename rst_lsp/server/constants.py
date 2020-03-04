@@ -85,3 +85,9 @@ class FoldingRangeKind:
     Comment = "comment"
     Imports = "imports"
     Region = "region"
+
+
+class FileChangeType:
+    Created = 1
+    Changed = 2
+    Deleted = 3

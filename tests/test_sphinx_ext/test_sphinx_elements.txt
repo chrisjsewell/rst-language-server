@@ -92,13 +92,13 @@
                                         False
             <LSPDirective arguments="" content_indent="4" dtype="math" klass="sphinx.directives.patches.MathDirective" line_content="35" line_end="39" line_start="31" options="{'nowrap': None, 'label': 'eq1'}">
                 <target ids="equation-eq1" target_uuid="uuid_4">
-                <math_block docname="input.rst" label="eq1" nowrap="True" number="1" target_uuid="uuid_5" xml:space="preserve">
+                <math_block docname="input.rst" label="eq1" nowrap="True" number="1" xml:space="preserve">
                     \begin{eqnarray}
                         y    & = & ax^2 + bx + c \\
                         f(x) & = & x^2 + 2xy + y^2
                     \end{eqnarray}
             <LSPDirective arguments="python::" content_indent="4" dtype="code-block" klass="sphinx.directives.code.CodeBlock" line_content="43" line_end="44" line_start="40" options="{}">
-                <literal_block force="False" highlight_args="{}" ids="code1" language="python::" names="code1" target_uuid="uuid_6" xml:space="preserve">
+                <literal_block force="False" highlight_args="{}" ids="code1" language="python::" names="code1" target_uuid="uuid_5" xml:space="preserve">
                     pass
             <LSPBlockTarget end_line="45" start_line="45" type="substitution_def">
                 <substitution_definition names="RST" target_uuid="uuid_0">

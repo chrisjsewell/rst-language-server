@@ -7,9 +7,6 @@ The visitor should be run via the ``LSPTransform`` class::
 
     transform = LSPTransform(document)
     transform.apply(source_content)
-    transform.name_to_uuid
-    transform.db_positions
-    transform.db_doc_symbols
 
 """
 import logging
@@ -42,12 +39,6 @@ class LSPTransform(Transform):
         self._visitor_lsp = None
 
     @property
-    def name_to_uuid(self):
-        if self._visitor_ref is None:
-            raise AttributeError("must call `apply` first")
-        return self._visitor_ref.name_to_uuid
-
-    @property
     def db_positions(self):
         if self._visitor_lsp is None:
             raise AttributeError("must call `apply` first")
@@ -58,6 +49,18 @@ class LSPTransform(Transform):
         if self._visitor_lsp is None:
             raise AttributeError("must call `apply` first")
         return self._visitor_lsp.db_references
+
+    @property
+    def db_pending_xrefs(self):
+        if self._visitor_lsp is None:
+            raise AttributeError("must call `apply` first")
+        return self._visitor_lsp.db_pending_refs
+
+    @property
+    def db_targets(self):
+        if self._visitor_lsp is None:
+            raise AttributeError("must call `apply` first")
+        return self._visitor_lsp.db_targets
 
     @property
     def db_doc_symbols(self):
@@ -89,13 +92,11 @@ class LSPTransform(Transform):
         finally:
             for name in remove:
                 delattr(nodes.GenericNodeVisitor, "visit_" + name)
-                delattr(
-                    nodes.GenericNodeVisitor, "depart_" + name,
-                )
+                delattr(nodes.GenericNodeVisitor, "depart_" + name)
 
 
 class VisitorRef2Target(nodes.GenericNodeVisitor):
-    """Visitor to link references to their tagets.
+    """Visitor to link references to their targets.
 
     This is adapted from the code in
     ``transforms.references.Substitutions``,
@@ -109,7 +110,6 @@ class VisitorRef2Target(nodes.GenericNodeVisitor):
     def __init__(self, document: nodes.document):
         super().__init__(document)
         self.document = self.document  # type: nodes.document
-        self.name_to_uuid = []
         # TODO handle anonymous in VisitorLSP
         self.anonymous_targets = []
         self.anonymous_refs = []
@@ -117,15 +117,12 @@ class VisitorRef2Target(nodes.GenericNodeVisitor):
         # assign ids to substitution definitions
         for sub_def_node in self.document.substitution_defs.values():
             sub_def_node["target_uuid"] = self.get_uuid()
-            for name in sub_def_node["names"]:
-                self.add_name_to_uuid(sub_def_node, name, sub_def_node["target_uuid"])
 
         # assign ids to citation definitions
         for citation_node in self.document.citations:
             citation_id = self.get_uuid()
             citation_node["target_uuid"] = citation_id
             for label in citation_node["names"]:
-                self.add_name_to_uuid(citation_node, label, citation_id)
                 if label in self.document.citation_refs:
                     for refnode in self.document.citation_refs[label]:
                         if "citerefid" not in refnode:
@@ -136,17 +133,11 @@ class VisitorRef2Target(nodes.GenericNodeVisitor):
             foot_id = self.get_uuid()
             footnode_node["target_uuid"] = foot_id
             for label in footnode_node["names"]:
-                self.add_name_to_uuid(footnode_node, label, foot_id)
                 if label in self.document.footnote_refs:
                     for refnode in self.document.footnote_refs[label]:
                         if "footrefid" not in refnode:
                             refnode["footrefid"] = foot_id
         # TODO assign ids to auto-numbered / symbol footnote definitions
-
-    def add_name_to_uuid(self, node, name, nid):
-        self.name_to_uuid.append(
-            {"type": node.__class__.__name__, "name": name, "uuid": nid}
-        )
 
     def get_uuid(self):
         return str(uuid.uuid4())
@@ -158,7 +149,6 @@ class VisitorRef2Target(nodes.GenericNodeVisitor):
             self.anonymous_targets.append(node)
             return
         for name in node["names"]:
-            self.add_name_to_uuid(node, name, targetid)
             reflist = self.document.refnames.get(name, [])
             for ref in reflist:
                 if "targetrefid" not in ref:
@@ -202,8 +192,6 @@ class VisitorRef2Target(nodes.GenericNodeVisitor):
     def add_target_uuid(self, node):
         if "names" in node and node["names"] and "target_uuid" not in node:
             node["target_uuid"] = self.get_uuid()
-            for name in node.get("names", []):
-                self.add_name_to_uuid(node, name, node["target_uuid"])
 
     # def visit_image(self, node):
     #     self.add_target_uuid(node)
@@ -217,10 +205,10 @@ class VisitorRef2Target(nodes.GenericNodeVisitor):
     # def visit_literal_block(self, node):
     #     self.add_target_uuid(node)
 
-    def visit_math_block(self, node):
-        if "label" in node:
-            node["target_uuid"] = self.get_uuid()
-            self.add_name_to_uuid(node, node["label"], node["target_uuid"])
+    # def visit_math_block(self, node):
+    #     if "label" in node:
+    #         node["target_uuid"] = self.get_uuid()
+    #         name = node["label"]
 
     def default_visit(self, node):
         """Override for generic, uniform traversals."""
@@ -236,15 +224,12 @@ class DBElement(TypedDict):
     uuid: str
     parent_uuid: Optional[str]
     block: bool
-    type: str
+    category: str
     title: str
     startLine: int
     startCharacter: int
     endLine: int
     endCharacter: int
-    targets: Optional[List[str]]
-    # references that only apply to targets within the same document
-    refs_samedoc: Optional[List[str]]
     # then element specific data
     # TODO use TypedDict with undefined keys?
 
@@ -303,8 +288,8 @@ class NestedElements:
         current_parent.append(
             {
                 "name": data["title"],
-                "detail": f'type: {data["type"]}',
-                "kind": ELEMENT2KIND.get(data["type"], SymbolKind.Constant),
+                "detail": f'type: {data["category"]}',
+                "kind": ELEMENT2KIND.get(data["category"], SymbolKind.Constant),
                 "range": {
                     "start": {
                         "line": data["startLine"],
@@ -340,6 +325,8 @@ class VisitorLSP(nodes.GenericNodeVisitor):
         self.source_lines = source.splitlines()
         self.db_positions = []
         self.db_references = []
+        self.db_pending_refs = []
+        self.db_targets = []
         self.nesting = NestedElements()
         self.current_inline = None
         # TODO add option to remove LSP nodes
@@ -370,12 +357,12 @@ class VisitorLSP(nodes.GenericNodeVisitor):
                 "title": node.title,
                 "parent_uuid": self.nesting.parent_uuid,
                 "block": True,
-                "type": "section",
+                "category": "section",
                 "startLine": start_indx,
                 "startCharacter": start_column,
                 "endLine": end_indx,
                 "endCharacter": end_column,
-                "level": node.level,
+                "section_level": node.level,
             }
             self.db_positions.append(data)
             self.nesting.enter_block(node, data)
@@ -390,19 +377,21 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             "title": node.dname,
             "parent_uuid": self.nesting.parent_uuid,
             "block": True,
-            "type": "directive",
+            "category": "directive",
             "startLine": start_indx,
             "startCharacter": start_column,
             "endLine": end_indx,
             "endCharacter": end_column,
-            "dtype": node.dname,
-            "contentLine": node.line_content,
-            "contentIndent": node.content_indent + start_column
-            if node.content_indent
-            else None,
-            "arguments": node.arguments,
-            "options": node.options,
-            "klass": node.klass,
+            "directive_name": node.dname,
+            "directive_data": {
+                "contentLine": node.line_content,
+                "contentIndent": node.content_indent + start_column
+                if node.content_indent
+                else None,
+                "arguments": node.arguments,
+                "options": node.options,
+                "klass": node.klass,
+            },
         }
         self.db_positions.append(data)
         self.nesting.enter_block(node, data)
@@ -417,7 +406,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             "title": node.etype,
             "parent_uuid": self.nesting.parent_uuid,
             "block": True,
-            "type": node.etype,
+            "category": node.etype,
             "startLine": start_indx,
             "startCharacter": start_column,
             "endLine": end_indx,
@@ -433,7 +422,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
             "title": node.attributes["type"],
             "parent_uuid": self.nesting.parent_uuid,
             "block": False,
-            "type": node.attributes["type"],
+            "category": node.attributes["type"],
             "startLine": sline,
             "startCharacter": scol,
             "endLine": eline,
@@ -441,7 +430,7 @@ class VisitorLSP(nodes.GenericNodeVisitor):
         }
         if "role" in node.attributes:
             data["title"] = node.attributes["role"]
-            data["rtype"] = node.attributes["role"]
+            data["role_name"] = node.attributes["role"]
         self.current_inline = data["uuid"]
         self.db_positions.append(data)
         self.nesting.add_inline(data)
@@ -469,20 +458,13 @@ class VisitorLSP(nodes.GenericNodeVisitor):
         if parent_uuid is not None:
             data = {
                 "position_uuid": parent_uuid,
-                "node": node.__class__.__name__,
+                "node_type": node.__class__.__name__,
                 "classes": node.get("classes", []),
-                "same_doc": False,
             }
-            for name in (
-                "refdomain",
-                "refexplicit",
-                "reftarget",
-                "reftype",
-                "refwarn",
-            ):
+            for name in ("refdomain", "refexplicit", "reftarget", "reftype", "refwarn"):
                 data[name] = node[name]
 
-            self.db_references.append(data)
+            self.db_pending_refs.append(data)
 
     def default_visit(self, node):
         parent_uuid = None
@@ -491,26 +473,29 @@ class VisitorLSP(nodes.GenericNodeVisitor):
         elif self.nesting.parent_uuid is not None:
             parent_uuid = self.nesting.parent_uuid
         if parent_uuid is not None:
+            # TODO record additional sphinx target nodes, like math_block's with label
             if "target_uuid" in node and node["target_uuid"]:
-                self.db_references.append(
+                self.db_targets.append(
                     {
                         "position_uuid": parent_uuid,
-                        "node": node.__class__.__name__,
+                        "node_type": node.__class__.__name__,
                         "classes": node.get("classes", []),
-                        "target": node["target_uuid"],
+                        "names": node.get("names", []),
+                        "uuid": node["target_uuid"],
                     }
                 )
             for ref_attr in ("footrefid", "citerefid", "targetrefid", "subrefid"):
-                if ref_attr in node:  # and node[ref_attr]:
+
+                if ref_attr in node and not node.get("classes", []):
+                    # bibtex/glossary extension identify themselves with classes,
+                    # so we will ignore them for now.
+                    # TODO record bibtex/glossary references separately
                     self.db_references.append(
                         {
                             "position_uuid": parent_uuid,
-                            "node": node.__class__.__name__,
+                            "node_type": node.__class__.__name__,
                             "classes": node.get("classes", []),
-                            "same_doc": True
-                            if not node.get("classes", False)
-                            else False,
-                            "reference": node[ref_attr],
+                            "target_uuid": node[ref_attr],
                         }
                     )
 

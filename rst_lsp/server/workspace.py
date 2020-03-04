@@ -1,4 +1,6 @@
-# from concurrent.futures import Future
+from concurrent.futures import Future
+import datetime
+import hashlib
 import io
 import logging
 import os
@@ -6,16 +8,17 @@ import pathlib
 import re
 from typing import Dict, List
 
-from rst_lsp.database.tinydb import SynchronizedDatabase
+from rst_lsp.database.main import DocutilsCache
 from rst_lsp.sphinx_ext.main import (
     assess_source,
     create_sphinx_app,
-    # find_all_files,
+    find_all_files,
     retrieve_namespace,
     SourceAssessResult,
     SphinxAppEnv,
 )
 from . import uri_utils as uris
+from .cache import create_default_cache_path, remove_default_cache_path
 from .constants import MessageType
 from .utils import find_parents
 from .datatypes import Position, TextDocument, TextEdit
@@ -94,8 +97,13 @@ class Workspace(object):
         self._root_uri_scheme = uris.urlparse(self._root_uri)[0]
         self._root_path = uris.to_fs_path(self._root_uri)
         self._open_docs = {}
-        # TODO how to utilise persistent DB?
-        self._db = SynchronizedDatabase(in_memory=True)
+
+        self._root_uri_hash = hashlib.md5(root_uri.encode("utf-8")).hexdigest()
+        # TODO persist cache?
+        remove_default_cache_path(self._root_uri_hash)
+        path = create_default_cache_path(self._root_uri_hash, "database")
+        self._db = DocutilsCache(str(path), echo=False)
+
         self._update_env()
 
     def _update_env(self):
@@ -116,7 +124,9 @@ class Workspace(object):
         logger.debug(f"Using conf dir: {conf_path}")
         try:
             self._app_env = create_sphinx_app(
-                os.path.dirname(conf_path) if conf_path else None
+                conf_dir=os.path.dirname(conf_path) if conf_path else None,
+                doctree_dir=create_default_cache_path(self._root_uri_hash, "doctrees"),
+                output_dir=create_default_cache_path(self._root_uri_hash, "outputs"),
             )
         except Exception as err:
             self.server.show_message(
@@ -128,19 +138,28 @@ class Workspace(object):
                 msg_type=MessageType.Error,
             )
             conf_path = None
-            self._app_env = create_sphinx_app(None)
+            self._app_env = create_sphinx_app(
+                conf_dir=None,
+                doctree_dir=create_default_cache_path(self._root_uri_hash, "doctrees"),
+                output_dir=create_default_cache_path(self._root_uri_hash, "outputs"),
+            )
         roles, directives = retrieve_namespace(self._app_env)
-        self._db.update_conf_file(conf_path, roles, directives)
+        self._db.update_conf_file(
+            conf_path, datetime.datetime.utcnow(), roles, directives
+        )
+        # TODO if local, use os.path.getmtime?
+        # TODO when to remove roles and directives with 'removed' status?
 
     def close(self):
-        self._db.close()
+        # TODO persist cache?
+        remove_default_cache_path(self._root_uri_hash)
 
     @property
     def documents(self) -> dict:
         return self._open_docs
 
     @property
-    def database(self) -> SynchronizedDatabase:
+    def database(self) -> DocutilsCache:
         """Return the workspace database.
 
         If any document's source text hasn't been parsed/assessed, since its last change
@@ -151,9 +170,11 @@ class Workspace(object):
             result = doc.get_assessment()  # type: SourceAssessResult
             self._db.update_doc(
                 doc.uri,
-                positions=result.positions,
-                references=result.references,
+                doc.mtime,
                 doc_symbols=result.doc_symbols,
+                positions=result.positions,
+                targets=result.targets,
+                references=result.references,
                 lints=result.linting,
             )
         return self._db
@@ -192,6 +213,8 @@ class Workspace(object):
         self._open_docs[document["uri"]] = self._create_document(document)
 
     def rm_document(self, doc_uri):
+        # TODO remove from database? or get notification when rst are deleted
+        # see also m_workspace__did_change_watched_files
         self._open_docs.pop(doc_uri)
 
     def update_document(self, doc_uri, change: TextEdit, version=None):
@@ -204,29 +227,64 @@ class Workspace(object):
         for doc_uri in self.documents:
             self.get_document(doc_uri).update_config(config)
 
-    # TODO parse all files in background
-    #     conf_path = (self._db.query_conf_file() or {}).get("uri", None)
-    #     if not conf_path:
-    #         return
-    #     exclude_patterns = (
-    #         self.app_env.app.config.exclude_patterns
-    #         + self.app_env.app.config.templates_path
-    #     )
-    #     future = self._server._endpoint._executor_service.submit(
-    #         find_all_files,
-    #         srcdir=os.path.dirname(conf_path),
-    #         exclude_patterns=exclude_patterns,
-    #     )
-    #     future.add_done_callback(self.notify_files)
+        # TODO configuration option, whether to read all files
 
-    # def notify_files(self, future: Future):
-    #     if future.cancelled():
-    #         return
-    #     self._rst_files = future.result()
+        conf_file = self._db.query_conf_file()
+        if not conf_file or not os.path.exists(conf_file.uri):
+            return
+        exclude_patterns = (
+            self.app_env.app.config.exclude_patterns
+            + self.app_env.app.config.templates_path
+            + [uris.to_fs_path(uri) for uri in self.documents]
+            # TODO current doc exclude doesn't appear to be working
+        )
+        all_paths = find_all_files(
+            os.path.dirname(conf_file.uri), exclude_patterns=exclude_patterns
+        )
+        self.server.log_message(f"parsing {len(all_paths)} closed files")
+
+        # start in separate thread, so the request can be returned
+        future = self._server._endpoint._executor_service.submit(
+            self.parse_closed_files, paths=all_paths
+        )
+        future.add_done_callback(self.notify_files)
+
+    def notify_files(self, future: Future):
+        if future.cancelled():
+            self.server.log_message("cancelled parsing closed files")
+        self.server.log_message(f"finished parsing {future.result()} closed files")
+
+    def parse_closed_files(self, paths):
+        # TODO send progress to client (will require next LSP version 3.15.0)
+        passed = 0
+        for path in paths:
+            try:
+                with open(path) as handle:
+                    source = handle.read()
+                # TODO check doc not in database with same mtime
+                result = assess_source(source, self.app_env, doc_uri=path)
+                self._db.update_doc(
+                    uri=uris.from_fs_path(path),
+                    # TODO use os.path.getmtime(path)?
+                    mtime=datetime.datetime.utcnow(),
+                    doc_symbols=result.doc_symbols,
+                    positions=result.positions,
+                    targets=result.targets,
+                    references=result.references,
+                    lints=result.linting,
+                )
+                self.server.log_message(f"file parsed: {uris.from_fs_path(path)}")
+                passed += 1
+            except Exception as err:
+                self.server.log_message(
+                    f"file parse failed: {path}: {err}", MessageType.Error
+                )
+        # TODO now remove removed roles/directives from database
+        return passed
 
     @property
     def is_local(self):
-        """Test if the file is local (i.e. can be accessed by ``os``)."""
+        """Test if the directory is local (i.e. can be accessed by ``os``)."""
         return (
             self._root_uri_scheme == "" or self._root_uri_scheme == "file"
         ) and os.path.exists(self._root_path)
@@ -262,7 +320,7 @@ class Document:
     """
 
     def __init__(
-        self, uri, source=None, version=None, local=True, config=None, workspace=None,
+        self, uri, source=None, version=None, local=True, config=None, workspace=None
     ):
         self.uri = uri
         self.version = version
@@ -274,6 +332,7 @@ class Document:
         self._local = local
         self._source = source
         self._assessment = None
+        self._mtime = datetime.datetime.utcnow()
 
     @property
     def workspace(self) -> Workspace:
@@ -281,6 +340,10 @@ class Document:
 
     def __str__(self):
         return str(self.uri)
+
+    @property
+    def mtime(self) -> datetime.datetime:
+        return self._mtime
 
     @property
     def lines(self) -> List[str]:
@@ -299,6 +362,8 @@ class Document:
             self._assessment = assess_source(
                 self.source, self.workspace.app_env, doc_uri=self.uri
             )
+            # TODO if local, use os.path.getmtime?
+            self._mtime = datetime.datetime.utcnow()
         return self._assessment
 
     def update_config(self, config: Config):

@@ -1,38 +1,41 @@
 db_positions:
-- arguments:
-  - python
-  block: true
-  contentIndent: 3
-  contentLine: 2
-  dtype: code
+- block: true
+  category: directive
+  directive_data:
+    arguments:
+    - python
+    contentIndent: 3
+    contentLine: 2
+    klass: docutils.parsers.rst.directives.body.CodeBlock
+    options: {}
+  directive_name: code
   endCharacter: 0
   endLine: 3
-  klass: docutils.parsers.rst.directives.body.CodeBlock
-  options: {}
   parent_uuid: null
   startCharacter: 0
   startLine: 0
   title: code
-  type: directive
   uuid: uuid_0
-- arguments:
-  - abc.png
-  block: true
-  contentIndent: null
-  contentLine: null
-  dtype: image
+- block: true
+  category: directive
+  directive_data:
+    arguments:
+    - abc.png
+    contentIndent: null
+    contentLine: null
+    klass: docutils.parsers.rst.directives.images.Image
+    options:
+      uri: abc.png
+  directive_name: image
   endCharacter: 17
   endLine: 4
-  klass: docutils.parsers.rst.directives.images.Image
-  options:
-    uri: abc.png
   parent_uuid: null
   startCharacter: 0
   startLine: 4
   title: image
-  type: directive
   uuid: uuid_1
 db_references: []
+db_targets: []
 doc_symbols:
 - detail: 'type: directive'
   kind: 5

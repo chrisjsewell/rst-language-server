@@ -16,30 +16,33 @@ def rst_definitions(
     database = document.workspace.database
     uri = document.uri
     result = database.query_at_position(
-        uri=uri, line=position["line"], character=position["character"]
+        uri=uri,
+        line=position["line"],
+        character=position["character"],
+        load_definitions=True,
     )
+
     if result is None:
         return []
 
     # TODO handle specific roles/directives, e.g. :ref: and :cite:
-    elements = database.query_definitions(uri=uri, position_uuid=result["uuid"])
 
     locations = []
-    for element in elements:
-        position = database.query_position_uuid(uuid=element["position_uuid"])
-        if not position:
+    for reference in result.references:
+        if not reference.target:
             continue
+        position = reference.target.position
         locations.append(
             {
-                "uri": position["uri"],
+                "uri": position.uri,
                 "range": {
                     "start": {
-                        "line": position["startLine"],
-                        "character": position["startCharacter"],
+                        "line": position.startLine,
+                        "character": position.startCharacter,
                     },
                     "end": {
-                        "line": position["endLine"],
-                        "character": position["endCharacter"],
+                        "line": position.endLine,
+                        "character": position.endCharacter,
                     },
                 },
             }

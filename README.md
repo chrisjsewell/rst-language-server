@@ -1,5 +1,28 @@
 # ReStructuredText Language Server
 
+**NOTE**: This project is still in development
+
+## Example Usage
+
+The VS Code extension can be tried by cloning the repository,
+opening it in VS Code, then inside the editor, press F5. This will compile and run the extension in a new [Extension Development Host window](https://code.visualstudio.com/api/get-started/your-first-extension).
+
+### Outlines and Diagnostics
+
+![outline_diagnostic](gifs/rst-lsp-demo_outline_diagnostic.gif)
+
+### Auto-Completions
+
+![autocompletion](gifs/rst-lsp-demo_autocompletion.gif)
+
+### References
+
+![references](gifs/rst-lsp-demo_references.gif)
+
+### Code Blocks
+
+![code-blocks](gifs/rst-lsp-demo_code_blocks.gif)
+
 ## Resources
 
 - docutils
@@ -158,20 +181,16 @@ External links:
 <paragraph>
     <reference refname="indirect external">
         indirect external
-<target id="id1" name="direct external"
-    refuri="http://indirect">
-<target id="id2" name="indirect external"
-    refname="direct external">
+<target id="id1" name="direct external" refuri="http://indirect">
+<target id="id2" name="indirect external" refname="direct external">
 ```
 
 ```xml
 <paragraph>
     <reference refname="indirect external">
         indirect external
-<target id="id1" name="direct external"
-    refuri="http://indirect">
-<target id="id2" name="indirect external"
-    refuri="http://indirect">
+<target id="id1" name="direct external" refuri="http://indirect">
+<target id="id2" name="indirect external" refuri="http://indirect">
 ```
 
 Internal links:
@@ -181,10 +200,8 @@ Internal links:
 <paragraph>
     <reference refname="indirect internal">
         indirect internal
-<target id="id2" name="indirect internal 2"
-    refname="final target">
-<target id="id3" name="indirect internal"
-    refname="indirect internal 2">
+<target id="id2" name="indirect internal 2" refname="final target">
+<target id="id3" name="indirect internal" refname="indirect internal 2">
 ```
 
 ```xml
@@ -291,4 +308,36 @@ Send `reporter.error` if transition after a title, at the beginning or end of th
 <transition>
 <section>
     ...
+```
+
+### Sphinx Process
+
+The [Sphinx build phases](https://www.sphinx-doc.org/en/master/extdev/index.html#build-phases) and [Sphinx core events](https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events)can be summarised as:
+
+```raw
+config-inited(app,config)
+builder-inited(app)
+env-get-outdated(app, env, added, changed, removed)
+env-before-read-docs(app, env, docnames)
+
+for docname in docnames:
+    env-purge-doc(app, env, docname)
+    if not removed:
+        source-read(app, docname, source)
+
+        run parser (by default docutils.Parser, with sphinx configured roles/directives/nodes)
+            parse to doctree
+            apply transforms (by priority)
+        doctree-read(app, doctree)
+
+env-updated(app, env)
+env-check-consistency(app, env)
+
+for docname in docnames:
+    apply post-transform (by priority)
+    doctree-resolved(app, doctree, docname)
+
+call builder
+
+build-finished(app, exception)
 ```

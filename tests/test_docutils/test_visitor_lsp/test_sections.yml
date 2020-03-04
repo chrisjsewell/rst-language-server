@@ -1,125 +1,136 @@
 db_positions:
 - block: true
+  category: section
   endCharacter: 9
   endLine: 18
-  level: 1
   parent_uuid: null
+  section_level: 1
   startCharacter: 0
   startLine: 0
   title: title
-  type: section
   uuid: uuid_5
 - block: false
+  category: role
   endCharacter: 9
   endLine: 3
   parent_uuid: uuid_5
-  rtype: title
+  role_name: title
   startCharacter: 0
   startLine: 3
   title: title
-  type: role
   uuid: uuid_6
 - block: true
+  category: section
   endCharacter: 9
   endLine: 8
-  level: 2
   parent_uuid: uuid_5
+  section_level: 2
   startCharacter: 0
   startLine: 5
   title: sub-title
-  type: section
   uuid: uuid_7
 - block: false
+  category: role
   endCharacter: 9
   endLine: 8
   parent_uuid: uuid_7
-  rtype: title
+  role_name: title
   startCharacter: 0
   startLine: 8
   title: title
-  type: role
   uuid: uuid_8
 - block: true
+  category: section
   endCharacter: 9
   endLine: 18
-  level: 2
   parent_uuid: uuid_5
+  section_level: 2
   startCharacter: 0
   startLine: 10
   title: sub-title2
-  type: section
   uuid: uuid_9
 - block: false
+  category: role
   endCharacter: 9
   endLine: 13
   parent_uuid: uuid_9
-  rtype: title
+  role_name: title
   startCharacter: 0
   startLine: 13
   title: title
-  type: role
   uuid: uuid_10
 - block: true
+  category: section
   endCharacter: 9
   endLine: 18
-  level: 3
   parent_uuid: uuid_9
+  section_level: 3
   startCharacter: 0
   startLine: 15
   title: sub-sub-title
-  type: section
   uuid: uuid_11
 - block: false
+  category: role
   endCharacter: 9
   endLine: 18
   parent_uuid: uuid_11
-  rtype: title
+  role_name: title
   startCharacter: 0
   startLine: 18
   title: title
-  type: role
   uuid: uuid_12
 - block: true
+  category: section
   endCharacter: 9
   endLine: 23
-  level: 1
   parent_uuid: null
+  section_level: 1
   startCharacter: 0
   startLine: 20
   title: title2
-  type: section
   uuid: uuid_13
 - block: false
+  category: role
   endCharacter: 9
   endLine: 23
   parent_uuid: uuid_13
-  rtype: title
+  role_name: title
   startCharacter: 0
   startLine: 23
   title: title
-  type: role
   uuid: uuid_14
-db_references:
+db_references: []
+db_targets:
 - classes: []
-  node: section
+  names:
+  - title
+  node_type: section
   position_uuid: uuid_5
-  target: uuid_0
+  uuid: uuid_0
 - classes: []
-  node: section
+  names:
+  - sub-title
+  node_type: section
   position_uuid: uuid_7
-  target: uuid_1
+  uuid: uuid_1
 - classes: []
-  node: section
+  names:
+  - sub-title2
+  node_type: section
   position_uuid: uuid_9
-  target: uuid_2
+  uuid: uuid_2
 - classes: []
-  node: section
+  names:
+  - sub-sub-title
+  node_type: section
   position_uuid: uuid_11
-  target: uuid_3
+  uuid: uuid_3
 - classes: []
-  node: section
+  names:
+  - title2
+  node_type: section
   position_uuid: uuid_13
-  target: uuid_4
+  uuid: uuid_4
 doc_symbols:
 - children:
   - detail: 'type: role'

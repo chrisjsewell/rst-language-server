@@ -19,27 +19,30 @@ def rst_hover(document: Document, position: Position) -> Hover:
         uri=uri,
         line=position["line"],
         character=position["character"],
-        type="directive",
-        dtype=("code", "code-block"),
-        arguments=["python"],
+        filters_equal={"category": "directive"},
+        filters_in={"directive_name": ("code", "code-block")},
     )
     if (
-        result is None
-        or (result["contentLine"] is None)
-        or (position["line"] < result["contentLine"])
-        or (position["character"] < result["contentIndent"])
+        (result is None)
+        or (result.directive_data is None)
+        or ("python" not in result.directive_data.get("arguments", []))
+        or (result.directive_data["contentLine"] is None)
+        or (position["line"] < result.directive_data["contentLine"])
+        or (position["character"] < result.directive_data["contentIndent"])
     ):
         return None
 
-    lines = document.lines[result["contentLine"] : result["endLine"] + 1]
-    text = "\n".join([l[result["contentIndent"] :].replace("\n", "") for l in lines])
+    lines = document.lines[result.directive_data["contentLine"] : result.endLine + 1]
+    text = "\n".join(
+        [l[result.directive_data["contentIndent"] :].replace("\n", "") for l in lines]
+    )
     # TODO add warning message, if jedi not installed
     import jedi
 
     definitions = jedi.Script(
         source=text,
-        line=position["line"] - result["contentLine"] + 1,
-        column=position["character"] - result["contentIndent"],
+        line=position["line"] - result.directive_data["contentLine"] + 1,
+        column=position["character"] - result.directive_data["contentIndent"],
     ).goto_definitions()
 
     word = document.word_at_position(position)

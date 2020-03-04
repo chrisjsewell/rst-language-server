@@ -18,6 +18,9 @@ from typing import IO, List, Tuple
 
 import attr
 
+from rst_lsp.docutils_ext import patch_globals as dpg  # noqa: F401
+from rst_lsp.sphinx_ext import patch_globals as spg  # noqa: F401
+
 from docutils.nodes import document
 from docutils.frontend import OptionParser
 from docutils.parsers.rst import Parser as RSTParser
@@ -48,7 +51,11 @@ class SphinxAppEnv:
 
 
 def create_sphinx_app(
-    confdir=None, confoverrides=None, source_dir=None, output_dir=None
+    conf_dir=None,
+    confoverrides=None,
+    source_dir=None,
+    output_dir=None,
+    doctree_dir=None,
 ) -> Tuple[Sphinx, dict, dict]:
     """Yield a Sphinx Application, within a context.
 
@@ -57,7 +64,7 @@ def create_sphinx_app(
 
     Parameters
     ----------
-    confdir : str or None
+    conf_dir : str or None
         path where configuration file (conf.py) is located
     confoverrides : dict or None
         dictionary containing parameters that will update those set from conf.py
@@ -70,36 +77,41 @@ def create_sphinx_app(
     sphinx.locale.init_console(os.path.join(package_dir, "locale"), "sphinx")
 
     # below is adapted from sphinx.cmd.build.build_main
-    confdir = confdir
     confoverrides = confoverrides or {}
 
     builder = "html"
-    # TODO this is not efficient, to create temp directories on every call
+
     # these are not needed before build, but there existence is checked in ``Sphinx```
-    sourcedir = source_dir or tempfile.mkdtemp()  # path to documentation source files
-    # path for the cached environment and doctree
-    # note source directory and destination directory cannot be identical
-    doctreedir = outputdir = output_dir or tempfile.mkdtemp()
+    # note source directory and output directory cannot be identical
+    _source_temp = _out_temp = None
+    if source_dir is None:
+        source_dir = _source_temp = tempfile.mkdtemp()
+    if output_dir is None and doctree_dir is None:
+        doctree_dir = output_dir = _out_temp = tempfile.mkdtemp()
+    elif doctree_dir is None:
+        doctree_dir = _out_temp = tempfile.mkdtemp()
+    elif output_dir is None:
+        output_dir = _out_temp = tempfile.mkdtemp()
 
     app = None
     try:
         log_stream_status = StringIO()
         log_stream_warning = StringIO()
-        with patch_docutils(confdir), docutils_namespace():
+        with patch_docutils(conf_dir), docutils_namespace():
             from docutils.parsers.rst.directives import _directives
             from docutils.parsers.rst.roles import _roles
             from sphinx.util.docutils import additional_nodes
 
             app = Sphinx(
-                sourcedir,
-                confdir,
-                outputdir,
-                doctreedir,
+                source_dir,
+                conf_dir,
+                output_dir,
+                doctree_dir,
                 builder,
                 confoverrides=confoverrides,
                 status=log_stream_status,
                 warning=log_stream_warning,
-                # originally parsed
+                # also originally parsed
                 # args.freshenv, args.warningiserror,
                 # args.tags, args.verbosity, args.jobs, args.keep_going
             )
@@ -111,10 +123,10 @@ def create_sphinx_app(
         # handle_exception(app, args, exc, error)
         raise exc
     finally:
-        if not source_dir:
-            shutil.rmtree(sourcedir, ignore_errors=True)
-        if not output_dir:
-            shutil.rmtree(outputdir, ignore_errors=True)
+        if _source_temp:
+            shutil.rmtree(_source_temp, ignore_errors=True)
+        if _out_temp:
+            shutil.rmtree(_out_temp, ignore_errors=True)
 
     return SphinxAppEnv(
         app, roles, directives, additional_nodes, log_stream_status, log_stream_warning
@@ -123,45 +135,58 @@ def create_sphinx_app(
 
 @contextmanager
 def sphinx_env(app_env: SphinxAppEnv):
-    with patch_docutils(app_env.app.confdir), docutils_namespace():
-        from docutils.parsers.rst.directives import _directives
-        from docutils.parsers.rst.roles import _roles
+    """This context enters the standard sphinx contexts,
+    then registers the roles, directives and nodes saved in the app_env.
+
+    The standard sphinx contexts:
+
+    - Patch docutils.languages.get_language(), to suppress reporter warnings
+    - Temporarily sets `os.environ['DOCUTILSCONFIG']` to the sphinx confdir
+    - Saves copies of roles._roles and directives._directives & resets them on exit
+    - Un-registers additional nodes (set via `register_node`) on exit
+      (by deleting `GenericNodeVisitor` visit/depart methods)
+    - Patches roles.roles and directives.directives functions to also look in domains
+    """
+    with patch_docutils(app_env.app.confdir), docutils_namespace(), sphinx_domains(
+        app_env.app.env
+    ):
+        from docutils.parsers.rst import directives, roles
         from sphinx.util.docutils import register_node
 
         if app_env.roles:
-            _roles.update(app_env.roles)
+            roles._roles.update(app_env.roles)
         if app_env.directives:
-            _directives.update(app_env.directives)
+            directives._directives.update(app_env.directives)
         for node in app_env.additional_nodes:
             register_node(node)
+        # TODO how to make `unregister_node` thread safe
 
-        with sphinx_domains(app_env.app.env):
-            yield
+        yield
 
 
 def retrieve_namespace(app_env: SphinxAppEnv):
-    """Retrieve all available roles, directives and additional nodes."""
-    # regarding the ``_roles`` and ``_directives`` mapping;
-    # sphinx presumably checks loads all roles/directives,
-    # when it loads its internal and conf specified extensions,
-    # however, docutils loads them on a lazy basis, when they are required
-    # the _role_registry contains all docutils roles by their 'canonical' names,
-    # but these are also mapped to language-dependent dependant names
-    # in docutils.parsers.rst.roles.role and
-    # similarly in docutils.parsers.rst.directives.directive
-    # TODO work out how to obtain the correct language mapping
-    # from docutils.languages import get_language
+    """Retrieve all available roles, directives and additional nodes.
 
-    # we use a threading lock to guard against the globals _directives and _roles
-    # being changed before they can be read.
+    Regarding the ``_roles`` and ``_directives`` mapping;
+    sphinx presumably checks loads all roles/directives,
+    when it loads its internal and conf specified extensions,
+    however, docutils loads them on a lazy basis, when they are required
+    the _role_registry contains all docutils roles by their 'canonical' names,
+    but these are also mapped to language-dependent dependant names
+    in docutils.parsers.rst.roles.role and
+    similarly in docutils.parsers.rst.directives.directive
+    """
+    # TODO obtain the correct language mapping from docutils.languages.get_language
     with threading.Lock():
         with sphinx_env(app_env):
             from docutils.parsers.rst.directives import _directives, _directive_registry
             from docutils.parsers.rst.roles import _roles, _role_registry
 
-            all_roles = copy.copy(_role_registry)
+            all_roles = {}
+            all_directives = {}
+            all_roles.update(_role_registry)
             all_roles.update(_roles)
-            all_directives = copy.copy(_directives)
+            all_directives.update(_directives)
             for key, (modulename, classname) in _directive_registry.items():
                 if key not in all_directives:
                     try:
@@ -180,7 +205,7 @@ def retrieve_namespace(app_env: SphinxAppEnv):
                     all_roles[f"{prefix}{role_name}"] = role
                 for direct_name, direct in domain.directives.items():
                     all_roles[f"{prefix}{direct_name}"] = direct
-        return all_roles, all_directives
+    return all_roles, all_directives
 
 
 def find_all_files(srcdir: str, exclude_patterns: List[str], suffixes=(".rst",)):
@@ -198,12 +223,6 @@ def find_all_files(srcdir: str, exclude_patterns: List[str], suffixes=(".rst",))
         if os.access(os.path.join(srcdir, filename), os.R_OK):
             filename = os.path.realpath(filename)
             docnames.add(filename)
-            # modified_time = os.path.getmtime(filename)
-            # TODO add/update os.path.getmtime for files in DB when saved/closed
-            # Then we can test against the DB to check which files need to be re-read
-            # also remove files from db that are no longer required
-            # re-read all files in background (async tinydb?)
-            # send progress to client (will require next LSP version 3.15.0)
     return docnames
 
 
@@ -212,13 +231,14 @@ class SourceAssessResult:
     doctree: document = attr.ib()
     positions: List[dict] = attr.ib()
     references: List[dict] = attr.ib()
-    name_to_target: List[dict] = attr.ib()
+    pending_xrefs: List[dict] = attr.ib()
+    targets: List[dict] = attr.ib()
     doc_symbols: List[DocumentSymbol] = attr.ib()
     linting: List[dict] = attr.ib()
 
 
 def assess_source(
-    content: str, app_env: SphinxAppEnv, doc_uri: str = "input.rst",
+    content: str, app_env: SphinxAppEnv, doc_uri: str = "input.rst"
 ) -> SourceAssessResult:
     """Assess the content of an file.
 
@@ -234,8 +254,6 @@ def assess_source(
     SourceAssessResult
 
     """
-    # TODO how can we guard against globals like _directives and _roles
-    # being changed by another thread, without thread locking the entire function?
     with sphinx_env(app_env):
 
         # TODO look at sphinx.io.read_doc function, that is used for sphinx parsing
@@ -265,7 +283,8 @@ def assess_source(
         doctree=document,
         positions=transform.db_positions,
         references=transform.db_references,
-        name_to_target=transform.name_to_uuid,
+        pending_xrefs=transform.db_pending_xrefs,
+        targets=transform.db_targets,
         doc_symbols=transform.db_doc_symbols,
         linting=reporter.log_capture,
     )

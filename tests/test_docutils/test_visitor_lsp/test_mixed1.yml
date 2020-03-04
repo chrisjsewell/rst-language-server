@@ -1,142 +1,150 @@
 db_positions:
 - block: true
+  category: hyperlink_target
   endCharacter: 10
   endLine: 0
   parent_uuid: null
   startCharacter: 0
   startLine: 0
   title: hyperlink_target
-  type: hyperlink_target
   uuid: uuid_5
 - block: true
+  category: section
   endCharacter: 28
   endLine: 11
-  level: 1
   parent_uuid: null
+  section_level: 1
   startCharacter: 0
   startLine: 2
   title: title
-  type: section
   uuid: uuid_6
-- arguments: []
-  block: true
-  contentIndent: 3
-  contentLine: 7
-  dtype: note
+- block: true
+  category: directive
+  directive_data:
+    arguments: []
+    contentIndent: 3
+    contentLine: 7
+    klass: docutils.parsers.rst.directives.admonitions.Note
+    options: {}
+  directive_name: note
   endCharacter: 0
   endLine: 8
-  klass: docutils.parsers.rst.directives.admonitions.Note
-  options: {}
   parent_uuid: uuid_6
   startCharacter: 0
   startLine: 5
   title: note
-  type: directive
   uuid: uuid_7
 - block: false
+  category: ref_foot
   endCharacter: 6
   endLine: 7
   parent_uuid: uuid_7
   startCharacter: 3
   startLine: 7
   title: ref_foot
-  type: ref_foot
   uuid: uuid_8
 - block: false
+  category: ref_basic
   endCharacter: 14
   endLine: 7
   parent_uuid: uuid_7
   startCharacter: 8
   startLine: 7
   title: ref_basic
-  type: ref_basic
   uuid: uuid_9
 - block: false
+  category: ref_sub
   endCharacter: 23
   endLine: 7
   parent_uuid: uuid_7
   startCharacter: 16
   startLine: 7
   title: ref_sub
-  type: ref_sub
   uuid: uuid_10
 - block: false
+  category: ref_cite
   endCharacter: 31
   endLine: 7
   parent_uuid: uuid_7
   startCharacter: 25
   startLine: 7
   title: ref_cite
-  type: ref_cite
   uuid: uuid_11
 - block: true
+  category: footnote
   endCharacter: 25
   endLine: 9
   parent_uuid: uuid_6
   startCharacter: 0
   startLine: 9
   title: footnote
-  type: footnote
   uuid: uuid_12
 - block: true
+  category: substitution_def
   endCharacter: 29
   endLine: 10
   parent_uuid: uuid_6
   startCharacter: 0
   startLine: 10
   title: substitution_def
-  type: substitution_def
   uuid: uuid_13
 - block: true
+  category: citation
   endCharacter: 28
   endLine: 11
   parent_uuid: uuid_6
   startCharacter: 0
   startLine: 11
   title: citation
-  type: citation
   uuid: uuid_14
 db_references:
 - classes: []
-  node: target
-  position_uuid: uuid_5
-  target: uuid_3
-- classes: []
-  node: section
-  position_uuid: uuid_6
-  target: uuid_4
-- classes: []
-  node: footnote_reference
+  node_type: footnote_reference
   position_uuid: uuid_8
-  reference: uuid_2
-  same_doc: true
+  target_uuid: uuid_2
 - classes: []
-  node: reference
+  node_type: reference
   position_uuid: uuid_9
-  reference: uuid_3
-  same_doc: true
+  target_uuid: uuid_3
 - classes: []
-  node: substitution_reference
+  node_type: substitution_reference
   position_uuid: uuid_10
-  reference: uuid_0
-  same_doc: true
+  target_uuid: uuid_0
 - classes: []
-  node: citation_reference
+  node_type: citation_reference
   position_uuid: uuid_11
-  reference: uuid_1
-  same_doc: true
+  target_uuid: uuid_1
+db_targets:
 - classes: []
-  node: footnote
+  names:
+  - target
+  node_type: target
+  position_uuid: uuid_5
+  uuid: uuid_3
+- classes: []
+  names:
+  - title
+  node_type: section
+  position_uuid: uuid_6
+  uuid: uuid_4
+- classes: []
+  names:
+  - '1'
+  node_type: footnote
   position_uuid: uuid_12
-  target: uuid_2
+  uuid: uuid_2
 - classes: []
-  node: substitution_definition
+  names:
+  - symbol
+  node_type: substitution_definition
   position_uuid: uuid_13
-  target: uuid_0
+  uuid: uuid_0
 - classes: []
-  node: citation
+  names:
+  - cite
+  node_type: citation
   position_uuid: uuid_14
-  target: uuid_1
+  uuid: uuid_1
 doc_symbols:
 - detail: 'type: hyperlink_target'
   kind: 8
