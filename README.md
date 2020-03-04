@@ -2,6 +2,8 @@
 
 **NOTE**: This project is still in development
 
+This LSP implementation is based on [palantir/python-language-server](https://github.com/palantir/python-language-server).
+
 ## Example Usage
 
 The VS Code extension can be tried by cloning the repository,
